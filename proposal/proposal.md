@@ -79,9 +79,14 @@ https://www.redblobgames.com/maps/terrain-from-noise/
 
 ### Lava rendering
 https://learnopengl.com/PBR/Theory
+https://threejs.org/examples/webgl_shader_lava.html
 
 
 ### Particles
 https://learnopengl.com/In-Practice/2D-Game/Particles
 https://www.opengl-tutorial.org/intermediate-tutorials/billboards-particles/particles-instancing/
 
+### Fluid simulation
+
+### Procedural textures
+https://thebookofshaders.com/12/
