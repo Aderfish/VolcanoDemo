@@ -2,25 +2,25 @@
 title: Project Proposal CS-341 2024
 ---
 
-# Project Title
+# Volcano Simulation
 
 ![A representative image](images/demo.jpg){width="300px"}
 
 
 ## Abstract
 
-TODO
+We will render a volcano erruption.
 
 
 ## Features
 
 | Feature                | Points       | Adapted Points |
 |------------------------|--------------|----------------|
-| Feature 1              | 10           | 10             |
-| Feature 2              | 10           | 10             |
-| Feature 3              | 10           | 10             |
-| Feature 4              | 20           | 10             |
-| Feature 5              | 40           | 30             |
+| Particle Effects for smoke and lava projections              | 20           | 20             |
+| Physical based lava rendering              | 20           | 15             |
+| Procedural volcano terrain generation              | 5           | 5             |
+| Procedural texture generation              | 10           | 10             |
+| Lava flow fluid simulation              | 20           | 20             |
 
 
 ## Schedule
