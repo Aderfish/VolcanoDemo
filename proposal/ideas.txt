@@ -1,0 +1,20 @@
+volcano scene
+
+procedural textures (for lava and rocks) (10 points)
+procedural generation of terrain (5 points)
+smoke and projection particles effects (20 points)
+fluid simulation of lava flowing down (20 points)
+
+physical shader for lava (15 points) 
+
+// bezier curves for camera movement through the scene (10 points)
+
+
+rendering
+-> particles + physical based
+
+procedural
+-> terrain + textures
+
+geometric modelling
+-> fluid simulation
