@@ -74,5 +74,14 @@ We will render a volcano erruption.
 
 ## Resources
 
-TODO
+### Terrain generation
+https://www.redblobgames.com/maps/terrain-from-noise/
+
+### Lava rendering
+https://learnopengl.com/PBR/Theory
+
+
+### Particles
+https://learnopengl.com/In-Practice/2D-Game/Particles
+https://www.opengl-tutorial.org/intermediate-tutorials/billboards-particles/particles-instancing/
 
