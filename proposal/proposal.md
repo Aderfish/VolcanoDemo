@@ -35,39 +35,39 @@ We will render a volcano erruption.
 	</tr>
 	<tr>
 		<td>Week 1</td>
-		<td></td>
-		<td></td>
-		<td></td>
+		<td>Write the project </td>
+		<td>Find the ressources that we'll need during the project</td>
+		<td>Setup the git repository</td>
 	</tr>
 	<tr>
 		<td>Week 2</td>
-		<td></td>
-		<td></td>
-		<td></td>
+		<td>Procedural volcano terrain generation</td>
+		<td>Procedural texture generation of the volcano terrain</td>
+		<td>Smoke particule effects for the volcano</td>
 	</tr>
 	<tr>
 		<td>Week 3</td>
-		<td></td>
-		<td></td>
-		<td></td>
+		<td>Fluid simulation of the lava (1/2)</td>
+		<td>Add physical based shader to the lava (1/2)</td>
+		<td>Procedural texture of the lava</td>
 	</tr>
 	<tr>
 		<td>Week 4</td>
-		<td></td>
-		<td></td>
-		<td></td>
+		<td>Fluid simulation of the lava (2/2)</td>
+		<td>Add physical based shader to the lava (2/2)</td>
+		<td>Eruption with particules</td>
 	</tr>
 	<tr>
 		<td>Week 5</td>
-		<td></td>
+		<td>Add particules around the lava flow</td>
 		<td></td>
 		<td></td>
 	</tr>
 	<tr>
 		<td>Week 6</td>
-		<td></td>
-		<td></td>
-		<td></td>
+		<td>Recording the final video</td>
+		<td>Prepare the final presentation</td>
+		<td>Finish the final report</td>
 	</tr>
 </table>
 
