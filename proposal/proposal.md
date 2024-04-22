@@ -12,11 +12,12 @@ The final objective is to have a scene of a realistic volcano eruption rendered 
 The user would be able to play with the simulation parameters in order to get various volcano eruptions.
 
 The scene would consist of the following:
-- A volcano terrain that is proceduraly generated (terrain + texture)
-- Particles effects to represent the smoke above the crater
-- A particle simulation of the lava flow that is exiting the crater 
-- A convicing rendering of the lava flow using Voronoï tesselation and procedural textures that depend on physical aspects of the lava
-
+<ul>
+<li>A volcano terrain that is proceduraly generated (terrain + texture)</li>
+<li>Particles effects to represent the smoke above the crater</li>
+<li>A particle simulation of the lava flow that is exiting the crater</li>
+<li>A convicing rendering of the lava flow using Voronoï tesselation and procedural textures that depend on physical aspects of the lava</li>
+</ul>
 
 
 ## Features
