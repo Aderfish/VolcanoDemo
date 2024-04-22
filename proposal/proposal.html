@@ -87,6 +87,37 @@ A convicing rendering of the lava flow using Voronoï tesselation and
 procedural textures that depend on physical aspects of the lava
 </li>
 </ul>
+<p>To achive this goal, we plan on doing the following:</p>
+<p>We will generate the volcano terrain and texture procedurally using
+the techniques that we have worked on during the homework on Perlin
+noise.</p>
+<p>Then, we will implement a particle system to generate the smoke that
+is leaving from the volcano crater.</p>
+<p>We will create a simulation of the lava flowing from the volcano. To
+do so, we are going to perform a fluid simulation using a paricle system
+to represent the lava. In particular, we’ll base our implementation
+mainly on the paper <a
+href="http://www-evasion.imag.fr/Publications/1999/SACNG99/gi99.pdf">Animating
+Lava Flows</a> that describes an efficient approach to animate lava
+flows.</p>
+<p>Then, we have to create a convicing rendering of the lava flow
+particle system. To do so, the first thing to do is to generate an
+appropriate mesh to represent the shape of the lava particles systems.
+This can be achieved using a method called Voronoï tesselation. To
+implement it, we’ll use the approach proposed in <a
+href="https://pubs.aip.org/aapt/ajp/article/90/6/469/2820132/Voronoi-cell-analysis-The-shapes-of-particle">Voronoi
+cell analysis: The shapes of particle systems</a>.</p>
+<p>Finally, we need to bring texture to our lava flow for it to be
+convicing. To do so, we’ll use an approach that is partially based on
+physical aspects of the lava and also based on a procedural approach.
+Conretelly, the plan is to use the temperature a lava point to get it’s
+“orangeness”. Then, on top of that we add a procedural texture to get a
+good render with crusts.</p>
+<p>To finish, we plan on making the flow simulation parameters
+changeable by the user. This way, we can observe various kind of
+eruptions. Then, we’ll proceed on recording a video of an eruption
+rendered through this project to showcase during the final
+presentation.</p>
 <h2 id="features">Features</h2>
 <table>
 <colgroup>
@@ -108,7 +139,8 @@ procedural textures that depend on physical aspects of the lava
 <td>20</td>
 </tr>
 <tr class="even">
-<td>Physical based lava rendering</td>
+<td>Lava rendering (voronoï tesselation of particles flow, physicaly
+based rendering)</td>
 <td>20</td>
 <td>15</td>
 </tr>
@@ -149,7 +181,7 @@ Name 3
 Week 1
 </td>
 <td>
-Write the project
+Write the project proposal
 </td>
 <td>
 Find the ressources that we’ll need during the project
