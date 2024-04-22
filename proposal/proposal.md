@@ -19,6 +19,8 @@ The scene would consist of the following:
 <li>A convicing rendering of the lava flow using Voronoï tesselation and procedural textures that depend on physical aspects of the lava</li>
 </ul>
 
+#### Action plan
+
 To achive this goal, we plan on doing the following:
 
 We will generate the volcano terrain and texture procedurally using the techniques that we have worked on during the homework on Perlin noise.
@@ -33,16 +35,32 @@ Finally, we need to bring texture to our lava flow for it to be convicing. To do
 
 To finish, we plan on making the flow simulation parameters changeable by the user. This way, we can observe various kind of eruptions. Then, we'll proceed on recording a video of an eruption rendered through this project to showcase during the final presentation.
 
+#### Why this project ?
+
+Volcanoes are among the most powerful and awe-inspiring phenomena on Earth. Using physics simulations and computer graphics, we aim to offer the ability to interact with and observe these formidable forces in real time.
+
+#### New techniques brought to the WebGL framework
+
+As discussed in the action plan above, this project will require to add various techniques to the WebGL framework. Concretely, we'll need to add : particle effects (smoke), fluid particles system simulation (lava flow), particles system voronoï tesselation and procedural generation of terrain and textures.
+
+#### Technical challenges
+
+The predominant challenge is the lava flow simulation which is the heart of the project. However, the paper [Animating Lava Flows](http://www-evasion.imag.fr/Publications/1999/SACNG99/gi99.pdf) is well detailled and should provide us with the necessary basis to implement the lava flow simulation.
+
+Another challenge will also be to correctly render the lava flow particles system. But once again, we have found ressources that should be able to guide us through the implementation.
+
+Finally, implementing smoke particles effect will be challenging but there are plenty of ressources on this matter specifically available online.
+
 
 ## Features
 
 | Feature                | Points       | Adapted Points |
 |------------------------|--------------|----------------|
-| Particle Effects for smoke and lava projections              | 20           | 20             |
-| Lava rendering (voronoï tesselation of particles flow, physicaly based rendering)            | 20           | 15             |
 | Procedural volcano terrain generation              | 5           | 5             |
 | Procedural texture generation              | 10           | 10             |
 | Lava flow fluid simulation              | 20           | 20             |
+| Lava rendering (voronoï tesselation of particles flow, semi-physically based rendering)            | 20           | 20             |
+| Particle Effects for smoke              | 20           | 15             |
 
 
 ## Schedule
@@ -51,9 +69,9 @@ To finish, we plan on making the flow simulation parameters changeable by the us
 <table>
 	<tr>
 		<th></th>
-		<th>Name 1</th>
-		<th>Name 2</th>
-		<th>Name 3</th>
+		<th>Yoann Lafore</th>
+		<th>Shimeng Ye</th>
+		<th>Alberts Reisons</th>
 	</tr>
 	<tr>
 		<td>Week 1</td>
@@ -65,25 +83,25 @@ To finish, we plan on making the flow simulation parameters changeable by the us
 		<td>Week 2</td>
 		<td>Procedural volcano terrain generation</td>
 		<td>Procedural texture generation of the volcano terrain</td>
-		<td>Smoke particule effects for the volcano</td>
+		<td>Smoke particule effects for the volcano (1/2)</td>
 	</tr>
 	<tr>
 		<td>Week 3</td>
 		<td>Fluid simulation of the lava (1/2)</td>
-		<td>Add physical based shader to the lava (1/2)</td>
-		<td>Procedural texture of the lava</td>
+		<td>Physically-only based rendering of the lava flow</td>
+		<td>Smoke particule effects for the volcano (2/2)</td>
 	</tr>
 	<tr>
 		<td>Week 4</td>
 		<td>Fluid simulation of the lava (2/2)</td>
-		<td>Add physical based shader to the lava (2/2)</td>
-		<td>Eruption with particules</td>
+		<td>Add procedural texture to the physically based lava texture</td>
+		<td>Voronoï tesselation of the lava flow particles system</td>
 	</tr>
 	<tr>
 		<td>Week 5</td>
-		<td>Add particules around the lava flow</td>
-		<td></td>
-		<td></td>
+		<td>Add ways for the user to interact with the simulation</td>
+		<td>Prepare a cinematic scene for the video recording</td>
+		<td>Start the writting of the final report</td>
 	</tr>
 	<tr>
 		<td>Week 6</td>

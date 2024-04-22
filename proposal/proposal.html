@@ -87,6 +87,7 @@ A convicing rendering of the lava flow using Voronoï tesselation and
 procedural textures that depend on physical aspects of the lava
 </li>
 </ul>
+<h4 id="action-plan">Action plan</h4>
 <p>To achive this goal, we plan on doing the following:</p>
 <p>We will generate the volcano terrain and texture procedurally using
 the techniques that we have worked on during the homework on Perlin
@@ -118,6 +119,30 @@ changeable by the user. This way, we can observe various kind of
 eruptions. Then, we’ll proceed on recording a video of an eruption
 rendered through this project to showcase during the final
 presentation.</p>
+<h4 id="why-this-project">Why this project ?</h4>
+<p>Volcanoes are among the most powerful and awe-inspiring phenomena on
+Earth. Using physics simulations and computer graphics, we aim to offer
+the ability to interact with and observe these formidable forces in real
+time.</p>
+<h4 id="new-techniques-brought-to-the-webgl-framework">New techniques
+brought to the WebGL framework</h4>
+<p>As discussed in the action plan above, this project will require to
+add various techniques to the WebGL framework. Concretely, we’ll need to
+add : particle effects (smoke), fluid particles system simulation (lava
+flow), particles system voronoï tesselation and procedural generation of
+terrain and textures.</p>
+<h4 id="technical-challenges">Technical challenges</h4>
+<p>The predominant challenge is the lava flow simulation which is the
+heart of the project. However, the paper <a
+href="http://www-evasion.imag.fr/Publications/1999/SACNG99/gi99.pdf">Animating
+Lava Flows</a> is well detailled and should provide us with the
+necessary basis to implement the lava flow simulation.</p>
+<p>Another challenge will also be to correctly render the lava flow
+particles system. But once again, we have found ressources that should
+be able to guide us through the implementation.</p>
+<p>Finally, implementing smoke particles effect will be challenging but
+there are plenty of ressources on this matter specifically available
+online.</p>
 <h2 id="features">Features</h2>
 <table>
 <colgroup>
@@ -134,17 +159,6 @@ presentation.</p>
 </thead>
 <tbody>
 <tr class="odd">
-<td>Particle Effects for smoke and lava projections</td>
-<td>20</td>
-<td>20</td>
-</tr>
-<tr class="even">
-<td>Lava rendering (voronoï tesselation of particles flow, physicaly
-based rendering)</td>
-<td>20</td>
-<td>15</td>
-</tr>
-<tr class="odd">
 <td>Procedural volcano terrain generation</td>
 <td>5</td>
 <td>5</td>
@@ -159,6 +173,17 @@ based rendering)</td>
 <td>20</td>
 <td>20</td>
 </tr>
+<tr class="even">
+<td>Lava rendering (voronoï tesselation of particles flow,
+semi-physically based rendering)</td>
+<td>20</td>
+<td>20</td>
+</tr>
+<tr class="odd">
+<td>Particle Effects for smoke</td>
+<td>20</td>
+<td>15</td>
+</tr>
 </tbody>
 </table>
 <h2 id="schedule">Schedule</h2>
@@ -167,13 +192,13 @@ based rendering)</td>
 <th>
 </th>
 <th>
-Name 1
+Yoann Lafore
 </th>
 <th>
-Name 2
+Shimeng Ye
 </th>
 <th>
-Name 3
+Alberts Reisons
 </th>
 </tr>
 <tr>
@@ -201,7 +226,7 @@ Procedural volcano terrain generation
 Procedural texture generation of the volcano terrain
 </td>
 <td>
-Smoke particule effects for the volcano
+Smoke particule effects for the volcano (1/2)
 </td>
 </tr>
 <tr>
@@ -212,10 +237,10 @@ Week 3
 Fluid simulation of the lava (1/2)
 </td>
 <td>
-Add physical based shader to the lava (1/2)
+Physically-only based rendering of the lava flow
 </td>
 <td>
-Procedural texture of the lava
+Smoke particule effects for the volcano (2/2)
 </td>
 </tr>
 <tr>
@@ -226,10 +251,10 @@ Week 4
 Fluid simulation of the lava (2/2)
 </td>
 <td>
-Add physical based shader to the lava (2/2)
+Add procedural texture to the physically based lava texture
 </td>
 <td>
-Eruption with particules
+Voronoï tesselation of the lava flow particles system
 </td>
 </tr>
 <tr>
@@ -237,11 +262,13 @@ Eruption with particules
 Week 5
 </td>
 <td>
-Add particules around the lava flow
+Add ways for the user to interact with the simulation
 </td>
 <td>
+Prepare a cinematic scene for the video recording
 </td>
 <td>
+Start the writting of the final report
 </td>
 </tr>
 <tr>
