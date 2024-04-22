@@ -4,12 +4,19 @@ title: Project Proposal CS-341 2024
 
 # Volcano Simulation
 
-![A representative image](images/demo.jpg){width="300px"}
+![A representative image](images/volcano.jpg){width="300px"}
 
 
 ## Abstract
+The final objective is to have a scene of a realistic volcano eruption rendered in real time.
+The user would be able to play with the simulation parameters in order to get various volcano eruptions.
 
-We will render a volcano erruption.
+The scene would consist of the following:
+- A volcano terrain that is proceduraly generated (terrain + texture)
+- Particles effects to represent the smoke above the crater
+- A particle simulation of the lava flow that is exiting the crater 
+- A convicing rendering of the lava flow using Voronoï tesselation and procedural textures that depend on physical aspects of the lava
+
 
 
 ## Features
@@ -75,9 +82,9 @@ We will render a volcano erruption.
 ## Resources
 
 ### Lava Flow simulation
-http://www-evasion.imag.fr/Publications/1999/SACNG99/gi99.pdf
-http://www-evasion.imag.fr/Membres/Fabrice.Neyret/Lave/index-eng.html#Rendering 
-https://www.researchgate.net/publication/365591320_Modeling_and_Visualization_of_Lava_Flows
+http://www-evasion.imag.fr/Publications/1999/SACNG99/gi99.pdf \
+http://www-evasion.imag.fr/Membres/Fabrice.Neyret/Lave/index-eng.html#Rendering \
+https://www.researchgate.net/publication/365591320_Modeling_and_Visualization_of_Lava_Flows \
 https://home.cscamm.umd.edu/publications/hangzhou_CS-05-04.pdf
 
 ### Terrain generation
@@ -90,15 +97,15 @@ https://www.scratchapixel.com/lessons/procedural-generation-virtual-worlds/perli
 https://pubs.aip.org/aapt/ajp/article/90/6/469/2820132/Voronoi-cell-analysis-The-shapes-of-particle
 
 #### Rendering the lava
-http://www-evasion.imag.fr/Publications/1999/SACNG99/gi99.pdf
-https://www.shadertoy.com/view/msycDz
-https://learnopengl.com/PBR/Theory
+http://www-evasion.imag.fr/Publications/1999/SACNG99/gi99.pdf \
+https://www.shadertoy.com/view/msycDz \
+https://learnopengl.com/PBR/Theory \
 https://threejs.org/examples/webgl_shader_lava.html
 
 
 ### Particles
-https://web.stanford.edu/class/cs237d/smoke.pdf
-https://www.opengl-tutorial.org/intermediate-tutorials/billboards-particles/particles-instancing/
+https://web.stanford.edu/class/cs237d/smoke.pdf \
+https://www.opengl-tutorial.org/intermediate-tutorials/billboards-particles/particles-instancing/ \
 https://learnopengl.com/In-Practice/2D-Game/Particles
 
 

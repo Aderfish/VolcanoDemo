@@ -46,13 +46,13 @@
           <li><a href="#schedule" id="toc-schedule">Schedule</a></li>
           <li><a href="#resources" id="toc-resources">Resources</a>
           <ul>
+          <li><a href="#lava-flow-simulation"
+          id="toc-lava-flow-simulation">Lava Flow simulation</a></li>
           <li><a href="#terrain-generation"
           id="toc-terrain-generation">Terrain generation</a></li>
           <li><a href="#lava-rendering" id="toc-lava-rendering">Lava
           rendering</a></li>
           <li><a href="#particles" id="toc-particles">Particles</a></li>
-          <li><a href="#fluid-simulation"
-          id="toc-fluid-simulation">Fluid simulation</a></li>
           <li><a href="#procedural-textures"
           id="toc-procedural-textures">Procedural textures</a></li>
           </ul></li>
@@ -63,11 +63,20 @@
         
 <h1 id="volcano-simulation">Volcano Simulation</h1>
 <figure>
-<img src="images/demo.jpg" width="300" alt="A representative image" />
+<img src="images/volcano.jpg" width="300"
+alt="A representative image" />
 <figcaption aria-hidden="true">A representative image</figcaption>
 </figure>
 <h2 id="abstract">Abstract</h2>
-<p>We will render a volcano erruption.</p>
+<p>The final objective is to have a scene of a realistic volcano
+eruption rendered in real time. The user would be able to play with the
+simulation parameters in order to get various volcano eruptions.</p>
+<p>The scene would consist of the following: - A volcano terrain that is
+proceduraly generated (terrain + texture) - Particles effects to
+represent the smoke above the crater - A particle simulation of the lava
+flow that is exiting the crater - A convicing rendering of the lava flow
+using Voronoï tesselation and procedural textures that depend on
+physical aspects of the lava</p>
 <h2 id="features">Features</h2>
 <table>
 <colgroup>
@@ -209,15 +218,28 @@ Finish the final report
 </tr>
 </table>
 <h2 id="resources">Resources</h2>
+<h3 id="lava-flow-simulation">Lava Flow simulation</h3>
+<p>http://www-evasion.imag.fr/Publications/1999/SACNG99/gi99.pdf<br />
+http://www-evasion.imag.fr/Membres/Fabrice.Neyret/Lave/index-eng.html#Rendering<br />
+https://www.researchgate.net/publication/365591320_Modeling_and_Visualization_of_Lava_Flows<br />
+https://home.cscamm.umd.edu/publications/hangzhou_CS-05-04.pdf</p>
 <h3 id="terrain-generation">Terrain generation</h3>
-<p>https://www.redblobgames.com/maps/terrain-from-noise/</p>
+<p>https://timetocode.tumblr.com/post/93970694121/volcanic-map-generation-step-by-step<br />
+https://www.redblobgames.com/maps/terrain-from-noise/<br />
+https://www.scratchapixel.com/lessons/procedural-generation-virtual-worlds/perlin-noise-part-2/perlin-noise-terrain-mesh.html</p>
 <h3 id="lava-rendering">Lava rendering</h3>
-<p>https://learnopengl.com/PBR/Theory
+<h4 id="creating-the-lava-mesh-with-voronoï-tesselation">Creating the
+lava mesh with voronoï tesselation</h4>
+<p>https://pubs.aip.org/aapt/ajp/article/90/6/469/2820132/Voronoi-cell-analysis-The-shapes-of-particle</p>
+<h4 id="rendering-the-lava">Rendering the lava</h4>
+<p>http://www-evasion.imag.fr/Publications/1999/SACNG99/gi99.pdf<br />
+https://www.shadertoy.com/view/msycDz<br />
+https://learnopengl.com/PBR/Theory<br />
 https://threejs.org/examples/webgl_shader_lava.html</p>
 <h3 id="particles">Particles</h3>
-<p>https://learnopengl.com/In-Practice/2D-Game/Particles
-https://www.opengl-tutorial.org/intermediate-tutorials/billboards-particles/particles-instancing/</p>
-<h3 id="fluid-simulation">Fluid simulation</h3>
+<p>https://web.stanford.edu/class/cs237d/smoke.pdf<br />
+https://www.opengl-tutorial.org/intermediate-tutorials/billboards-particles/particles-instancing/<br />
+https://learnopengl.com/In-Practice/2D-Game/Particles</p>
 <h3 id="procedural-textures">Procedural textures</h3>
 <p>https://thebookofshaders.com/12/</p>
         </div>
