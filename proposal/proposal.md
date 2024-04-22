@@ -9,9 +9,9 @@ title: Project Proposal CS-341 2024
 
 ## Abstract
 The final objective is to have a scene of a realistic volcano eruption rendered in real time.
-The user would be able to play with the simulation parameters in order to get various volcano eruptions.
+The user will be able to play with the simulation parameters in order to get various volcano eruptions.
 
-The scene would consist of the following:
+The scene will consist of the following:
 <ul>
 <li>A volcano terrain that is proceduraly generated (terrain + texture)</li>
 <li>Particles effects to represent the smoke above the crater</li>
@@ -115,32 +115,36 @@ Finally, implementing smoke particles effect will be challenging but there are p
 ## Resources
 
 ### Lava Flow simulation
-http://www-evasion.imag.fr/Publications/1999/SACNG99/gi99.pdf \
-http://www-evasion.imag.fr/Membres/Fabrice.Neyret/Lave/index-eng.html#Rendering \
-https://www.researchgate.net/publication/365591320_Modeling_and_Visualization_of_Lava_Flows \
-https://home.cscamm.umd.edu/publications/hangzhou_CS-05-04.pdf
+[Animating Lava Flows Paper](http://www-evasion.imag.fr/Publications/1999/SACNG99/gi99.pdf) \
+[Animating Lava Flows Showcase website](http://www-evasion.imag.fr/Membres/Fabrice.Neyret/Lave/index-eng.html#Rendering) \
+[Modeling and Visualization of Lava Flows](https://www.researchgate.net/publication/365591320_Modeling_and_Visualization_of_Lava_Flows) \
+[Moving Mesh Methods for Computational Fluid Dynamics](https://home.cscamm.umd.edu/publications/hangzhou_CS-05-04.pdf)
 
 ### Terrain generation
-https://timetocode.tumblr.com/post/93970694121/volcanic-map-generation-step-by-step \
-https://www.redblobgames.com/maps/terrain-from-noise/ \
-https://www.scratchapixel.com/lessons/procedural-generation-virtual-worlds/perlin-noise-part-2/perlin-noise-terrain-mesh.html
+[Volcanic Map Generation Step by Step](https://timetocode.tumblr.com/post/93970694121/volcanic-map-generation-step-by-step) \
+[Making maps with noise functions](https://www.redblobgames.com/maps/terrain-from-noise/) \
+[Using Perlin Noise to Create a Terrain Mesh](https://www.scratchapixel.com/lessons/procedural-generation-virtual-worlds/perlin-noise-part-2/perlin-noise-terrain-mesh.html)
 
 ### Lava rendering
 #### Creating the lava mesh with voronoï tesselation
-https://pubs.aip.org/aapt/ajp/article/90/6/469/2820132/Voronoi-cell-analysis-The-shapes-of-particle
+[Voronoi cell analysis: The shapes of particle systems](https://pubs.aip.org/aapt/ajp/article/90/6/469/2820132/Voronoi-cell-analysis-The-shapes-of-particle) \
+[Particle hydrodynamics with tessellation techniques](https://academic.oup.com/mnras/article/406/4/2289/1018040) \
+[Tessellation Methods for Modeling the Material Structure](https://www.researchgate.net/publication/272174585_Tessellation_Methods_for_Modeling_the_Material_Structure)
 
 #### Rendering the lava
-http://www-evasion.imag.fr/Publications/1999/SACNG99/gi99.pdf \
-https://www.shadertoy.com/view/msycDz \
-https://learnopengl.com/PBR/Theory \
-https://threejs.org/examples/webgl_shader_lava.html
+[Animating Lava Flows Paper](http://www-evasion.imag.fr/Publications/1999/SACNG99/gi99.pdf) (end of the paper) \
+[Texture distortion for lava](https://www.shadertoy.com/view/msycDz) \
+[Physically based rendering in OpenGL](https://learnopengl.com/PBR/Theory) \
+[Lava shader demo](https://threejs.org/examples/webgl_shader_lava.html)
 
 
 ### Particles
-https://web.stanford.edu/class/cs237d/smoke.pdf \
-https://www.opengl-tutorial.org/intermediate-tutorials/billboards-particles/particles-instancing/ \
-https://learnopengl.com/In-Practice/2D-Game/Particles
+[Visual Simulation of Smoke](https://web.stanford.edu/class/cs237d/smoke.pdf) \
+[OpenGL-tutorial - Particles / Instancing](https://www.opengl-tutorial.org/intermediate-tutorials/billboards-particles/particles-instancing/) \
+[Learn OpenGL - Particles](https://learnopengl.com/In-Practice/2D-Game/Particles)
 
 
 ### Procedural textures
-https://thebookofshaders.com/12/
+[Perlin noise](https://en.wikipedia.org/wiki/Perlin_noise#:~:text=Perlin%20noise%20is%20a%20procedural,details%20are%20the%20same%20size.) \
+[Rock texture example](https://www.shadertoy.com/view/td2GWt) \
+[Cellular Noise](https://thebookofshaders.com/12/)
