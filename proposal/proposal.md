@@ -74,19 +74,33 @@ We will render a volcano erruption.
 
 ## Resources
 
+### Lava Flow simulation
+http://www-evasion.imag.fr/Publications/1999/SACNG99/gi99.pdf
+http://www-evasion.imag.fr/Membres/Fabrice.Neyret/Lave/index-eng.html#Rendering 
+https://www.researchgate.net/publication/365591320_Modeling_and_Visualization_of_Lava_Flows
+https://home.cscamm.umd.edu/publications/hangzhou_CS-05-04.pdf
+
 ### Terrain generation
-https://www.redblobgames.com/maps/terrain-from-noise/
+https://timetocode.tumblr.com/post/93970694121/volcanic-map-generation-step-by-step \
+https://www.redblobgames.com/maps/terrain-from-noise/ \
+https://www.scratchapixel.com/lessons/procedural-generation-virtual-worlds/perlin-noise-part-2/perlin-noise-terrain-mesh.html
 
 ### Lava rendering
+#### Creating the lava mesh with voronoï tesselation
+https://pubs.aip.org/aapt/ajp/article/90/6/469/2820132/Voronoi-cell-analysis-The-shapes-of-particle
+
+#### Rendering the lava
+http://www-evasion.imag.fr/Publications/1999/SACNG99/gi99.pdf
+https://www.shadertoy.com/view/msycDz
 https://learnopengl.com/PBR/Theory
 https://threejs.org/examples/webgl_shader_lava.html
 
 
 ### Particles
-https://learnopengl.com/In-Practice/2D-Game/Particles
+https://web.stanford.edu/class/cs237d/smoke.pdf
 https://www.opengl-tutorial.org/intermediate-tutorials/billboards-particles/particles-instancing/
+https://learnopengl.com/In-Practice/2D-Game/Particles
 
-### Fluid simulation
 
 ### Procedural textures
 https://thebookofshaders.com/12/
