@@ -20,7 +20,10 @@ uniform float m_terrain_height;
 uniform float m_terrain_width;
 uniform float m_terrain_length;
 
-
+// Functions from the "noise.frag.glsl" file
+float perlin_noise(vec2 pos);
+float perlin_fbm(vec2 point);
+float turbulence(vec2 point);
 
 float volcano_height(vec2 pos) {
   // Convert the position to the terrain size

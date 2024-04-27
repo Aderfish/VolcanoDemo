@@ -49,6 +49,11 @@ export function init_volcano_heightmap(
     min: "linear",
   });
 
+  const noise_library_code = resources["noise/shaders/noise.frag.glsl"];
+  const heightmap_code = resources["noise/shaders/volcano_heightmap.frag.glsl"];
+
+  const frag_shader = `${heightmap_code}\n${noise_library_code}`;
+
   const pipeline_generate_texture = regl({
     attributes: { position: mesh_quad_2d.position },
     elements: mesh_quad_2d.faces,
@@ -65,7 +70,7 @@ export function init_volcano_heightmap(
     },
 
     vert: resources["noise/shaders/volcano_heightmap.vert.glsl"],
-    frag: resources["noise/shaders/volcano_heightmap.frag.glsl"],
+    frag: frag_shader,
 
     framebuffer: noise_buffer,
   });
