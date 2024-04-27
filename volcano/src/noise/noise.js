@@ -124,6 +124,7 @@ void main() {
     new NoiseTexture("Wood", "tex_wood"),
     new NoiseTexture("Liquid", "tex_liquid", true),
     new NoiseTexture("FBM_for_terrain", "tex_fbm_for_terrain", true),
+    new NoiseTexture("Volcano_terrain", "tex_volcano_terrain", true),
   ];
 
   return noise_textures;
