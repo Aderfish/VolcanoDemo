@@ -6,8 +6,6 @@ import { init_noise } from "./noise/noise.js";
 import { init_terrain } from "./terrain/terrain.js";
 
 async function main() {
-  console.log("Hello, World!");
-
   // Create the regl canvas
   const regl = createREGL({
     profile: true, // if we want to measure the size of buffers/textures in memory
@@ -140,10 +138,12 @@ async function main() {
     }
   })();
 
+  // This cannot be more than 256 because it causes the render to clip
+  const size = 256;
+
   texture_fbm.draw_texture_to_buffer({
-    width: 96,
-    height: 96,
-    mouse_offset: [-12.24, 8.15],
+    width: size,
+    height: size,
   });
 
   const terrain_actor = init_terrain(regl, resources, texture_fbm.get_buffer());
