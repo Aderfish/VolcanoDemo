@@ -16,7 +16,7 @@ const mesh_quad_2d = {
 
 export function init_noise(regl, resources) {
   // shader implementing all noise functions
-  const noise_library_code = resources["shaders/noise.frag.glsl"];
+  const noise_library_code = resources["noise/shaders/noise.frag.glsl"];
 
   // Safari (at least older versions of it) does not support reading float buffers...
   var isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
@@ -42,7 +42,7 @@ export function init_noise(regl, resources) {
       viewer_scale: regl.prop("viewer_scale"),
     },
 
-    vert: resources["shaders/display.vert.glsl"],
+    vert: resources["noise/shaders/display.vert.glsl"],
     frag: regl.prop("shader_frag"),
 
     framebuffer: noise_buffer,
@@ -54,8 +54,8 @@ export function init_noise(regl, resources) {
     uniforms: {
       buffer_to_draw: noise_buffer,
     },
-    vert: resources["shaders/buffer_to_screen.vert.glsl"],
-    frag: resources["shaders/buffer_to_screen.frag.glsl"],
+    vert: resources["noise/shaders/buffer_to_screen.vert.glsl"],
+    frag: resources["noise/shaders/buffer_to_screen.frag.glsl"],
   });
 
   class NoiseTexture {

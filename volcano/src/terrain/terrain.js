@@ -137,8 +137,8 @@ export function init_terrain(regl, resources, height_map_buffer) {
     },
     elements: terrain_mesh.faces,
 
-    vert: resources["shaders/terrain.vert.glsl"],
-    frag: resources["shaders/terrain.frag.glsl"],
+    vert: resources["terrain/shaders/terrain.vert.glsl"],
+    frag: resources["terrain/shaders/terrain.frag.glsl"],
   });
 
   class TerrainActor {
