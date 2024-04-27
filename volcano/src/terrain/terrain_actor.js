@@ -6,6 +6,7 @@ import {
   mat3,
   mat4,
 } from "../../lib/gl-matrix_3.3.0/esm/index.js";
+import { TerrainCharacteristics } from "../noise/volcano_heightmap.js";
 import { mat4_matmul_many } from "../utils/icg_math.js";
 
 class BufferData {
@@ -31,7 +32,13 @@ class BufferData {
   }
 }
 
-function terrain_build_mesh(height_map) {
+/**
+ *
+ * @param {*} height_map
+ * @param {TerrainCharacteristics} terrain_characteristics
+ * @returns
+ */
+function terrain_build_mesh(height_map, terrain_characteristics) {
   const grid_width = height_map.width;
   const grid_height = height_map.height;
 
@@ -73,12 +80,12 @@ function terrain_build_mesh(height_map) {
 			The XY coordinates are calculated so that the full grid covers the square [-0.5, 0.5]^2 in the XY plane.
 			*/
 
-      const map_width = 1;
-      const map_height = 1;
+      const map_width = terrain_characteristics.m_terrain_width;
+      const map_height = terrain_characteristics.m_terrain_length;
       const tile_width = map_width / (grid_width - 1);
       const tile_height = map_height / (grid_height - 1);
-      const map_start_x = -0.5;
-      const map_start_y = -0.5;
+      const map_start_x = -map_width / 2;
+      const map_start_y = -map_height / 2;
 
       const point_x = map_start_x + gx * tile_width;
       const point_y = map_start_y + gy * tile_height;
@@ -92,8 +99,8 @@ function terrain_build_mesh(height_map) {
     }
   }
 
-  for (let gy = 0; gy < grid_height - 1; gy++) {
-    for (let gx = 0; gx < grid_width - 1; gx++) {
+  for (let gy = 0; gy < grid_height - 1; gy += 1) {
+    for (let gx = 0; gx < grid_width - 1; gx += 1) {
       /* #TODO PG1.6.1
 			Triangulate the grid cell whose lower lefthand corner is grid index (gx, gy).
 			You will need to create two triangles to fill each square.
@@ -118,14 +125,31 @@ function terrain_build_mesh(height_map) {
   };
 }
 
-export function init_terrain(regl, resources, height_map_buffer) {
+/**
+ *
+ * @param {*} regl
+ * @param {*} resources
+ * @param {*} height_map_buffer
+ * @param {TerrainCharacteristics} terrain_characteristics
+ * @returns
+ */
+export function init_terrain_actor(
+  regl,
+  resources,
+  height_map_buffer,
+  terrain_characteristics
+) {
   const terrain_mesh = terrain_build_mesh(
-    new BufferData(regl, height_map_buffer)
+    new BufferData(regl, height_map_buffer),
+    terrain_characteristics
   );
 
   const pipeline_draw_terrain = regl({
     attributes: {
-      position: terrain_mesh.vertex_positions,
+      position: {
+        buffer: regl.buffer(terrain_mesh.vertex_positions),
+        size: terrain_mesh.vertex_positions[0].length,
+      },
       normal: terrain_mesh.vertex_normals,
     },
     uniforms: {

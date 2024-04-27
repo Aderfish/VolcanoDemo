@@ -1,5 +1,7 @@
 precision highp float;
 
+
+
 varying float v2f_height;
 
 /* Blinn-Phong shader setup from previous exercises */
@@ -8,7 +10,7 @@ varying vec3 v2f_dir_to_light;
 varying vec3 v2f_normal;
 
 
-const vec3  light_color = vec3(1.0, 0.941, 0.898);
+const vec3  light_color = vec3(1.0, 0.941, 0.898) * 2.0;
 // Small perturbation to prevent "z-fighting" on the water on some machines...
 const float terrain_water_level    = -0.03125 + 1e-6;
 const vec3  terrain_color_water    = vec3(0.29, 0.51, 0.62);
@@ -36,7 +38,7 @@ void main()
 
 	if(height > terrain_water_level){
 		shininess = 2.0;
-		float weight = 2. * (height - terrain_water_level);
+		float weight = 2. * (height - terrain_water_level) * 0.01;
 		material_color = weight * terrain_color_mountain + (1.-weight) * terrain_color_grass;
 	}
 

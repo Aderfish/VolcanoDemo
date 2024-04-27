@@ -3,6 +3,11 @@ import { createREGL } from "../lib/regljs_2.1.0/regl.module.js";
 import { mat4, vec2, vec4 } from "../lib/gl-matrix_3.3.0/esm/index.js";
 import { deg_to_rad, mat4_matmul_many } from "./utils/icg_math.js";
 import { init_noise } from "./noise/noise.js";
+import { init_terrain_actor } from "./terrain/terrain_actor.js";
+import {
+  TerrainCharacteristics,
+  init_volcano_heightmap,
+} from "./noise/volcano_heightmap.js";
 
 async function main() {
   // Create the regl canvas
@@ -43,6 +48,9 @@ async function main() {
 
     "noise/shaders/buffer_to_screen.vert.glsl",
     "noise/shaders/buffer_to_screen.frag.glsl",
+
+    "noise/shaders/volcano_heightmap.vert.glsl",
+    "noise/shaders/volcano_heightmap.frag.glsl",
   ].forEach((shader_filename) => {
     resources[`${shader_filename}`] = load_text(`./src/${shader_filename}`);
   });
@@ -60,7 +68,7 @@ async function main() {
 
   let cam_angle_z = -0.5; // in radians!
   let cam_angle_y = -0.42; // in radians!
-  let cam_distance_factor = 1;
+  let cam_distance_factor = 256;
 
   let cam_target = [0, 0, 0];
 
@@ -115,7 +123,7 @@ async function main() {
     const factor_mul_base = 1.08;
     const factor_mul = event.deltaY > 0 ? factor_mul_base : 1 / factor_mul_base;
     cam_distance_factor *= factor_mul;
-    cam_distance_factor = Math.max(0.1, Math.min(cam_distance_factor, 4));
+    cam_distance_factor = Math.max(0.1, Math.min(cam_distance_factor, 1000));
     // console.log('wheel', event.deltaY, event.deltaMode)
     event.preventDefault(); // don't scroll the page too...
     update_cam_transform();
@@ -126,26 +134,28 @@ async function main() {
 		Actors
 	---------------------------------------------------------------*/
 
-  const noise_textures = init_noise(regl, resources);
+  const terrain_characteristics = new TerrainCharacteristics();
 
-  const texture_fbm = (() => {
-    for (const t of noise_textures) {
-      //if(t.name === 'FBM') {
-      if (t.name === "Volcano_terrain") {
-        return t;
-      }
-    }
-  })();
+  const volcano_heightmap = init_volcano_heightmap(
+    regl,
+    resources,
+    terrain_characteristics
+  );
 
   // This cannot be more than 256 because it causes the render to clip
-  const size = 256;
+  const size = 1024;
 
-  texture_fbm.draw_texture_to_buffer({
+  volcano_heightmap.draw_heightmap_to_buffer({
     width: size,
     height: size,
   });
 
-  const terrain_actor = init_terrain(regl, resources, texture_fbm.get_buffer());
+  const terrain_actor = init_terrain_actor(
+    regl,
+    resources,
+    volcano_heightmap.get_buffer(),
+    terrain_characteristics
+  );
 
   /*---------------------------------------------------------------
 		Frame render
@@ -153,7 +163,7 @@ async function main() {
   const mat_projection = mat4.create();
   const mat_view = mat4.create();
 
-  let light_position_world = [0.2, -0.3, 0.8, 1.0];
+  let light_position_world = [-40, -40, 100, 1.0];
 
   const light_position_cam = [0, 0, 0, 0];
 
@@ -166,7 +176,7 @@ async function main() {
         deg_to_rad * 60, // fov y
         frame.framebufferWidth / frame.framebufferHeight, // aspect ratio
         0.01, // near
-        100 // far
+        1000 // far
       );
 
       mat4.copy(mat_view, mat_turntable);
