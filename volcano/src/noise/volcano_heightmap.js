@@ -1,14 +1,14 @@
 // Represents the characteristics of the terrain
 export class TerrainCharacteristics {
   constructor() {
-    this.m_crater_radius = 20;
-    this.m_crater_height = 20;
-    this.m_volcano_max_height = 50;
+    this.m_crater_radius = 150;
+    this.m_crater_height = 50;
+    this.m_volcano_max_height = 450;
     this.m_volcano_center = [0, 0];
-    this.m_volcano_radius = 50;
-    this.m_terrain_height = 1;
-    this.m_terrain_width = 200;
-    this.m_terrain_length = 200;
+    this.m_volcano_radius = 800;
+    this.m_terrain_height = 50;
+    this.m_terrain_width = 3000;
+    this.m_terrain_length = 3000;
   }
 }
 

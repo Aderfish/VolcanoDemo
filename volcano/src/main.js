@@ -68,7 +68,7 @@ async function main() {
 
   let cam_angle_z = -0.5; // in radians!
   let cam_angle_y = -0.42; // in radians!
-  let cam_distance_factor = 256;
+  let cam_distance_factor = 2048;
 
   let cam_target = [0, 0, 0];
 
@@ -123,7 +123,7 @@ async function main() {
     const factor_mul_base = 1.08;
     const factor_mul = event.deltaY > 0 ? factor_mul_base : 1 / factor_mul_base;
     cam_distance_factor *= factor_mul;
-    cam_distance_factor = Math.max(0.1, Math.min(cam_distance_factor, 1000));
+    cam_distance_factor = Math.max(0.1, Math.min(cam_distance_factor, 4000));
     // console.log('wheel', event.deltaY, event.deltaMode)
     event.preventDefault(); // don't scroll the page too...
     update_cam_transform();
@@ -142,8 +142,7 @@ async function main() {
     terrain_characteristics
   );
 
-  // This cannot be more than 256 because it causes the render to clip
-  const size = 1024;
+  const size = 2048;
 
   volcano_heightmap.draw_heightmap_to_buffer({
     width: size,
@@ -163,7 +162,7 @@ async function main() {
   const mat_projection = mat4.create();
   const mat_view = mat4.create();
 
-  let light_position_world = [-40, -40, 100, 1.0];
+  let light_position_world = [-800, -800, 800, 1.0];
 
   const light_position_cam = [0, 0, 0, 0];
 
@@ -176,7 +175,7 @@ async function main() {
         deg_to_rad * 60, // fov y
         frame.framebufferWidth / frame.framebufferHeight, // aspect ratio
         0.01, // near
-        1000 // far
+        4000 // far
       );
 
       mat4.copy(mat_view, mat_turntable);
