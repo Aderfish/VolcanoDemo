@@ -3,13 +3,12 @@ import { createREGL } from "../lib/regljs_2.1.0/regl.module.js";
 import { mat4, vec2, vec4 } from "../lib/gl-matrix_3.3.0/esm/index.js";
 import { deg_to_rad, mat4_matmul_many } from "./utils/icg_math.js";
 import { init_noise } from "./noise/noise.js";
-import { init_terrain } from "./terrain/terrain.js";
 
 async function main() {
   // Create the regl canvas
   const regl = createREGL({
     profile: true, // if we want to measure the size of buffers/textures in memory
-    extensions: ["OES_texture_float"], // enable float textures
+    extensions: ["OES_texture_float", "OES_element_index_uint"], // enable float textures
   });
 
   // The <canvas> (HTML element for drawing graphics) was created by REGL, lets take a handle to it.
