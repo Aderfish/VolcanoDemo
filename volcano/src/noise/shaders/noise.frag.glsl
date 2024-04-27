@@ -344,11 +344,3 @@ vec3 tex_marble(vec2 point) {
 
 	return marble_color;
 }
-
-
-// ==============================================================
-// Procedural volcano terrain texture
-
-vec3 tex_volcano_terrain(vec2 point) {
-return vec3(0.);
-}
