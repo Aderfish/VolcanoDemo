@@ -66,9 +66,6 @@ float volcano_shape(vec2 real_pos) {
   // Calculate the distance to the center of the volcano
   float m_dist_to_center = distance(real_pos, m_volcano_center);
 
-  // Calculate the scaling factor relative to the terrain
-  float kappa = m_volcano_max_height;
-
   // When the point is inside the crater
   if (m_dist_to_center < m_crater_radius) {
     float a = smoothstep(0.0, m_crater_radius, m_dist_to_center);
@@ -78,7 +75,7 @@ float volcano_shape(vec2 real_pos) {
   // When the point is outside the crater
   float outside_scaling = (2.0 * (m_dist_to_center - m_crater_radius) ) / ( m_volcano_radius);
     
-  return exp(- outside_scaling * outside_scaling ) * kappa ;
+  return exp(- outside_scaling * outside_scaling ) * m_volcano_max_height ;
 }
 
 
