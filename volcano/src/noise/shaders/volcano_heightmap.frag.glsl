@@ -92,12 +92,91 @@ float volcano_height(vec2 pos) {
 }
 
 
+
+float sigmoid(float x) {
+  return 1.0 / (1.0 + exp(-x));
+}
+
+float island(vec2 pos) {
+  // The radius of the island
+  const float m_island_radius = 700.0;
+
+  // The height of the island
+  const float m_island_height = 50.0;
+
+  // The proportion of the island that is "flat" meaning that the average height is the same
+  const float prop_flat = 0.2;
+  const float m_inner_radius = prop_flat * m_island_radius;
+
+  // The base noise frequency for the island
+  const float base_noise_freq = 2.0;
+
+  // The transition proportion between the island and the sea
+  const float transition_factor = 1.2;
+  float m_transition_dist_end = transition_factor * m_island_radius;
+
+
+  vec2 real_pos = pos * vec2(m_terrain_width / 2.0, m_terrain_length / 2.0);
+  float dist_to_center = distance(real_pos, vec2(0.0, 0.0));
+
+  // We scale the position to have consitent noise accross islands of different sizes
+  vec2 noise_pos = real_pos / m_island_radius;
+
+  // The height of the current point on the island
+  float curr_height = 0.0;
+
+  // Base noise added to the island
+  float base_height_noise = m_island_height * perlin_fbm(base_noise_freq * noise_pos);
+
+  // Inside the "flat" part of the island
+  if(dist_to_center < m_inner_radius) {
+    return m_island_height + base_height_noise;
+  }
+
+  // Transition of the height of the island from the "island_height" to the sea level (0)
+  else if(dist_to_center < m_island_radius) {
+    float a = (dist_to_center - m_inner_radius) / (m_island_radius - m_inner_radius);
+
+    curr_height = (1.0 - smoothstep(0.0, 1.0, a)) * m_island_height + base_height_noise;
+  }
+
+  // Transition of the noise from the island to the sea
+  // We are basically gradually decreasing the amplitude of the noise
+  // to make the transition to the sea smoother
+  else if(dist_to_center < m_transition_dist_end) {
+    // Base noise
+    curr_height =  base_height_noise ;
+
+    // Add higher frequency and "more rare" noise to have little island/rocks on the sea
+    float higher_freq_noise = m_island_height * (perlin_fbm( 2.0 * base_noise_freq * noise_pos) - 0.3);
+    curr_height += higher_freq_noise * smoothstep(m_island_radius, m_transition_dist_end, dist_to_center);
+
+    // Smooth the transition
+    curr_height *= (1.0 - smoothstep(m_island_radius, m_transition_dist_end, dist_to_center));
+  }
+
+  // The sea
+  else {
+    curr_height = 0.0;
+  }
+
+
+  return curr_height;
+}
+
+
+
+float height(vec2 pos) {
+  return island(pos);
+}
+
+
 // ---
 
 varying vec2 v2f_tex_coords;
 
 void main() {
-	float height = volcano_height(v2f_tex_coords);
+	float height = height(v2f_tex_coords);
 
 	gl_FragColor = vec4(vec3(height), 1.0);
 } 
