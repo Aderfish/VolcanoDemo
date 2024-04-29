@@ -1,11 +1,14 @@
 precision highp float;
 
-// The radius of the volcano crater in meters
-uniform float m_crater_radius;
-uniform float m_crater_height;
+//---- Terrain ----
 
-// The maximum height of the volcano in meters
-uniform float m_volcano_max_height;
+// The terrain width and length in meters
+uniform float m_terrain_width;
+uniform float m_terrain_length;
+
+
+
+//--- Volcano ---
 
 // The center of the volcano in meters
 uniform vec2 m_volcano_center;
@@ -13,10 +16,46 @@ uniform vec2 m_volcano_center;
 // The radius of the volcano in meters
 uniform float m_volcano_radius;
 
+// The radius of the volcano crater in meters
+uniform float m_crater_radius;
+uniform float m_crater_height;
 
-// The terrain width and length in meters
-uniform float m_terrain_width;
-uniform float m_terrain_length;
+// The maximum height of the volcano in meters
+uniform float m_volcano_max_height;
+
+// The base frequency of the noise added to the volcano
+uniform float volcano_noise_freq;
+
+// The transition proportion on which the noise is removed (with respect to the volcano radius)
+uniform float volcano_transition_factor;
+
+// The proportion of noise that constitutes the final volcano shape
+uniform float volcano_noise_prop;
+
+
+
+//--- Island ---
+
+// The radius of the island in meters
+uniform float m_island_radius;
+
+// The height of the island in meters
+uniform float m_island_height;
+
+// The proportion of the island that is "flat" meaning that the average height is the same (with respect to the island radius)
+// Concretely, when the distance to the center of the island is less than "prop_flat * m_island_radius",
+// the height of the island is "m_island_height" + noise
+// When we leave this area, the height of the island gradually decreases to 0
+uniform float prop_flat;
+
+// The base noise frequency for the island
+uniform float island_noise_freq;
+
+// The transition proportion between the island and the sea
+uniform float island_transition_factor;
+
+
+
 
 // Functions from the "noise.frag.glsl" file
 float perlin_noise(vec2 pos);
@@ -50,7 +89,7 @@ float volcano_height(vec2 real_pos){
   const float transition_factor = 1.8;
   float m_transition_dist_end = transition_factor * m_volcano_radius;
 
-  // The proportion of oise that constitutes the final volcano shape
+  // The proportion of noise that constitutes the final volcano shape
   const float noise_prop = 0.2;
 
   float m_dist_to_center = distance(real_pos, m_volcano_center);
