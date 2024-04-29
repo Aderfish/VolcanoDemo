@@ -4,10 +4,8 @@ import { mat4, vec2, vec4 } from "../lib/gl-matrix_3.3.0/esm/index.js";
 import { deg_to_rad, mat4_matmul_many } from "./utils/icg_math.js";
 import { init_noise } from "./noise/noise.js";
 import { init_terrain_actor } from "./terrain/terrain_actor.js";
-import {
-  TerrainCharacteristics,
-  init_volcano_heightmap,
-} from "./noise/volcano_heightmap.js";
+import { init_volcano_heightmap } from "./noise/volcano_heightmap.js";
+import { GenerationParameters } from "./noise/generation_parameters.js";
 
 async function main() {
   // Create the regl canvas
@@ -134,12 +132,12 @@ async function main() {
 		Actors
 	---------------------------------------------------------------*/
 
-  const terrain_characteristics = new TerrainCharacteristics();
+  const generation_parameters = new GenerationParameters();
 
   const volcano_heightmap = init_volcano_heightmap(
     regl,
     resources,
-    terrain_characteristics
+    generation_parameters
   );
 
   const size = 2048;
@@ -153,7 +151,7 @@ async function main() {
     regl,
     resources,
     volcano_heightmap.get_buffer(),
-    terrain_characteristics
+    generation_parameters.terrain
   );
 
   /*---------------------------------------------------------------

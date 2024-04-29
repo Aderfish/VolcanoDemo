@@ -6,7 +6,7 @@ import {
   mat3,
   mat4,
 } from "../../lib/gl-matrix_3.3.0/esm/index.js";
-import { TerrainCharacteristics } from "../noise/volcano_heightmap.js";
+import { TerrainParameters } from "../noise/generation_parameters.js";
 import { mat4_matmul_many } from "../utils/icg_math.js";
 
 class BufferData {
@@ -35,10 +35,10 @@ class BufferData {
 /**
  *
  * @param {*} height_map
- * @param {TerrainCharacteristics} terrain_characteristics
+ * @param {TerrainParameters} terrain_parameters
  * @returns
  */
-function terrain_build_mesh(height_map, terrain_characteristics) {
+function terrain_build_mesh(height_map, terrain_parameters) {
   const grid_width = height_map.width;
   const grid_height = height_map.height;
 
@@ -80,8 +80,8 @@ function terrain_build_mesh(height_map, terrain_characteristics) {
 			The XY coordinates are calculated so that the full grid covers the square [-0.5, 0.5]^2 in the XY plane.
 			*/
 
-      const map_width = terrain_characteristics.m_terrain_width;
-      const map_height = terrain_characteristics.m_terrain_length;
+      const map_width = terrain_parameters.m_terrain_width;
+      const map_height = terrain_parameters.m_terrain_length;
       const tile_width = map_width / (grid_width - 1);
       const tile_height = map_height / (grid_height - 1);
       const map_start_x = -map_width / 2;
@@ -130,18 +130,18 @@ function terrain_build_mesh(height_map, terrain_characteristics) {
  * @param {*} regl
  * @param {*} resources
  * @param {*} height_map_buffer
- * @param {TerrainCharacteristics} terrain_characteristics
+ * @param {TerrainParameters} terrain_parameters
  * @returns
  */
 export function init_terrain_actor(
   regl,
   resources,
   height_map_buffer,
-  terrain_characteristics
+  terrain_parameters
 ) {
   const terrain_mesh = terrain_build_mesh(
     new BufferData(regl, height_map_buffer),
-    terrain_characteristics
+    terrain_parameters
   );
 
   const pipeline_draw_terrain = regl({

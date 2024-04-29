@@ -80,14 +80,14 @@ float volcano_shape(vec2 real_pos) {
 
 
 float volcano_height(vec2 real_pos){
-  const float base_noise_freq = 3.0;
+  // The base frequency for the noise generation
+  float base_noise_freq = volcano_noise_freq;
 
   // The transition proportion on which the noise is removed (with respect to the volcano radius)
-  const float transition_factor = 1.8;
-  float m_transition_dist_end = transition_factor * m_volcano_radius;
+  float m_transition_dist_end = volcano_transition_factor * m_volcano_radius;
 
   // The proportion of noise that constitutes the final volcano shape
-  const float noise_prop = 0.2;
+  float noise_prop = volcano_noise_prop;
 
   float m_dist_to_center = distance(real_pos, m_volcano_center);
 
@@ -121,22 +121,14 @@ float volcano_height(vec2 real_pos){
 
 
 float island(vec2 real_pos) {
-  // The radius of the island
-  const float m_island_radius = 700.0;
-
-  // The height of the island
-  const float m_island_height = 50.0;
-
   // The proportion of the island that is "flat" meaning that the average height is the same
-  const float prop_flat = 0.2;
-  const float m_inner_radius = prop_flat * m_island_radius;
+  float m_inner_radius = island_prop_flat * m_island_radius;
 
   // The base noise frequency for the island
-  const float base_noise_freq = 2.0;
+  float base_noise_freq = island_noise_freq;
 
   // The transition proportion between the island and the sea
-  const float transition_factor = 1.2;
-  float m_transition_dist_end = transition_factor * m_island_radius;
+  float m_transition_dist_end = island_transition_factor * m_island_radius;
 
   float dist_to_center = distance(real_pos, vec2(0.0, 0.0));
 
@@ -184,7 +176,6 @@ float island(vec2 real_pos) {
 
   return curr_height;
 }
-
 
 
 float height(vec2 pos) {
