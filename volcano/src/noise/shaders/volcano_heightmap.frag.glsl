@@ -43,10 +43,10 @@ uniform float m_island_radius;
 uniform float m_island_height;
 
 // The proportion of the island that is "flat" meaning that the average height is the same (with respect to the island radius)
-// Concretely, when the distance to the center of the island is less than "prop_flat * m_island_radius",
+// Concretely, when the distance to the center of the island is less than "island_prop_flat * m_island_radius",
 // the height of the island is "m_island_height" + noise
 // When we leave this area, the height of the island gradually decreases to 0
-uniform float prop_flat;
+uniform float island_prop_flat;
 
 // The base noise frequency for the island
 uniform float island_noise_freq;
