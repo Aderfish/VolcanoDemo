@@ -13,8 +13,6 @@ uniform vec2 m_volcano_center;
 // The radius of the volcano in meters
 uniform float m_volcano_radius;
 
-// The height of the terrain in meters
-uniform float m_terrain_height;
 
 // The terrain width and length in meters
 uniform float m_terrain_width;
