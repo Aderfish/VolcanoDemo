@@ -46,51 +46,44 @@ float volcano_shape(vec2 real_pos) {
 
 
 float volcano_height(vec2 real_pos){
-  return 0.0;
-}
+  const float base_noise_freq = 3.0;
 
+  // The transition proportion on which the noise is removed (with respect to the volcano radius)
+  const float transition_factor = 1.8;
+  float m_transition_dist_end = transition_factor * m_volcano_radius;
 
-float volcano_height_2(vec2 pos) {
-  // Convert the position to the terrain size
-  vec2 real_pos = pos * vec2(m_terrain_width / 2.0, m_terrain_length / 2.0);
+  // The proportion of oise that constitutes the final volcano shape
+  const float noise_prop = 0.2;
 
-  float dist_to_center = distance(real_pos, m_volcano_center);
+  float m_dist_to_center = distance(real_pos, m_volcano_center);
 
+  float initial_volcano_height =  volcano_shape(real_pos);
 
-  float perlin_fbm_freq = 5.0;
-  float perlin_fbm_amp = 40.0;
-  float perlin_fbm_comp = perlin_fbm(pos * perlin_fbm_freq) * perlin_fbm_amp;
-  float perlin_fbm_comp2 = perlin_fbm(pos * perlin_fbm_freq * 2.0) * perlin_fbm_amp * 0.5;
+  // We scale the position to have consitent noise accross volcanos of different sizes
+  vec2 noise_pos = real_pos / m_volcano_radius;
 
-  float perlin_noise_freq = 0.5;
-  float perlin_noise_amp = 0.5;
-  float perlin_noise_comp = perlin_noise(pos * perlin_noise_freq) * perlin_noise_amp;
+  // Generate the noise added to the volcano
+  float volcano_height = initial_volcano_height * (1.0 - noise_prop) + noise_prop * perlin_fbm(base_noise_freq * noise_pos) * initial_volcano_height;
+  volcano_height = volcano_height * (1.0 - noise_prop) + noise_prop * perlin_fbm(base_noise_freq * noise_pos * 2.0) * volcano_height * 0.5;
+  volcano_height = volcano_height * (1.0 - noise_prop) + noise_prop * turbulence(base_noise_freq * noise_pos) * volcano_height;
 
-  float turbulence_freq = 0.5;
-  float turbulence_amp = 20.0;
-  float turbulence_comp = turbulence(pos * turbulence_freq) * turbulence_amp;
+  float total_noise_added = volcano_height - initial_volcano_height;
 
-  float volcano_noise_comp = perlin_fbm_comp + perlin_fbm_comp2 + perlin_noise_comp + turbulence_comp;
-
-  if(dist_to_center < m_volcano_radius) {
-    return volcano_shape(pos) + volcano_noise_comp + m_terrain_height;
+  if(m_dist_to_center < m_volcano_radius) {
+    // The volcano already has all the noise
+  }
+  else if(m_dist_to_center < m_transition_dist_end) {
+    // We gradually remove the noise
+    volcano_height = initial_volcano_height + total_noise_added * (1.0 - smoothstep(m_volcano_radius, m_transition_dist_end, m_dist_to_center));
+  }
+  else {
+    // The volcano has no noise
+    volcano_height = initial_volcano_height;
   }
 
-  float transition_dist = 0.25 * m_volcano_radius;
-  
-  float terrain_noise_comp = perlin_fbm(pos*2.0) * 100.0;
-
-  if(dist_to_center < m_volcano_radius + transition_dist) {
-    float transition_factor = (dist_to_center - m_volcano_radius) / transition_dist;
-    return volcano_shape(pos) + m_terrain_height + volcano_noise_comp * (1.0 - transition_factor) + transition_factor * terrain_noise_comp;
-  }
-  
-
-  return volcano_shape(pos) +  m_terrain_height + terrain_noise_comp;
-
-  float turbulence_factor = 0.2;
-  return volcano_shape(pos) * (turbulence(pos * 4.0)*turbulence_factor + (1.0 - turbulence_factor)) + perlin_fbm(pos * 3.0) * 20.0 - turbulence(pos * 3.0) * 1.0;
+  return volcano_height;
 }
+
 
 
 float island(vec2 real_pos) {
@@ -162,7 +155,7 @@ float island(vec2 real_pos) {
 
 float height(vec2 pos) {
   vec2 real_pos = pos * vec2(m_terrain_width / 2.0, m_terrain_length / 2.0);
-  return island(real_pos);
+  return island(real_pos) + volcano_height(real_pos);
 }
 
 
