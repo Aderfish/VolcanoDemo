@@ -25,10 +25,7 @@ float perlin_noise(vec2 pos);
 float perlin_fbm(vec2 point);
 float turbulence(vec2 point);
 
-float volcano_shape(vec2 pos) {
-  // Convert the position to the terrain size
-  vec2 real_pos = pos * vec2(m_terrain_width / 2.0, m_terrain_length / 2.0);
-
+float volcano_shape(vec2 real_pos) {
   // Calculate the distance to the center of the volcano
   float m_dist_to_center = distance(real_pos, m_volcano_center);
 
@@ -48,7 +45,12 @@ float volcano_shape(vec2 pos) {
 }
 
 
-float volcano_height(vec2 pos) {
+float volcano_height(vec2 real_pos){
+  return 0.0;
+}
+
+
+float volcano_height_2(vec2 pos) {
   // Convert the position to the terrain size
   vec2 real_pos = pos * vec2(m_terrain_width / 2.0, m_terrain_length / 2.0);
 
@@ -91,7 +93,7 @@ float volcano_height(vec2 pos) {
 }
 
 
-float island(vec2 pos) {
+float island(vec2 real_pos) {
   // The radius of the island
   const float m_island_radius = 700.0;
 
@@ -109,8 +111,6 @@ float island(vec2 pos) {
   const float transition_factor = 1.2;
   float m_transition_dist_end = transition_factor * m_island_radius;
 
-
-  vec2 real_pos = pos * vec2(m_terrain_width / 2.0, m_terrain_length / 2.0);
   float dist_to_center = distance(real_pos, vec2(0.0, 0.0));
 
   // We scale the position to have consitent noise accross islands of different sizes
@@ -161,7 +161,8 @@ float island(vec2 pos) {
 
 
 float height(vec2 pos) {
-  return island(pos);
+  vec2 real_pos = pos * vec2(m_terrain_width / 2.0, m_terrain_length / 2.0);
+  return island(real_pos);
 }
 
 
