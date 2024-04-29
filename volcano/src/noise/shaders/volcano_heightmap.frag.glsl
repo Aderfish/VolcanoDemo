@@ -27,19 +27,18 @@ float turbulence(vec2 point);
 
 float volcano_shape(vec2 pos) {
   // Convert the position to the terrain size
-  pos = pos * vec2(m_terrain_width / 2.0, m_terrain_length / 2.0);
+  vec2 real_pos = pos * vec2(m_terrain_width / 2.0, m_terrain_length / 2.0);
 
   // Calculate the distance to the center of the volcano
-  float m_dist_to_center = distance(pos, m_volcano_center);
+  float m_dist_to_center = distance(real_pos, m_volcano_center);
 
   // Calculate the scaling factor relative to the terrain
   float kappa = m_volcano_max_height;
 
   // When the point is inside the crater
-  float inside_scaling = exp(-(2.0 * m_dist_to_center / m_crater_radius) * (2.0 * m_dist_to_center / m_crater_radius));
-
   if (m_dist_to_center < m_crater_radius) {
-    return (1.0 - inside_scaling) * kappa + inside_scaling * m_crater_height;
+    float a = smoothstep(0.0, m_crater_radius, m_dist_to_center);
+    return m_crater_height * (1.0 - a) + a * m_volcano_max_height;
   }
 
   // When the point is outside the crater
@@ -91,11 +90,6 @@ float volcano_height(vec2 pos) {
   return volcano_shape(pos) * (turbulence(pos * 4.0)*turbulence_factor + (1.0 - turbulence_factor)) + perlin_fbm(pos * 3.0) * 20.0 - turbulence(pos * 3.0) * 1.0;
 }
 
-
-
-float sigmoid(float x) {
-  return 1.0 / (1.0 + exp(-x));
-}
 
 float island(vec2 pos) {
   // The radius of the island
