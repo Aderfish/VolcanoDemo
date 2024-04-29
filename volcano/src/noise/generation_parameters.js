@@ -15,6 +15,7 @@ export class VolcanoParameters {
     this.volcano_noise_freq = 3.0;
     this.volcano_transition_factor = 1.8;
     this.volcano_noise_prop = 0.2;
+    this.volcano_noise_offset = [0, 0];
   }
 }
 
@@ -25,6 +26,7 @@ export class IslandParameters {
     this.island_prop_flat = 0.2;
     this.island_noise_freq = 2.0;
     this.island_transition_factor = 1.2;
+    this.island_noise_offset = [0, 0];
   }
 }
 

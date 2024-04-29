@@ -53,11 +53,13 @@ export function init_volcano_heightmap(regl, resources, generation_parameters) {
       volcano_noise_freq: regl.prop("volcano_noise_freq"),
       volcano_transition_factor: regl.prop("volcano_transition_factor"),
       volcano_noise_prop: regl.prop("volcano_noise_prop"),
+      volcano_noise_offset: regl.prop("volcano_noise_offset"),
       m_island_radius: regl.prop("m_island_radius"),
       m_island_height: regl.prop("m_island_height"),
       island_prop_flat: regl.prop("island_prop_flat"),
       island_noise_freq: regl.prop("island_noise_freq"),
       island_transition_factor: regl.prop("island_transition_factor"),
+      island_noise_offset: regl.prop("island_noise_offset"),
     },
 
     vert: resources["noise/shaders/volcano_heightmap.vert.glsl"],
@@ -105,12 +107,16 @@ export function init_volcano_heightmap(regl, resources, generation_parameters) {
           this.generation_parameters.volcano.volcano_transition_factor,
         volcano_noise_prop:
           this.generation_parameters.volcano.volcano_noise_prop,
+        volcano_noise_offset:
+          this.generation_parameters.volcano.volcano_noise_offset,
         m_island_radius: this.generation_parameters.island.m_island_radius,
         m_island_height: this.generation_parameters.island.m_island_height,
         island_prop_flat: this.generation_parameters.island.island_prop_flat,
         island_noise_freq: this.generation_parameters.island.island_noise_freq,
         island_transition_factor:
           this.generation_parameters.island.island_transition_factor,
+        island_noise_offset:
+          this.generation_parameters.island.island_noise_offset,
       });
     }
   }

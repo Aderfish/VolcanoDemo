@@ -32,6 +32,8 @@ uniform float volcano_transition_factor;
 // The proportion of noise that constitutes the final volcano shape
 uniform float volcano_noise_prop;
 
+// The offset of the noise added to the volcano (used to create variation between volcanos)
+uniform vec2 volcano_noise_offset;
 
 
 //--- Island ---
@@ -54,6 +56,8 @@ uniform float island_noise_freq;
 // The transition proportion between the island and the sea
 uniform float island_transition_factor;
 
+// The offset of the noise added to the island (used to create variation between islands)
+uniform vec2 island_noise_offset;
 
 
 
@@ -94,7 +98,7 @@ float volcano_height(vec2 real_pos){
   float initial_volcano_height =  volcano_shape(real_pos);
 
   // We scale the position to have consitent noise accross volcanos of different sizes
-  vec2 noise_pos = real_pos / m_volcano_radius;
+  vec2 noise_pos = real_pos / m_volcano_radius + volcano_noise_offset;
 
   // Generate the noise added to the volcano
   float volcano_height = initial_volcano_height * (1.0 - noise_prop) + noise_prop * perlin_fbm(base_noise_freq * noise_pos) * initial_volcano_height;
@@ -133,7 +137,7 @@ float island(vec2 real_pos) {
   float dist_to_center = distance(real_pos, vec2(0.0, 0.0));
 
   // We scale the position to have consitent noise accross islands of different sizes
-  vec2 noise_pos = real_pos / m_island_radius;
+  vec2 noise_pos = real_pos / m_island_radius + island_noise_offset;
 
   // The height of the current point on the island
   float curr_height = 0.0;
