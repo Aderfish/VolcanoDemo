@@ -145,8 +145,6 @@ async function main() {
 		Actors
 	---------------------------------------------------------------*/
 
-  const size = 2048;
-
   const volcano_heightmap = init_volcano_heightmap(regl, resources);
   let terrain_actor;
 
@@ -166,8 +164,6 @@ async function main() {
       console.log("Regenerating terrain");
       volcano_heightmap.draw_heightmap_to_buffer({
         generation_parameters: generation_parameters,
-        width: size,
-        height: size,
       });
       terrain_actor = init_terrain_actor(
         regl,

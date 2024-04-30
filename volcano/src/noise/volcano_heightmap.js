@@ -77,14 +77,12 @@ export function init_volcano_heightmap(regl, resources) {
     }
 
     // Draw the heightmap to the buffer
-    draw_heightmap_to_buffer({
-      generation_parameters,
-      width = 256,
-      height = 256,
-    }) {
+    draw_heightmap_to_buffer({ generation_parameters }) {
+      let size = generation_parameters.terrain.side_resolution;
+
       // Resize the buffer if needed
-      if (noise_buffer.width !== width || noise_buffer.height !== height) {
-        noise_buffer.resize(width, height);
+      if (noise_buffer.width !== size || noise_buffer.height !== size) {
+        noise_buffer.resize(size, size);
       }
 
       // Clear the buffer

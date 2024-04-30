@@ -2,6 +2,7 @@ export class TerrainParameters {
   constructor() {
     this.m_terrain_width = 300;
     this.m_terrain_length = 300;
+    this.side_resolution = 512;
   }
 }
 

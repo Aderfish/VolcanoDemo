@@ -7,6 +7,8 @@ import {
 
 export function link_generation_parameters_menu(init_parameters, callback) {
   function setFieldsToValues(parameters) {
+    document.getElementById("side_resolution").value =
+      parameters.terrain.side_resolution;
     document.getElementById("terrain_width").value =
       parameters.terrain.m_terrain_width;
     document.getElementById("terrain_length").value =
@@ -60,6 +62,9 @@ export function link_generation_parameters_menu(init_parameters, callback) {
 
   applyButton.addEventListener("click", () => {
     const generationParametersRaw = {
+      side_resolution: parseInt(
+        document.getElementById("side_resolution").value
+      ),
       terrainWidth: parseInt(document.getElementById("terrain_width").value),
       terrainLength: parseInt(document.getElementById("terrain_length").value),
       volcanoRadius: parseFloat(
@@ -111,6 +116,7 @@ export function link_generation_parameters_menu(init_parameters, callback) {
     };
 
     const terrainParams = new TerrainParameters();
+    terrainParams.side_resolution = generationParametersRaw.side_resolution;
     terrainParams.m_terrain_width = generationParametersRaw.terrainWidth;
     terrainParams.m_terrain_length = generationParametersRaw.terrainLength;
 
