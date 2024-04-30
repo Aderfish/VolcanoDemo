@@ -20,7 +20,7 @@ const mesh_quad_2d = {
  * @param {*} resources
  * @param {GenerationParameters} generation_parameters
  */
-export function init_volcano_heightmap(regl, resources, generation_parameters) {
+export function init_volcano_heightmap(regl, resources) {
   // shared buffer to which the texture are rendered
   const noise_buffer = regl.framebuffer({
     width: 256,
@@ -69,9 +69,7 @@ export function init_volcano_heightmap(regl, resources, generation_parameters) {
   });
 
   class HeightMap {
-    constructor(generation_parameters) {
-      this.generation_parameters = generation_parameters;
-    }
+    constructor() {}
 
     // Get the buffer that contains the heightmap
     get_buffer() {
@@ -79,7 +77,11 @@ export function init_volcano_heightmap(regl, resources, generation_parameters) {
     }
 
     // Draw the heightmap to the buffer
-    draw_heightmap_to_buffer({ width = 256, height = 256 }) {
+    draw_heightmap_to_buffer({
+      generation_parameters,
+      width = 256,
+      height = 256,
+    }) {
       // Resize the buffer if needed
       if (noise_buffer.width !== width || noise_buffer.height !== height) {
         noise_buffer.resize(width, height);
@@ -93,33 +95,30 @@ export function init_volcano_heightmap(regl, resources, generation_parameters) {
 
       // Render the heightmap to the buffer
       pipeline_generate_texture({
-        m_terrain_width: this.generation_parameters.terrain.m_terrain_width,
-        m_terrain_length: this.generation_parameters.terrain.m_terrain_length,
-        m_volcano_center: this.generation_parameters.volcano.m_volcano_center,
-        m_volcano_radius: this.generation_parameters.volcano.m_volcano_radius,
-        m_crater_radius: this.generation_parameters.volcano.m_crater_radius,
-        m_crater_height: this.generation_parameters.volcano.m_crater_height,
+        m_terrain_width: generation_parameters.terrain.m_terrain_width,
+        m_terrain_length: generation_parameters.terrain.m_terrain_length,
+        m_volcano_center: generation_parameters.volcano.m_volcano_center,
+        m_volcano_radius: generation_parameters.volcano.m_volcano_radius,
+        m_crater_radius: generation_parameters.volcano.m_crater_radius,
+        m_crater_height: generation_parameters.volcano.m_crater_height,
         m_volcano_max_height:
-          this.generation_parameters.volcano.m_volcano_max_height,
-        volcano_noise_freq:
-          this.generation_parameters.volcano.volcano_noise_freq,
+          generation_parameters.volcano.m_volcano_max_height,
+        volcano_noise_freq: generation_parameters.volcano.volcano_noise_freq,
         volcano_transition_factor:
-          this.generation_parameters.volcano.volcano_transition_factor,
-        volcano_noise_prop:
-          this.generation_parameters.volcano.volcano_noise_prop,
+          generation_parameters.volcano.volcano_transition_factor,
+        volcano_noise_prop: generation_parameters.volcano.volcano_noise_prop,
         volcano_noise_offset:
-          this.generation_parameters.volcano.volcano_noise_offset,
-        m_island_radius: this.generation_parameters.island.m_island_radius,
-        m_island_height: this.generation_parameters.island.m_island_height,
-        island_prop_flat: this.generation_parameters.island.island_prop_flat,
-        island_noise_freq: this.generation_parameters.island.island_noise_freq,
+          generation_parameters.volcano.volcano_noise_offset,
+        m_island_radius: generation_parameters.island.m_island_radius,
+        m_island_height: generation_parameters.island.m_island_height,
+        island_prop_flat: generation_parameters.island.island_prop_flat,
+        island_noise_freq: generation_parameters.island.island_noise_freq,
         island_transition_factor:
-          this.generation_parameters.island.island_transition_factor,
-        island_noise_offset:
-          this.generation_parameters.island.island_noise_offset,
+          generation_parameters.island.island_transition_factor,
+        island_noise_offset: generation_parameters.island.island_noise_offset,
       });
     }
   }
 
-  return new HeightMap(generation_parameters);
+  return new HeightMap();
 }

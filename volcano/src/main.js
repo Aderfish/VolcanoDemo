@@ -6,6 +6,7 @@ import { init_noise } from "./noise/noise.js";
 import { init_terrain_actor } from "./terrain/terrain_actor.js";
 import { init_volcano_heightmap } from "./noise/volcano_heightmap.js";
 import { GenerationParameters } from "./noise/generation_parameters.js";
+import { link_generation_parameters_menu } from "./ui/generation_parameters_menu.js";
 
 async function main() {
   // Create the regl canvas
@@ -128,31 +129,26 @@ async function main() {
     update_needed = true;
   });
 
+  let regenerate_terrain_needed = true;
+  let generation_parameters = new GenerationParameters();
+
+  link_generation_parameters_menu(
+    generation_parameters,
+    (generationParameters) => {
+      generation_parameters = generationParameters;
+      regenerate_terrain_needed = true;
+      update_needed = true;
+    }
+  );
+
   /*---------------------------------------------------------------
 		Actors
 	---------------------------------------------------------------*/
 
-  const generation_parameters = new GenerationParameters();
-
-  const volcano_heightmap = init_volcano_heightmap(
-    regl,
-    resources,
-    generation_parameters
-  );
-
   const size = 2048;
 
-  volcano_heightmap.draw_heightmap_to_buffer({
-    width: size,
-    height: size,
-  });
-
-  const terrain_actor = init_terrain_actor(
-    regl,
-    resources,
-    volcano_heightmap.get_buffer(),
-    generation_parameters.terrain
-  );
+  const volcano_heightmap = init_volcano_heightmap(regl, resources);
+  let terrain_actor;
 
   /*---------------------------------------------------------------
 		Frame render
@@ -165,6 +161,23 @@ async function main() {
   const light_position_cam = [0, 0, 0, 0];
 
   regl.frame((frame) => {
+    if (regenerate_terrain_needed) {
+      regenerate_terrain_needed = false;
+      console.log("Regenerating terrain");
+      volcano_heightmap.draw_heightmap_to_buffer({
+        generation_parameters: generation_parameters,
+        width: size,
+        height: size,
+      });
+      terrain_actor = init_terrain_actor(
+        regl,
+        resources,
+        volcano_heightmap.get_buffer(),
+        generation_parameters.terrain
+      );
+      console.log("Terrain regenerated");
+    }
+
     if (update_needed) {
       update_needed = false; // do this *before* running the drawing code so we don't keep updating if drawing throws an error.
 
