@@ -7,6 +7,7 @@ varying float v2f_height;
 varying vec3 v2f_dir_from_view;
 varying vec3 v2f_dir_to_light;
 varying vec3 v2f_normal;
+varying vec2 v2f_uv;
 
 uniform mat4 mat_mvp;
 uniform mat4 mat_model_view;
@@ -16,6 +17,7 @@ uniform vec4 light_position; // in camera space coordinates already
 void main()
 {
     v2f_height = position.z;
+	v2f_uv = position.xy;
     vec4 position_v4 = vec4(position, 1);
 
   /** 
