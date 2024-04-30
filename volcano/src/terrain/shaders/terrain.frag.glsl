@@ -213,8 +213,8 @@ void main()
 
 	//float weight = 2. * (height - terrain_water_level) * 0.0013;
 	//vec3 terrain_tex = pow(weight, 2.) * rock_tex + (1.-pow(weight, 2.)) * 1.;
-	float ratio = 0.7;
-	color *= (rock_tex1 * (1. - ratio)  + rock_tex2 * ratio) * 0.9; 
+	float ratio = height/400.;
+	color = (rock_tex1 * (1. - ratio)  + rock_tex2 * ratio) * 0.9; 
 	}
 
 	gl_FragColor = vec4(color, 1.); // output: RGBA in 0..1 range
