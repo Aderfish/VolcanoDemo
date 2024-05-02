@@ -17,7 +17,7 @@ const vec3  terrain_color_grass    = vec3(0.33, 0.43, 0.18);
 
 
 // ==============================================================
-// "Rock" texture2: Cellular noise (Voronoi)
+// "Rock" texture: Cellular noise (Voronoi)
 
 //Generate a random number within [0,1] with a vec2
 float rand(vec2 v) {
@@ -30,23 +30,6 @@ vec2 rand2(vec2 v) {
         rand(v * vec2(5782.3478, 23874.456) + vec2(6427.38487, 7264.23748)));
 }
 
-<<<<<<< Updated upstream
-/*
-float noise(vec2 uv) {
-    vec2 f = fract(uv);
-    vec2 i = floor(uv);
-    
-    float a = rand(i);
-    float b = rand(i + vec2(0.0, 1.0));
-    float c = rand(i + vec2(1.0, 0.0));
-    float d = rand(i + vec2(1.0, 1.0));
-    
-    vec2 u = -2. * f * f * f + 3. * f * f;
-    return mix(mix(a, b, u.y), mix(c, d, u.y), u.x);
-}*/
-
-=======
->>>>>>> Stashed changes
 #define NUM_GRADIENTS 12
 
 // -- Gradient table --
@@ -74,18 +57,11 @@ int hash_func(vec2 grid_point) {
 	return int(mod(hash_poly(hash_poly(grid_point.x) + grid_point.y), float(NUM_GRADIENTS)));
 }
 
-// -- Smooth interpolation polynomial --
-// Use mix(a, b, blending_weight_poly(t))
 float blending_weight_poly(float t) {
 	return t*t*t*(t*(t*6.0 - 15.0)+10.0);
 }
 
 float perlin_noise(vec2 point) {
-	/* #TODO PG1.4.1
-	Implement 2D perlin noise as described in the handout.
-	You may find a glsl `for` loop useful here, but it's not necessary.
-	*/
-
   // Determine the grid cell coordinates
   vec2 grid_point_0_0 = floor(point);
   vec2 grid_point_1_0 = grid_point_0_0 + vec2(1., 0.);
@@ -129,24 +105,6 @@ float perlin_noise(vec2 point) {
 	return noise;
 }
 
-<<<<<<< Updated upstream
-/*
-float fbm2(vec2 uv) {
-    float sum = 0.0;
-    float amp = 0.0;
-    float persistence = 0.8;
-    vec2 st = uv;
-    
-    for (int i = 0; i < 6; ++i) {
-        amp = amp / persistence + noise(st);
-        sum = sum / persistence + 1.;
-        st *= 2.;
-    }
-    return amp / sum;
-}*/
-
-=======
->>>>>>> Stashed changes
 const int num_octaves = 3;
 const float freq_multiplier = 2.17;
 const float ampl_multiplier = 0.5;
@@ -207,14 +165,14 @@ float voronoi(vec2 point) {
     return 1. - pow(m, 0.5) / space * sqrt(float(N)) * 1.;
 }
 
-vec3 tex_rock2(vec2 point){
+vec3 tex_rock(vec2 point){
   vec3 rock_color = vec3(voronoi(point));
   rock_color *= clamp(fbm2(point), 0., 1.);
   return rock_color;
 }
 
 // ==============================================================
-// "Rock" texture1
+// "Mountain" texture
 
 float hash(vec2 p) 
 {
@@ -283,12 +241,12 @@ vec3 nor(vec2 p)
 		-.1));
 }
 
-vec3 tex_rock(vec2 point){	
+vec3 tex_mont(vec2 point){	
 	float r;
     vec3 light = normalize(vec3(1., 1., -1.));
     r = max(dot(nor(point), light), 0.1);
-    vec3 rock_color = clamp(vec3(r, r, r), 0., 1.);
-	return rock_color;
+    vec3 mont_color = clamp(vec3(r, r, r), 0., 1.);
+	return mont_color;
 }
 // ==============================================================
 
@@ -338,10 +296,10 @@ void main()
 	}
 
 	if(height > terrain_water_level){
-	vec3 rock_tex1 = tex_rock2(v2f_uv/50.);
-	vec3 rock_tex2 = tex_rock(v2f_uv/400.);
+	vec3 rock_tex = tex_rock(v2f_uv/50.);
+	vec3 mont_tex = tex_mont(v2f_uv/400.);
 	float ratio = smoothstep(0., 120., height);
-	color *= rock_tex1 * (1. - ratio)  + rock_tex2 * ratio; 
+	color *= rock_tex * (1. - ratio)  + mont_tex * ratio; 
 	}
 
 	gl_FragColor = vec4(color, 1.); // output: RGBA in 0..1 range
