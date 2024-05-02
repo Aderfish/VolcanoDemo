@@ -30,6 +30,7 @@ vec2 rand2(vec2 v) {
         rand(v * vec2(5782.3478, 23874.456) + vec2(6427.38487, 7264.23748)));
 }
 
+<<<<<<< Updated upstream
 /*
 float noise(vec2 uv) {
     vec2 f = fract(uv);
@@ -44,6 +45,8 @@ float noise(vec2 uv) {
     return mix(mix(a, b, u.y), mix(c, d, u.y), u.x);
 }*/
 
+=======
+>>>>>>> Stashed changes
 #define NUM_GRADIENTS 12
 
 // -- Gradient table --
@@ -126,6 +129,7 @@ float perlin_noise(vec2 point) {
 	return noise;
 }
 
+<<<<<<< Updated upstream
 /*
 float fbm2(vec2 uv) {
     float sum = 0.0;
@@ -141,6 +145,8 @@ float fbm2(vec2 uv) {
     return amp / sum;
 }*/
 
+=======
+>>>>>>> Stashed changes
 const int num_octaves = 3;
 const float freq_multiplier = 2.17;
 const float ampl_multiplier = 0.5;
