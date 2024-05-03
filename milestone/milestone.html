@@ -68,7 +68,7 @@
 <p>Name 2</p>
 </th>
 <th>
-<p>Name 3</p>
+<p>Shimeng Ye</p>
 </th>
 </tr>
 <tr>
@@ -79,7 +79,7 @@
 </td>
 <td>
 </td>
-<td>
+<td>Find resources for textures needed to render terrain/rock/grass and etc.
 </td>
 </tr>
 <tr>
@@ -90,7 +90,7 @@
 </td>
 <td>
 </td>
-<td>
+<td>Try found textures on the terrain and adjust the parameters according to the visual effect. 
 </td>
 </tr>
 <tr>
@@ -101,7 +101,7 @@
 </td>
 <td>
 </td>
-<td>
+<td>Study the techniques for the generation of the textures and clean-up the code for the implementation. Start working on the lava texture.
 </td>
 </tr>
 </table></li>
@@ -121,7 +121,18 @@ feedback for the final report.</p>
 <li><p>Feature Name</p>
 <ul>
 <li><p>Implementation</p>
-<p>Briefly describe how you implemented the feature.</p></li>
+<p>Briefly describe how you implemented the feature.</p>
+<p>Terrain texture: we implement two textures to represent the mountain rocks
+ and the low-altitude grass-like texture. The grass-like texture is achieved by
+  using Voronoi method (cellular noise) combined with perlin noise. The mountain-rock like
+  texture is done by employing fractal brownian motion on a type of cell noise  (by taking 
+  the weighted sum of noise in the neighboring noise cells of a certain kernel size). This 
+  texture is highlighted by evaluating the dot product of the derivative of the generated 
+  texture and a fixed-direction light source.
+  The final texture is a blending of these two textures depending on the height of the 
+  terrain in order to achieve a visual transition of grass to rock like texture.
+</p>
+</li>
 <li><p>Validation</p>
 <p>Provide evidence (plots, screenshots, animations, etc.) that the
 feature works as expected.</p></li>
@@ -145,7 +156,7 @@ are on track.</p>
 <p>Name 2</p>
 </th>
 <th>
-<p>Name 3</p>
+<p>Shimeng Ye</p>
 </th>
 </tr>
 <tr>
@@ -156,7 +167,7 @@ are on track.</p>
 </td>
 <td>
 </td>
-<td>
+<td>5
 </td>
 </tr>
 <tr>
@@ -168,6 +179,7 @@ are on track.</p>
 <td>
 </td>
 <td>
+  13
 </td>
 </tr>
 <tr>
@@ -203,7 +215,7 @@ proposed changes to the schedule, if needed.</p>
 <p>Name 2</p>
 </th>
 <th>
-<p>Name 3</p>
+<p>Shimeng Ye</p>
 </th>
 </tr>
 <tr>
@@ -214,7 +226,7 @@ proposed changes to the schedule, if needed.</p>
 </td>
 <td>
 </td>
-<td>
+<td>Add procedural texture to the physically-based lava texture
 </td>
 </tr>
 <tr>
@@ -225,7 +237,7 @@ proposed changes to the schedule, if needed.</p>
 </td>
 <td>
 </td>
-<td>
+<td>Prepare a cinematic scene for the video recording
 </td>
 </tr>
 <tr>
@@ -236,7 +248,7 @@ proposed changes to the schedule, if needed.</p>
 </td>
 <td>
 </td>
-<td>
+<td>Prepare the final presentation
 </td>
 </tr>
 </table></li>
