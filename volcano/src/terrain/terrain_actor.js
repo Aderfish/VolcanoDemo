@@ -9,7 +9,7 @@ import {
 import { TerrainParameters } from "../noise/generation_parameters.js";
 import { mat4_matmul_many } from "../utils/icg_math.js";
 
-class BufferData {
+export class BufferData {
   constructor(regl, buffer) {
     this.width = buffer.width;
     this.height = buffer.height;
