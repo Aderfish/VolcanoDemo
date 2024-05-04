@@ -9,6 +9,15 @@ class LavaParticle {
     this.vx = 0;
     this.vy = 0;
     this.vz = 0;
+
+    // ---- Smoothing kernel parameters
+    // This is the kernel radius of action
+    this.m_kernel_h = 1.0;
+    this.m_kernel_h2 = this.m_kernel_h * this.m_kernel_h;
+
+    // This is the normalisation factor of the kernel
+    this.m_kernel_alpha =
+      15 / (Math.PI * this.m_kernel_h * this.m_kernel_h * this.m_kernel_h);
   }
 }
 
@@ -19,6 +28,20 @@ class LavaSimulation {
     this.generation_parameters = generation_parameters;
   }
 
+  /**
+   * Compute the gaussian kernel value at distance d from the center
+   *
+   * @param {number} d The distance from the center of the kernel
+   */
+  gaussian_kernel(d) {
+    return this.m_kernel_alpha * Math.exp((-d * d) / this.m_kernel_h2);
+  }
+
+  /**
+   * Add a new particle to the simulation
+   * The particle is spawned at the center of the volcano
+   * and has a random offset
+   */
   add_particle() {
     let x = this.generation_parameters.volcano.m_volcano_center[0];
     let y = this.generation_parameters.volcano.m_volcano_center[1];
