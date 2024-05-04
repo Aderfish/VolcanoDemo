@@ -1,4 +1,3 @@
-import { TerrainParameters } from "../../noise/generation_parameters";
 import { BufferData } from "../../terrain/terrain_actor";
 
 class LavaParticle {
@@ -9,6 +8,10 @@ class LavaParticle {
     this.vx = 0;
     this.vy = 0;
     this.vz = 0;
+
+    // Physics characteristics
+    this.pressure = 0;
+    this.density = 0;
   }
 
   /**
@@ -49,6 +52,41 @@ class LavaSimulation {
    */
   gaussian_kernel(d) {
     return this.m_kernel_alpha * Math.exp((-d * d) / this.m_kernel_h2);
+  }
+
+  /**
+   * Compute the kernel value between two particles
+   *
+   * @param {LavaParticle} particle_i the particle for which to compute the kernel
+   * @param {LavaParticle} particle_j the particle to compute the kernel with
+   * @returns the kernel value between the two particles
+   */
+  kernel(particle_i, particle_j) {
+    const dist2 = particle_i.distance_square_with(particle_j);
+    return this.kernel(Math.sqrt(dist2));
+  }
+
+  /**
+   * Compute the gradient of the kernel between two particles
+   * with respect to the position of the first particle [particle_i]
+   *
+   * @param {LavaParticle} particle_i the particle for which to compute the gradient
+   * @param {LavaParticle} particle_j the particle to compute the gradient with
+   * @returns the gradient of the kernel between the two particles
+   */
+  kernel_gradient(particle_i, particle_j) {
+    const kernel_value_factor =
+      (-2 * this.kernel(particle_i, particle_j)) / this.m_kernel_h2;
+
+    const dx = particle_i.x - particle_j.x;
+    const dy = particle_i.y - particle_j.y;
+    const dz = particle_i.z - particle_j.z;
+
+    return [
+      kernel_value_factor * dx,
+      kernel_value_factor * dy,
+      kernel_value_factor * dz,
+    ];
   }
 
   /**
