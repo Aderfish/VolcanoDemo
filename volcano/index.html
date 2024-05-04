@@ -19,6 +19,140 @@
 <!-- regl will add its own full-screen canvas -->
 
 <div id="debug-overlay">
+  <div class="show_menu">
+    <label for="show_generation_menu_checkbox">Show generation menu</label>
+    <input type="checkbox" id="show_generation_menu_checkbox" style="float: right;" onclick="toggleVisibility('generation-menu')">
+  </div>
+
+  <div id="generation-menu" style="display: none; max-height: 1000px; overflow-y: auto; ">
+
+
+    <div class="apply_button" id="apply_generation_button">
+      <div style="text-align: center;">
+        <h3>Apply</h3>
+      </div>
+    </div>
+
+    <div class="control-panel" style="cursor: pointer;" id="set_default_button">
+      <div style="text-align: center;">
+        <labe style="cursor: pointer;" id="set_default_button">Set default</label>
+      </div>
+    </div>
+
+    <div class="control-panel">
+      <h3>Terrain Parameters</h3>
+      <div class="form-group">
+        <label>Side Resolution: <input type="number" id="side_resolution" value="512"></label>
+      </div>
+      <div class="form-group">
+        <label>Width (m): <input type="number" id="terrain_width" value="2000"></label>
+      </div>
+      <div class="form-group">
+        <label>Length (m): <input type="number" id="terrain_length" value="2000"></label>
+      </div>
+    </div>
+
+    <div class="control-panel">
+      <h3>Volcano Parameters</h3>
+      <div class="form-group">
+        <label>Volcano Radius (m): <input type="number" id="volcano_radius" value="300"></label>
+      </div>
+      <div class="form-group">
+        <label>Volcano Height (m): <input type="number" id="volcano_max_height" value="200"></label>
+      </div>
+      <div class="form-group">
+        <label>Crater Radius (m): <input type="number" id="crater_radius" value="70"></label>
+      </div>
+      <div class="form-group">
+        <label>Crater Height (m): <input type="number" id="crater_height" value="50"></label>
+      </div>
+      <div class="form-group">
+        <div class="volcano_center_form" >
+          <label for="volcano_center_x" style="display: flex;">
+            Center: X:
+          </label>
+          <input type="number" id="volcano_center_x" value="0" style="margin-left: 10px; width: 55px;">
+          <label for="volcano_center_y" style="display: flex; margin-left: 15px;">
+            Y:
+          </label>
+          <input type="number" id="volcano_center_y" value="0" style="margin-right: 20px; margin-left: 10px; width: 55px;">
+        </div>
+      </div>
+
+
+      
+      
+
+      <div class="show_advanced">
+        <label>Advanced </label>
+        <input type="checkbox" style="float: left;" onclick="toggleVisibility('volcano_advanced')">
+      </div>
+      <div id="volcano_advanced" style="display: none;" class="advanced">
+        <div class="form-group">
+                  <label>Noise Frequency: <input type="number" step="0.1" id="volcano_noise_freq" value="3.0"></label>
+              </div>
+              <div class="form-group">
+                  <label>Transition Factor: <input type="number" step="0.1" id="volcano_transition_factor" value="1.8"></label>
+              </div>
+              <div class="form-group">
+                  <label>Noise Proportion: <input type="number" step="0.1" id="volcano_noise_prop" value="0.2"></label>
+              </div>
+              <div class="form-group">
+                  <label>Noise Offset X: <input type="number" id="volcano_noise_offset_x" value="0"></label>
+              </div>
+              <div class="form-group">
+                  <label>Noise Offset Y: <input type="number" id="volcano_noise_offset_y" value="0"></label>
+              </div>
+          </div>
+      </div>
+
+      <div class="control-panel">
+          <h3>Island Parameters</h3>
+          <div class="form-group">
+              <label>Island Radius (m): <input type="number" id="island_radius" value="700"></label>
+          </div>
+          <div class="form-group">
+              <label>Island Height (m): <input type="number" id="island_height" value="50"></label>
+          </div>
+          
+          <div class="show_advanced">
+              <label>Advanced </label>
+              <input type="checkbox" style="float: left;" onclick="toggleVisibility('island_advanced')">
+          </div>
+          <div id="island_advanced" style="display: none;" class="advanced">
+              <div class="form-group">
+                  <label>Proportion Flat: <input type="number" step="0.1" id="island_prop_flat" value="0.2"></label>
+              </div>
+              <div class="form-group">
+                  <label>Noise Frequency: <input type="number" step="0.1" id="island_noise_freq" value="2.0"></label>
+              </div>
+              <div class="form-group">
+                  <label>Transition Factor: <input type="number" step="0.1" id="island_transition_factor" value="1.2"></label>
+              </div>
+              <div class="form-group">
+                  <label>Noise Offset X: <input type="number" id="island_noise_offset_x" value="0"></label>
+              </div>
+              <div class="form-group">
+                  <label>Noise Offset Y: <input type="number" id="island_noise_offset_y" value="0"></label>
+              </div>
+          </div>
+      </div>
+
+    </div>
+
+
+
+  <script>
+      function toggleVisibility(id) {
+          var element = document.getElementById(id);
+          if (element.style.display === 'none') {
+              element.style.display = 'block';
+          } else {
+              element.style.display = 'none';
+          }
+      }
+  </script>
+
 
 	<!-- <ul id="menu-mode">Shading mode:</ul>
 	<pre id="debug-text"></pre> -->

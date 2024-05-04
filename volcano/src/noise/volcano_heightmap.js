@@ -1,16 +1,4 @@
-// Represents the characteristics of the terrain
-export class TerrainCharacteristics {
-  constructor() {
-    this.m_crater_radius = 150;
-    this.m_crater_height = 50;
-    this.m_volcano_max_height = 450;
-    this.m_volcano_center = [0, 0];
-    this.m_volcano_radius = 800;
-    this.m_terrain_height = 50;
-    this.m_terrain_width = 3000;
-    this.m_terrain_length = 3000;
-  }
-}
+import { GenerationParameters } from "./generation_parameters.js";
 
 const mesh_quad_2d = {
   position: [
@@ -30,13 +18,9 @@ const mesh_quad_2d = {
  *
  * @param {*} regl
  * @param {*} resources
- * @param {TerrainCharacteristics} terrain_characteristics
+ * @param {GenerationParameters} generation_parameters
  */
-export function init_volcano_heightmap(
-  regl,
-  resources,
-  terrain_characteristics
-) {
+export function init_volcano_heightmap(regl, resources) {
   // shared buffer to which the texture are rendered
   const noise_buffer = regl.framebuffer({
     width: 256,
@@ -59,14 +43,23 @@ export function init_volcano_heightmap(
     elements: mesh_quad_2d.faces,
 
     uniforms: {
+      m_terrain_width: regl.prop("m_terrain_width"),
+      m_terrain_length: regl.prop("m_terrain_length"),
+      m_volcano_center: regl.prop("m_volcano_center"),
+      m_volcano_radius: regl.prop("m_volcano_radius"),
       m_crater_radius: regl.prop("m_crater_radius"),
       m_crater_height: regl.prop("m_crater_height"),
       m_volcano_max_height: regl.prop("m_volcano_max_height"),
-      m_volcano_center: regl.prop("m_volcano_center"),
-      m_volcano_radius: regl.prop("m_volcano_radius"),
-      m_terrain_height: regl.prop("m_terrain_height"),
-      m_terrain_width: regl.prop("m_terrain_width"),
-      m_terrain_length: regl.prop("m_terrain_length"),
+      volcano_noise_freq: regl.prop("volcano_noise_freq"),
+      volcano_transition_factor: regl.prop("volcano_transition_factor"),
+      volcano_noise_prop: regl.prop("volcano_noise_prop"),
+      volcano_noise_offset: regl.prop("volcano_noise_offset"),
+      m_island_radius: regl.prop("m_island_radius"),
+      m_island_height: regl.prop("m_island_height"),
+      island_prop_flat: regl.prop("island_prop_flat"),
+      island_noise_freq: regl.prop("island_noise_freq"),
+      island_transition_factor: regl.prop("island_transition_factor"),
+      island_noise_offset: regl.prop("island_noise_offset"),
     },
 
     vert: resources["noise/shaders/volcano_heightmap.vert.glsl"],
@@ -75,10 +68,8 @@ export function init_volcano_heightmap(
     framebuffer: noise_buffer,
   });
 
-  class VolcanoHeightMap {
-    constructor(terrain_characteristics) {
-      this.terrain_characteristics = terrain_characteristics;
-    }
+  class HeightMap {
+    constructor() {}
 
     // Get the buffer that contains the heightmap
     get_buffer() {
@@ -86,10 +77,12 @@ export function init_volcano_heightmap(
     }
 
     // Draw the heightmap to the buffer
-    draw_heightmap_to_buffer({ width = 256, height = 256 }) {
+    draw_heightmap_to_buffer({ generation_parameters }) {
+      let size = generation_parameters.terrain.side_resolution;
+
       // Resize the buffer if needed
-      if (noise_buffer.width !== width || noise_buffer.height !== height) {
-        noise_buffer.resize(width, height);
+      if (noise_buffer.width !== size || noise_buffer.height !== size) {
+        noise_buffer.resize(size, size);
       }
 
       // Clear the buffer
@@ -100,17 +93,30 @@ export function init_volcano_heightmap(
 
       // Render the heightmap to the buffer
       pipeline_generate_texture({
-        m_crater_radius: this.terrain_characteristics.m_crater_radius,
-        m_crater_height: this.terrain_characteristics.m_crater_height,
-        m_volcano_max_height: this.terrain_characteristics.m_volcano_max_height,
-        m_volcano_center: this.terrain_characteristics.m_volcano_center,
-        m_volcano_radius: this.terrain_characteristics.m_volcano_radius,
-        m_terrain_height: this.terrain_characteristics.m_terrain_height,
-        m_terrain_width: this.terrain_characteristics.m_terrain_width,
-        m_terrain_length: this.terrain_characteristics.m_terrain_length,
+        m_terrain_width: generation_parameters.terrain.m_terrain_width,
+        m_terrain_length: generation_parameters.terrain.m_terrain_length,
+        m_volcano_center: generation_parameters.volcano.m_volcano_center,
+        m_volcano_radius: generation_parameters.volcano.m_volcano_radius,
+        m_crater_radius: generation_parameters.volcano.m_crater_radius,
+        m_crater_height: generation_parameters.volcano.m_crater_height,
+        m_volcano_max_height:
+          generation_parameters.volcano.m_volcano_max_height,
+        volcano_noise_freq: generation_parameters.volcano.volcano_noise_freq,
+        volcano_transition_factor:
+          generation_parameters.volcano.volcano_transition_factor,
+        volcano_noise_prop: generation_parameters.volcano.volcano_noise_prop,
+        volcano_noise_offset:
+          generation_parameters.volcano.volcano_noise_offset,
+        m_island_radius: generation_parameters.island.m_island_radius,
+        m_island_height: generation_parameters.island.m_island_height,
+        island_prop_flat: generation_parameters.island.island_prop_flat,
+        island_noise_freq: generation_parameters.island.island_noise_freq,
+        island_transition_factor:
+          generation_parameters.island.island_transition_factor,
+        island_noise_offset: generation_parameters.island.island_noise_offset,
       });
     }
   }
 
-  return new VolcanoHeightMap(terrain_characteristics);
+  return new HeightMap();
 }
