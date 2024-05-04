@@ -9,15 +9,6 @@ class LavaParticle {
     this.vx = 0;
     this.vy = 0;
     this.vz = 0;
-
-    // ---- Smoothing kernel parameters
-    // This is the kernel radius of action
-    this.m_kernel_h = 1.0;
-    this.m_kernel_h2 = this.m_kernel_h * this.m_kernel_h;
-
-    // This is the normalisation factor of the kernel
-    this.m_kernel_alpha =
-      15 / (Math.PI * this.m_kernel_h * this.m_kernel_h * this.m_kernel_h);
   }
 
   /**
@@ -40,6 +31,15 @@ class LavaSimulation {
     this.particles = [];
     this.terrain_heightmap = new BufferData(terrain_heightmap_buffer);
     this.generation_parameters = generation_parameters;
+
+    // ---- Smoothing kernel parameters
+    // This is the kernel radius of action
+    this.m_kernel_h = 1.0;
+    this.m_kernel_h2 = this.m_kernel_h * this.m_kernel_h;
+
+    // This is the normalisation factor of the kernel
+    this.m_kernel_alpha =
+      15 / (Math.PI * this.m_kernel_h * this.m_kernel_h * this.m_kernel_h);
   }
 
   /**
@@ -104,5 +104,33 @@ class LavaSimulation {
     }
 
     return neighbors;
+  }
+
+  // TODO: We need to compute the forces acting on the particles that are:
+  // - The pressure force F_Pi
+  // - The viscosity force F_vi
+  // - The gravity force F_g
+  // - The collision force F_ci
+
+  /**
+   * Compute the gravity force acting on a particle
+   *
+   * @param {LavaParticle} particle The particle for which to compute the gravity force
+   * @returns the gravity force acting on the particle
+   */
+  gravity_force(particle) {
+    // We use gravity as a force of -9.81 m/s^2 in the z direction
+    return [0, 0, -9.81];
+  }
+
+  /**
+   * Compute the pressure force acting on a particle
+   *
+   * @param {LavaParticle} particle The particle for which to compute the pressure force
+   * @param {Array<LavaParticle>} neighbors The list of neighbors of the particle
+   * @returns the pressure force acting on the particle
+   */
+  pressure_force(particle, neighbors) {
+    return 0;
   }
 }
