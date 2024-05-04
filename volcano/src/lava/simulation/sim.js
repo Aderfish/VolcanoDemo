@@ -164,12 +164,32 @@ class LavaSimulation {
 
   /**
    * Compute the pressure force acting on a particle
+   * The pressure force is computed according to the formula on the paper
+   * "Animating Lava Flows" (http://www-evasion.imag.fr/Publications/1999/SACNG99/gi99.pdf)
+   * on section 2.2
    *
    * @param {LavaParticle} particle The particle for which to compute the pressure force
    * @param {Array<LavaParticle>} neighbors The list of neighbors of the particle
    * @returns the pressure force acting on the particle
    */
   pressure_force(particle, neighbors) {
+    let force = [0, 0, 0];
+
+    for (neigh_particle in neighbors) {
+      // Compute the kernel gradient between the particle and its neighbor
+      const kernel_grad = this.kernel_gradient(particle, neigh_particle);
+
+      // Compute the pressure force
+      const pressure =
+        particle.mass *
+        neigh_particle.mass *
+        (particle.pressure / particle.density ** 2 +
+          neigh_particle.pressure / particle.density ** 2);
+
+      force[0] -= pressure * kernel_grad[0];
+      force[1] -= pressure * kernel_grad[1];
+      force[2] -= pressure * kernel_grad[2];
+    }
     return 0;
   }
 }
