@@ -132,7 +132,7 @@ float fbm2(vec2 point) {
 float voronoi(vec2 point) {
 	const int N = 5;
 	float m = 10000.0;
-	const float space = 6.;
+	const float space = 5.;
    
     vec2 uvi = vec2(floor(point / space)); // index of the square as integer
     vec2 p1 = uvi * space;
@@ -218,7 +218,7 @@ float fbmabs(vec2 p) {
 	float a = 1.;
     const float f_m = 2.;
 	const float a_m = 0.5;
-	const int num_oct = 7;
+	const int num_oct = 9;
 
 	float r = 0.0;	
     for(int i = 0; i < num_oct; i++){	
@@ -271,7 +271,7 @@ void main()
 
 	if(height > terrain_water_level){
 		shininess = 2.0;
-		float weight = 2. * (height - terrain_water_level) * 0.001;
+		float weight = 2. * (height - terrain_water_level) * 0.01;
 		material_color = weight * terrain_color_mountain + (1.-weight) * terrain_color_grass;
 	}
 
@@ -296,9 +296,9 @@ void main()
 	}
 
 	if(height > terrain_water_level){
-	vec3 rock_tex = tex_rock(v2f_uv/50.);
-	vec3 mont_tex = tex_mont(v2f_uv/400.);
-	float ratio = smoothstep(0., 120., height);
+	vec3 rock_tex = tex_rock(v2f_uv/10.);
+	vec3 mont_tex = tex_mont(v2f_uv/100.);
+	float ratio = smoothstep(0., 50., height);
 	color *= rock_tex * (1. - ratio)  + mont_tex * ratio; 
 	}
 
