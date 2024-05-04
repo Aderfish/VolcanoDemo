@@ -146,9 +146,9 @@ class LavaSimulation {
   }
 
   // TODO: We need to compute the forces acting on the particles that are:
-  // - The pressure force F_Pi
+  // - The pressure force F_Pi [done]
   // - The viscosity force F_vi
-  // - The gravity force F_g
+  // - The gravity force F_g [done]
   // - The collision force F_ci
 
   /**
@@ -190,6 +190,7 @@ class LavaSimulation {
       force[1] -= pressure * kernel_grad[1];
       force[2] -= pressure * kernel_grad[2];
     }
-    return 0;
+
+    return force;
   }
 }
