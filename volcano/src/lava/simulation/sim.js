@@ -19,6 +19,20 @@ class LavaParticle {
     this.m_kernel_alpha =
       15 / (Math.PI * this.m_kernel_h * this.m_kernel_h * this.m_kernel_h);
   }
+
+  /**
+   * Compute the squared distance between this particle and another particle
+   *
+   * @param {LavaParticle} other_particle
+   * @returns the square of the distance between this particle and another particle
+   */
+  distance_square_with(other_particle) {
+    const dx = this.x - other_particle.x;
+    const dy = this.y - other_particle.y;
+    const dz = this.z - other_particle.z;
+
+    return dx * dx + dy * dy + dz * dz;
+  }
 }
 
 class LavaSimulation {
@@ -65,5 +79,30 @@ class LavaSimulation {
 
     // Add the particle to the simulation
     this.particles.push(particle);
+  }
+
+  /**
+   * Get the list of neighbors of a particle
+   * A neighbor is a particle different from the input particle
+   * such that the distance between the two particles is less than the 2 times the kernel radius
+   * (dist < 2 * h <=> dist^2 < 4 * h^2)
+   *
+   * @param {LavaParticle} particle
+   * @returns the list of neighbors of the input particle
+   */
+  get_neighbors(particle) {
+    const neighbors = [];
+    const neighbors_radius = 4 * particle.m_kernel_h2;
+
+    for (p in this.particles) {
+      if (p != particle) {
+        const dist2 = particle.distance_square_with(p);
+        if (dist2 < neighbors_radius) {
+          neighbors.push(p);
+        }
+      }
+    }
+
+    return neighbors;
   }
 }
