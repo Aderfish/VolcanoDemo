@@ -12,6 +12,7 @@ class LavaParticle {
     // Physics characteristics
     this.pressure = 0;
     this.density = 0;
+    this.mass = 0;
   }
 
   /**
