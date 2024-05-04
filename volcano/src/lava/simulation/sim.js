@@ -150,6 +150,8 @@ class LavaSimulation {
   // - The viscosity force F_vi
   // - The gravity force F_g [done]
   // - The collision force F_ci
+  // We also need to compute the density and pressure of the particles (see section 2.2 for initial values)
+  // as well as the temperature of the particles
 
   /**
    * Compute the gravity force acting on a particle
@@ -192,5 +194,22 @@ class LavaSimulation {
     }
 
     return force;
+  }
+
+  /**
+   * Compute the viscosity force acting on a particle
+   * The viscosity force is computed according to the formula on the paper
+   * "Animating Lava Flows" (http://www-evasion.imag.fr/Publications/1999/SACNG99/gi99.pdf)
+   * on section 2.3
+   *
+   * @param {LavaParticle} particle The particle for which to compute the viscosity force
+   * @param {Array<LavaParticle>} neighbors The list of neighbors of the particle
+   * @returns the viscosity force acting on the particle
+   */
+  viscosity_force(particle, neighbors) {
+    // The v_i on the formula is the velocity of the particle
+    // We also must add a temperature parameter to the Particle class
+
+    return [0, 0, 0];
   }
 }
