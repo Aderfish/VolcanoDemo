@@ -10,6 +10,8 @@ varying vec2 v2f_uv;
 
 varying float v2f_water_tex_scale;
 varying float v2f_volcano_h;
+varying vec3 v2f_water_col_dark;
+varying vec3 v2f_water_col_light;
 
 const vec3  light_color = vec3(1.0, 0.941, 0.898) * 1.0;
 // Small perturbation to prevent "z-fighting" on the water on some machines...
@@ -293,8 +295,8 @@ vec3 rgb_nor(vec3 col_rgb){
 
 vec3 tex_water(vec2 point){	
 	float r;
-	vec3 wa_col_dark = rgb_nor(vec3(38., 72., 102.));
-	vec3 wa_col_light = rgb_nor(vec3(123., 146., 166.));
+	vec3 wa_col_dark = rgb_nor(v2f_water_col_dark);
+	vec3 wa_col_light = rgb_nor(v2f_water_col_light);
 	vec2 wa_tex_range = vec2(0.67, 0.7);
 	float coef_r = find_k(wa_tex_range, vec2(wa_col_dark.x, wa_col_light.x));
 	float coef_g = find_k(wa_tex_range, vec2(wa_col_dark.y, wa_col_light.y));

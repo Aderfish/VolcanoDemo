@@ -45,9 +45,6 @@ async function main() {
     "terrain/shaders/terrain.vert.glsl",
     "terrain/shaders/terrain.frag.glsl",
 
-    "terrain/shaders/normals.vert.glsl",
-    "terrain/shaders/normals.frag.glsl",
-
     "noise/shaders/buffer_to_screen.vert.glsl",
     "noise/shaders/buffer_to_screen.frag.glsl",
 
@@ -175,13 +172,6 @@ async function main() {
         generation_parameters
       );
       console.log("Terrain regenerated");
-      /*terrain_actor = init_terrain_texture(
-        regl,
-        resources,
-        volcano_heightmap.get_buffer(),
-        generation_parameters
-      );
-      console.log("Terrain Texture regenerated");*/
     }
 
     if (update_needed) {

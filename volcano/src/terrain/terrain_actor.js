@@ -125,6 +125,17 @@ function terrain_build_mesh(height_map, terrain_parameters) {
   };
 }
 
+function hexToRgb(hex) {
+  hex = hex.replace(/^#/, '');
+
+  var bigint = parseInt(hex, 16);
+
+  var r = (bigint >> 16) & 255;
+  var g = (bigint >> 8) & 255;
+  var b = bigint & 255;
+
+  return [r, g, b];
+}
 /**
  *
  * @param {*} regl
@@ -161,30 +172,13 @@ export function init_terrain_actor(
       terrain_width: terrain_parameters.terrain.m_terrain_width,
       water_tex_scale: terrain_parameters.terrain.water_tex_scale,
       volcano_h: terrain_parameters.volcano.m_volcano_max_height,
+      water_col_dark: hexToRgb(terrain_parameters.terrain.water_col_dark),
+      water_col_light: hexToRgb(terrain_parameters.terrain.water_col_light)
     },
     elements: terrain_mesh.faces,
 
     vert: resources["terrain/shaders/terrain.vert.glsl"],
     frag: resources["terrain/shaders/terrain.frag.glsl"],
-  });
-  
-  const pipeline_normals_terrain = regl({
-    attributes: {
-      vertex_position: {
-        buffer: regl.buffer(terrain_mesh.vertex_positions),
-        size: terrain_mesh.vertex_positions[0].length,
-      },
-      vertex_normal: terrain_mesh.vertex_normals,
-    },
-    uniforms: {
-      mat_mvp: regl.prop("mat_mvp"),
-      mat_model_view: regl.prop("mat_model_view"),
-      mat_normals_to_view: regl.prop("mat_normals"),
-    },
-    elements: terrain_mesh.faces,
-
-    vert: resources["terrain/shaders/normals.vert.glsl"],
-    frag: resources["terrain/shaders/normals.frag.glsl"],
   });
 
   class TerrainActor {
@@ -210,12 +204,6 @@ export function init_terrain_actor(
 
         light_position: light_position_cam,
       });
-      /*
-      pipeline_normals_terrain({
-        mat_mvp: this.mat_mvp,
-        mat_model_view: this.mat_model_view,
-        mat_normals: this.mat_normals,
-      });*/
     }
   }
 

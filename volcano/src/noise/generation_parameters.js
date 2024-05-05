@@ -4,6 +4,8 @@ export class TerrainParameters {
     this.m_terrain_length = 300;
     this.side_resolution = 512;
     this.water_tex_scale = 10.0;
+    this.water_col_dark = "#1D3B54";
+    this.water_col_light = "#5A7082";
   }
 }
 

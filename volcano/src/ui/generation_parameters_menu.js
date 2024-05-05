@@ -13,6 +13,10 @@ export function link_generation_parameters_menu(init_parameters, callback) {
       parameters.terrain.m_terrain_width;
     document.getElementById("terrain_length").value =
       parameters.terrain.m_terrain_length;
+    document.getElementById("water_col_dark").value =
+      parameters.terrain.water_col_dark;
+    document.getElementById("water_col_light").value =
+      parameters.terrain.water_col_light;
     document.getElementById("water_tex_scale").value =
       parameters.terrain.water_tex_scale;
     document.getElementById("volcano_radius").value =
@@ -70,6 +74,9 @@ export function link_generation_parameters_menu(init_parameters, callback) {
       terrainWidth: parseInt(document.getElementById("terrain_width").value),
       terrainLength: parseInt(document.getElementById("terrain_length").value),
       
+      water_col_dark: document.getElementById("water_col_dark").value,
+      water_col_light: document.getElementById("water_col_light").value,
+
       water_tex_scale: parseFloat(document.getElementById("water_tex_scale").value),
 
       volcanoRadius: parseFloat(
@@ -124,6 +131,8 @@ export function link_generation_parameters_menu(init_parameters, callback) {
     terrainParams.side_resolution = generationParametersRaw.side_resolution;
     terrainParams.m_terrain_width = generationParametersRaw.terrainWidth;
     terrainParams.m_terrain_length = generationParametersRaw.terrainLength;
+    terrainParams.water_col_dark = generationParametersRaw.water_col_dark;
+    terrainParams.water_col_light = generationParametersRaw.water_col_light;
     terrainParams.water_tex_scale = generationParametersRaw.water_tex_scale;
 
     const volcanoParams = new VolcanoParameters();
