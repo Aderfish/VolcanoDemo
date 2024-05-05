@@ -165,6 +165,25 @@ export function init_terrain_actor(
     frag: resources["terrain/shaders/terrain.frag.glsl"],
   });
 
+  const pipeline_normals_terrain = regl({
+    attributes: {
+      vertex_position: {
+        buffer: regl.buffer(terrain_mesh.vertex_positions),
+        size: terrain_mesh.vertex_positions[0].length,
+      },
+      vertex_normal: terrain_mesh.vertex_normals,
+    },
+    uniforms: {
+      mat_mvp: regl.prop("mat_mvp"),
+      mat_model_view: regl.prop("mat_model_view"),
+      mat_normals_to_view: regl.prop("mat_normals"),
+    },
+    elements: terrain_mesh.faces,
+
+    vert: resources["terrain/shaders/normals.vert.glsl"],
+    frag: resources["terrain/shaders/normals.frag.glsl"],
+  });
+
   class TerrainActor {
     constructor() {
       this.mat_mvp = mat4.create();
@@ -180,7 +199,7 @@ export function init_terrain_actor(
       mat3.fromMat4(this.mat_normals, this.mat_model_view);
       mat3.transpose(this.mat_normals, this.mat_normals);
       mat3.invert(this.mat_normals, this.mat_normals);
-
+      
       pipeline_draw_terrain({
         mat_mvp: this.mat_mvp,
         mat_model_view: this.mat_model_view,
@@ -188,6 +207,12 @@ export function init_terrain_actor(
 
         light_position: light_position_cam,
       });
+      /*
+      pipeline_normals_terrain({
+        mat_mvp: this.mat_mvp,
+        mat_model_view: this.mat_model_view,
+        mat_normals: this.mat_normals,
+      });*/
     }
   }
 

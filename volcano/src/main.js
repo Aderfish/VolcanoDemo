@@ -45,6 +45,9 @@ async function main() {
     "terrain/shaders/terrain.vert.glsl",
     "terrain/shaders/terrain.frag.glsl",
 
+    "terrain/shaders/normals.vert.glsl",
+    "terrain/shaders/normals.frag.glsl",
+
     "noise/shaders/buffer_to_screen.vert.glsl",
     "noise/shaders/buffer_to_screen.frag.glsl",
 

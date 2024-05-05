@@ -212,7 +212,7 @@ float iqnoisep(vec2 x)
     return 2.* va/wt - 1.;
 }
 
-float fbmabs(vec2 p) {
+float fbmabs_9(vec2 p) {
 	// Initial frequency and frequency multiplier
 	float f = 1.;
 	float a = 1.;
@@ -221,7 +221,7 @@ float fbmabs(vec2 p) {
 	const int num_oct = 9;
 
 	float r = 0.0;	
-    for(int i = 0; i < num_oct; i++){	
+    for(int i = 0; i < num_oct ; i++){	
 		r += abs(iqnoisep(p*f))* a;       
 	    f *= f_m;
 		a *= a_m;
@@ -231,23 +231,71 @@ float fbmabs(vec2 p) {
 	return r;
 }
 
+float fbmabs_2(vec2 p) {
+	// Initial frequency and frequency multiplier
+	float f = 1.;
+	float a = 1.;
+    const float f_m = 1.5;
+	const float a_m = 0.4;
+	const int num_oct = 4;
+
+	float r = 0.0;	
+    for(int i = 0; i < num_oct ; i++){	
+		r += abs(iqnoisep(p*f))* a;       
+	    f *= f_m;
+		a *= a_m;
+		p -= vec2(-.1, .7) * r;
+	}
+	return r;
+}
+
 // Evaluate the derivatives of fbmabs function along xyz directions
-vec3 nor(vec2 p)
+vec3 nor_9(vec2 p)
 {
 	const vec2 e = vec2(0.002, 0.0);
 	return normalize(vec3(
-		fbmabs(p + e.xy) - fbmabs(p - e.xy),
-		fbmabs(p + e.yx) - fbmabs(p - e.yx),
+		fbmabs_9(p + e.xy) - fbmabs_9(p - e.xy),
+		fbmabs_9(p + e.yx) - fbmabs_9(p - e.yx),
+		-.1));
+}
+
+vec3 nor_2(vec2 p)
+{
+	const vec2 e = vec2(0.002, 0.0);
+	return normalize(vec3(
+		fbmabs_2(p + e.xy) - fbmabs_2(p - e.xy),
+		fbmabs_2(p + e.yx) - fbmabs_2(p - e.yx),
 		-.1));
 }
 
 vec3 tex_mont(vec2 point){	
 	float r;
     vec3 light = normalize(vec3(1., 1., -1.));
-    r = max(dot(nor(point), light), 0.1);
+    r = max(dot(nor_9(point), light), 0.1);
     vec3 mont_color = clamp(vec3(r, r, r), 0., 1.);
 	return mont_color;
 }
+
+vec3 tex_water(vec2 point){	
+	float r;
+    vec3 light = normalize(vec3(1., 1., -0.5));
+    r = max(dot(nor_2(point), light), 0.1);
+    vec3 water_color = vec3(1.) - clamp(vec3(r, r, r + 0.5), 0.3, 0.33);
+	return water_color;
+}
+
+float find_k(vec2 point, vec2 col){
+	float k = (col.y - col.x)/pow(point.y - point.x, 3.);
+	return k;
+}
+
+vec3 rgb_nor(vec3 col_rgb){
+	float r_nor = col_rgb.x / 255.;
+	float g_nor = col_rgb.y / 255.;
+	float b_nor = col_rgb.z / 255.;
+	return vec3(r_nor, g_nor, b_nor);
+}
+
 // ==============================================================
 
 void main()
@@ -294,13 +342,26 @@ void main()
 	if(dot(normal, direction_to_light) > 0. && dot(halfway, normal) > 0.){
 		color += material_color * light_color * pow(dot(halfway, normal), shininess);
 	}
-
+	
+	vec3 wa_col_dark = rgb_nor(vec3(38., 72., 102.));
+	vec3 wa_col_light = rgb_nor(vec3(123., 146., 166.));
+	float coef_r = find_k(vec2(0.67, 0.7), vec2(wa_col_dark.x, wa_col_light.x));
+	float coef_g = find_k(vec2(0.67, 0.7), vec2(wa_col_dark.y, wa_col_light.y));
+	float coef_b = find_k(vec2(0.67, 0.7), vec2(wa_col_dark.z, wa_col_light.z));
+	
 	if(height > terrain_water_level){
 	vec3 rock_tex = tex_rock(v2f_uv/10.);
 	vec3 mont_tex = tex_mont(v2f_uv/100.);
 	float ratio = smoothstep(0., 50., height);
-	color *= rock_tex * (1. - ratio)  + mont_tex * ratio; 
+	color *= (rock_tex * (1. - ratio)  + mont_tex * ratio) * 3.; 
+	}else{
+		vec3 water_tex = tex_water(v2f_uv/6.);
+		color = vec3(coef_r * pow(water_tex.x - 0.67, 3.) + wa_col_dark.x, coef_g * pow(water_tex.x - 0.67, 3.) + wa_col_dark.y, coef_b * pow(water_tex.x - 0.67, 3.) + wa_col_dark.z);
+		gl_FragColor = vec4(color, 1.);
 	}
 
+	vec3 normal_color_rgb = normal * 0.5 + 0.5; // Calculate the false color
+	float normal_color_grey = normal_color_rgb.x * 0.2126 + normal_color_rgb.y * 0.7152 + normal_color_rgb.y * 0.0722; // Convert rgb to grey-scale
+	color *= normal_color_grey;
 	gl_FragColor = vec4(color, 1.); // output: RGBA in 0..1 range
 }
