@@ -268,6 +268,33 @@ class LavaSimulation {
     return grad;
   }
 
+  /**
+   * Compute the temperature laplacian of a particle
+   *
+   * @param {LavaParticle} particle The particle for which to compute the temperature laplacian
+   * @param {Array<LavaParticle>} neighbors The list of neighbors of the particle
+   * @returns the temperature laplacian of the particle
+   */
+  temperature_laplacian(particle, neighbors) {
+    let laplacian = 0;
+
+    for (neigh_particle in neighbors) {
+      const kernel_grad = this.kernel_gradient(particle, neigh_particle);
+      const temp_grad = neigh_particle.temp_grad;
+
+      const kernel_grad_dot_prod =
+        kernel_grad[0] * temp_grad[0] +
+        kernel_grad[1] * temp_grad[1] +
+        kernel_grad[2] * temp_grad[2];
+
+      const norm_factor = neigh_particle.mass / neigh_particle.density;
+
+      laplacian += kernel_grad_dot_prod * norm_factor;
+    }
+
+    return laplacian;
+  }
+
   // --- Set methods for the simulation parameters
 
   /**
