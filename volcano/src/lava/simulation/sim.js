@@ -1,3 +1,4 @@
+import { exp } from "../../../lib/gl-matrix_3.3.0/esm/quat";
 import { BufferData } from "../../terrain/terrain_actor";
 
 class LavaParticle {
@@ -13,6 +14,7 @@ class LavaParticle {
     this.pressure = 0;
     this.density = 0;
     this.mass = 0;
+    this.temperature = 0;
   }
 
   /**
@@ -44,6 +46,13 @@ class LavaSimulation {
     // This is the normalisation factor of the kernel
     this.m_kernel_alpha =
       15 / (Math.PI * this.m_kernel_h * this.m_kernel_h * this.m_kernel_h);
+
+    // ---- Simulation parameters
+
+    // Evolution of the viscosity of the lava with temperature
+    // See section 2.3 of the paper "Animating Lava Flows" (http://www-evasion.imag.fr/Publications/1999/SACNG99/gi99.pdf)
+    this.visc_a_factor = 220;
+    this.visc_b_factor = 0.5;
   }
 
   /**
@@ -207,9 +216,26 @@ class LavaSimulation {
    * @returns the viscosity force acting on the particle
    */
   viscosity_force(particle, neighbors) {
-    // The v_i on the formula is the velocity of the particle
-    // We also must add a temperature parameter to the Particle class
+    const visc_factor =
+      this.visc_b_factor * exp(-this.visc_a_factor * particle.temperature);
+    const global_factor = (visc_factor * particle.mass) / particle.density;
 
-    return [0, 0, 0];
+    let force = [0, 0, 0];
+
+    for (neigh_particle in neighbors) {
+      const d_vx = particle.vx - neigh_particle.vx;
+      const d_vy = particle.vy - neigh_particle.vy;
+      const d_vz = particle.vz - neigh_particle.vz;
+
+      const kernel_value = this.kernel(particle, neigh_particle);
+
+      const norm_factor = neigh_particle.mass / neigh_particle.density;
+
+      force[0] += global_factor * d_vx * kernel_value * norm_factor;
+      force[1] += global_factor * d_vy * kernel_value * norm_factor;
+      force[2] += global_factor * d_vz * kernel_value * norm_factor;
+    }
+
+    return force;
   }
 }
