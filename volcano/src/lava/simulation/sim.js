@@ -15,6 +15,9 @@ class LavaParticle {
     this.density = 0;
     this.mass = 0;
     this.temperature = 0;
+
+    // Simulation metrics
+    this.temp_grad = [0, 0, 0];
   }
 
   /**
@@ -237,5 +240,30 @@ class LavaSimulation {
     }
 
     return force;
+  }
+
+  /**
+   * Compute the gradient of the temperature of a particle and set it
+   * into the particle's temp_grad attribute
+   *
+   * @param {LavaParticle} particle The particle for which to compute the temperature gradient
+   * @param {Array<LavaParticle>} neighbors The list of neighbors of the particle
+   */
+  set_temperature_gradient(particle, neighbors) {
+    let grad = [0, 0, 0];
+
+    for (neigh_particle in neighbors) {
+      const kernel_grad = this.kernel_gradient(particle, neigh_particle);
+
+      const d_temp = particle.temperature - neigh_particle.temperature;
+
+      const norm_factor = neigh_particle.mass / neigh_particle.density;
+
+      grad[0] += d_temp * kernel_grad[0] * norm_factor;
+      grad[1] += d_temp * kernel_grad[1] * norm_factor;
+      grad[2] += d_temp * kernel_grad[2] * norm_factor;
+    }
+
+    particle.temp_grad = grad;
   }
 }
