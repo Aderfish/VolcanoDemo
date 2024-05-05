@@ -8,6 +8,8 @@ varying vec3 v2f_dir_to_light;
 varying vec3 v2f_normal;
 varying vec2 v2f_uv;
 
+varying float v2f_water_tex_scale;
+
 const vec3  light_color = vec3(1.0, 0.941, 0.898) * 1.0;
 // Small perturbation to prevent "z-fighting" on the water on some machines...
 const float terrain_water_level    = -0.03125 + 1e-6;
@@ -276,14 +278,6 @@ vec3 tex_mont(vec2 point){
 	return mont_color;
 }
 
-vec3 tex_water(vec2 point){	
-	float r;
-    vec3 light = normalize(vec3(1., 1., -0.5));
-    r = max(dot(nor_2(point), light), 0.1);
-    vec3 water_color = vec3(1.) - clamp(vec3(r, r, r + 0.5), 0.3, 0.33);
-	return water_color;
-}
-
 float find_k(vec2 point, vec2 col){
 	float k = (col.y - col.x)/pow(point.y - point.x, 3.);
 	return k;
@@ -296,6 +290,22 @@ vec3 rgb_nor(vec3 col_rgb){
 	return vec3(r_nor, g_nor, b_nor);
 }
 
+vec3 tex_water(vec2 point){	
+	float r;
+	vec3 wa_col_dark = rgb_nor(vec3(38., 72., 102.));
+	vec3 wa_col_light = rgb_nor(vec3(123., 146., 166.));
+	vec2 wa_tex_range = vec2(0.67, 0.7);
+	float coef_r = find_k(wa_tex_range, vec2(wa_col_dark.x, wa_col_light.x));
+	float coef_g = find_k(wa_tex_range, vec2(wa_col_dark.y, wa_col_light.y));
+	float coef_b = find_k(wa_tex_range, vec2(wa_col_dark.z, wa_col_light.z));
+
+    vec3 light = normalize(vec3(1., 1., -0.5));
+    r = max(dot(nor_2(point), light), 0.1);
+    vec3 water_tex = vec3(1.) - clamp(vec3(r, r, r + 0.5), 0.3, 0.33);
+
+	vec3 water_color = vec3(coef_r * pow(water_tex.x - wa_tex_range.x, 3.) + wa_col_dark.x, coef_g * pow(water_tex.x - wa_tex_range.x, 3.) + wa_col_dark.y, coef_b * pow(water_tex.x - wa_tex_range.x, 3.) + wa_col_dark.z);
+	return water_color;
+}
 // ==============================================================
 
 void main()
@@ -343,20 +353,13 @@ void main()
 		color += material_color * light_color * pow(dot(halfway, normal), shininess);
 	}
 	
-	vec3 wa_col_dark = rgb_nor(vec3(38., 72., 102.));
-	vec3 wa_col_light = rgb_nor(vec3(123., 146., 166.));
-	float coef_r = find_k(vec2(0.67, 0.7), vec2(wa_col_dark.x, wa_col_light.x));
-	float coef_g = find_k(vec2(0.67, 0.7), vec2(wa_col_dark.y, wa_col_light.y));
-	float coef_b = find_k(vec2(0.67, 0.7), vec2(wa_col_dark.z, wa_col_light.z));
-	
 	if(height > terrain_water_level){
 	vec3 rock_tex = tex_rock(v2f_uv/10.);
 	vec3 mont_tex = tex_mont(v2f_uv/100.);
 	float ratio = smoothstep(0., 50., height);
 	color *= (rock_tex * (1. - ratio)  + mont_tex * ratio) * 3.; 
 	}else{
-		vec3 water_tex = tex_water(v2f_uv/6.);
-		color = vec3(coef_r * pow(water_tex.x - 0.67, 3.) + wa_col_dark.x, coef_g * pow(water_tex.x - 0.67, 3.) + wa_col_dark.y, coef_b * pow(water_tex.x - 0.67, 3.) + wa_col_dark.z);
+		color = tex_water(v2f_uv * v2f_water_tex_scale / 60. );
 		gl_FragColor = vec4(color, 1.);
 	}
 

@@ -3,6 +3,7 @@ export class TerrainParameters {
     this.m_terrain_width = 300;
     this.m_terrain_length = 300;
     this.side_resolution = 512;
+    this.water_tex_scale = 10.0;
   }
 }
 

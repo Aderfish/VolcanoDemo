@@ -158,13 +158,15 @@ export function init_terrain_actor(
       mat_normals: regl.prop("mat_normals"),
 
       light_position: regl.prop("light_position"),
+      terrain_width: terrain_parameters.m_terrain_width,
+      water_tex_scale: terrain_parameters.water_tex_scale,
     },
     elements: terrain_mesh.faces,
 
     vert: resources["terrain/shaders/terrain.vert.glsl"],
     frag: resources["terrain/shaders/terrain.frag.glsl"],
   });
-
+  /*
   const pipeline_normals_terrain = regl({
     attributes: {
       vertex_position: {
@@ -182,7 +184,7 @@ export function init_terrain_actor(
 
     vert: resources["terrain/shaders/normals.vert.glsl"],
     frag: resources["terrain/shaders/normals.frag.glsl"],
-  });
+  });*/
 
   class TerrainActor {
     constructor() {

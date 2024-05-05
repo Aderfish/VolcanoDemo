@@ -13,6 +13,8 @@ export function link_generation_parameters_menu(init_parameters, callback) {
       parameters.terrain.m_terrain_width;
     document.getElementById("terrain_length").value =
       parameters.terrain.m_terrain_length;
+    document.getElementById("water_tex_scale").value =
+      parameters.terrain.water_tex_scale;
     document.getElementById("volcano_radius").value =
       parameters.volcano.m_volcano_radius;
     document.getElementById("volcano_max_height").value =
@@ -67,6 +69,9 @@ export function link_generation_parameters_menu(init_parameters, callback) {
       ),
       terrainWidth: parseInt(document.getElementById("terrain_width").value),
       terrainLength: parseInt(document.getElementById("terrain_length").value),
+      
+      water_tex_scale: parseFloat(document.getElementById("water_tex_scale").value),
+
       volcanoRadius: parseFloat(
         document.getElementById("volcano_radius").value
       ),
@@ -119,6 +124,7 @@ export function link_generation_parameters_menu(init_parameters, callback) {
     terrainParams.side_resolution = generationParametersRaw.side_resolution;
     terrainParams.m_terrain_width = generationParametersRaw.terrainWidth;
     terrainParams.m_terrain_length = generationParametersRaw.terrainLength;
+    terrainParams.water_tex_scale = generationParametersRaw.water_tex_scale;
 
     const volcanoParams = new VolcanoParameters();
     volcanoParams.m_crater_radius = generationParametersRaw.craterRadius;
