@@ -172,9 +172,16 @@ async function main() {
         regl,
         resources,
         volcano_heightmap.get_buffer(),
-        generation_parameters.terrain
+        generation_parameters
       );
       console.log("Terrain regenerated");
+      /*terrain_actor = init_terrain_texture(
+        regl,
+        resources,
+        volcano_heightmap.get_buffer(),
+        generation_parameters
+      );
+      console.log("Terrain Texture regenerated");*/
     }
 
     if (update_needed) {

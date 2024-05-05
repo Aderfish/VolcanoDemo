@@ -1,4 +1,4 @@
-precision mediump float;
+precision highp float;
 		
 /* #TODO GL2.2.1
 	Pass the normal to the fragment shader by creating a varying vertex-to-fragment variable.

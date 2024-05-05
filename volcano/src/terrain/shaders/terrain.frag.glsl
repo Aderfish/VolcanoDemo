@@ -9,6 +9,7 @@ varying vec3 v2f_normal;
 varying vec2 v2f_uv;
 
 varying float v2f_water_tex_scale;
+varying float v2f_volcano_h;
 
 const vec3  light_color = vec3(1.0, 0.941, 0.898) * 1.0;
 // Small perturbation to prevent "z-fighting" on the water on some machines...
@@ -301,7 +302,7 @@ vec3 tex_water(vec2 point){
 
     vec3 light = normalize(vec3(1., 1., -0.5));
     r = max(dot(nor_2(point), light), 0.1);
-    vec3 water_tex = vec3(1.) - clamp(vec3(r, r, r + 0.5), 0.3, 0.33);
+    vec3 water_tex = vec3(1.) - clamp(vec3(r, r, r), 0.295, 0.33);
 
 	vec3 water_color = vec3(coef_r * pow(water_tex.x - wa_tex_range.x, 3.) + wa_col_dark.x, coef_g * pow(water_tex.x - wa_tex_range.x, 3.) + wa_col_dark.y, coef_b * pow(water_tex.x - wa_tex_range.x, 3.) + wa_col_dark.z);
 	return water_color;
@@ -329,8 +330,8 @@ void main()
 
 	if(height > terrain_water_level){
 		shininess = 2.0;
-		float weight = 2. * (height - terrain_water_level) * 0.01;
-		material_color = weight * terrain_color_mountain + (1.-weight) * terrain_color_grass;
+		float weight = (height - terrain_water_level)/v2f_volcano_h;
+		material_color = weight * terrain_color_mountain + (1. - weight) * terrain_color_grass;
 	}
 
 	/* apply the Blinn-Phong lighting model*/
@@ -356,7 +357,7 @@ void main()
 	if(height > terrain_water_level){
 	vec3 rock_tex = tex_rock(v2f_uv/10.);
 	vec3 mont_tex = tex_mont(v2f_uv/100.);
-	float ratio = smoothstep(0., 50., height);
+	float ratio = smoothstep(0., v2f_volcano_h, height);
 	color *= (rock_tex * (1. - ratio)  + mont_tex * ratio) * 3.; 
 	}else{
 		color = tex_water(v2f_uv * v2f_water_tex_scale / 60. );
