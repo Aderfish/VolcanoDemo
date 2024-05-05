@@ -248,8 +248,9 @@ class LavaSimulation {
    *
    * @param {LavaParticle} particle The particle for which to compute the temperature gradient
    * @param {Array<LavaParticle>} neighbors The list of neighbors of the particle
+   * @returns the gradient of the temperature of the particle
    */
-  set_temperature_gradient(particle, neighbors) {
+  temperature_gradient(particle, neighbors) {
     let grad = [0, 0, 0];
 
     for (neigh_particle in neighbors) {
@@ -264,6 +265,18 @@ class LavaSimulation {
       grad[2] += d_temp * kernel_grad[2] * norm_factor;
     }
 
-    particle.temp_grad = grad;
+    return grad;
+  }
+
+  // --- Set methods for the simulation parameters
+
+  /**
+   * Set the temperature gradient of a particle
+   *
+   * @param {LavaParticle} particle The particle for which to set the temperature gradient
+   * @param {Array<LavaParticle>} neighbors The list of neighbors of the particle
+   */
+  set_temperature_gradient(particle, neighbors) {
+    particle.temp_grad = this.temperature_gradient(particle, neighbors);
   }
 }
