@@ -58,6 +58,21 @@ Finally, we have started working on the simulation of the lava flow following th
 			Provide evidence (plots, screenshots, animations, etc.) that the feature works as expected.
 
 
+  - Volcanic island terrain generation
+    
+    - Implementation
+
+      The creation of the terrain has been splitted into two parts: the island and the volcano itself. \
+      The island is first generated as a disk whose elevation smoothly decreases when approaching the edge in order to get a good transition with the water. Then, a combination of perlin FBM noises is used to get a more realistic terrain as well as little remote islands. \
+      The volcano shape is created by generating a conic shape that descreases exponontially. Then, in the middle, we create a crater for where the lava particles will be emitted. Also, a combination of perlin FBM and turbulence noises are used to get the "rocky" look of the volcano. \
+      Finally, both heightmaps are combined in order to get the look of a volcanic island.
+
+      Also, to enhance interactivity, we have created a menu that allows to play with the various parameters of the generation. This allows to create all sort of volcanic islands by adjusting a total of 17 different parameters that play in the generation process.
+
+    - Validation
+
+      <img src="images/terrain_generation_val.png" width=700>
+
 4. Report the number of hours each team member has dedicated to the project (as recorded on Moodle). Comment on the accuracy of your initial time estimates. Critically reflect on your work plan and assess if you are on track.
 
 	<table>
