@@ -7,6 +7,7 @@ import { init_terrain_actor } from "./terrain/terrain_actor.js";
 import { init_volcano_heightmap } from "./noise/volcano_heightmap.js";
 import { GenerationParameters } from "./noise/generation_parameters.js";
 import { link_generation_parameters_menu } from "./ui/generation_parameters_menu.js";
+import { init_billboard_actor } from "./particles/fire_actors.js";
 
 async function main() {
   // Create the regl canvas
@@ -50,6 +51,9 @@ async function main() {
 
     "noise/shaders/volcano_heightmap.vert.glsl",
     "noise/shaders/volcano_heightmap.frag.glsl",
+
+    "particles/shaders/billboard.vert.glsl",
+    "particles/shaders/billboard.frag.glsl",
   ].forEach((shader_filename) => {
     resources[`${shader_filename}`] = load_text(`./src/${shader_filename}`);
   });
@@ -148,6 +152,8 @@ async function main() {
   const volcano_heightmap = init_volcano_heightmap(regl, resources);
   let terrain_actor;
 
+  const billboard_actor = init_billboard_actor(regl, resources);
+
   /*---------------------------------------------------------------
 		Frame render
 	---------------------------------------------------------------*/
@@ -200,6 +206,7 @@ async function main() {
       regl.clear({ color: [0.9, 0.9, 1, 1] });
 
       terrain_actor.draw(scene_info);
+      billboard_actor.draw(scene_info);
     }
   });
 }
