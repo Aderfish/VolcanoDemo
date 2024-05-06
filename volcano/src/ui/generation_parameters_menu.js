@@ -19,6 +19,14 @@ export function link_generation_parameters_menu(init_parameters, callback) {
       parameters.terrain.water_col_light;
     document.getElementById("water_tex_scale").value =
       parameters.terrain.water_tex_scale;
+    document.getElementById("grass_tex_scale").value =
+      parameters.terrain.grass_tex_scale;
+    document.getElementById("mont_tex_scale").value =
+      parameters.terrain.mont_tex_scale;
+    document.getElementById("water_f_m").value =
+      parameters.terrain.water_f_m;
+    document.getElementById("water_a_m").value =
+      parameters.terrain.water_a_m;
     document.getElementById("volcano_radius").value =
       parameters.volcano.m_volcano_radius;
     document.getElementById("volcano_max_height").value =
@@ -78,6 +86,11 @@ export function link_generation_parameters_menu(init_parameters, callback) {
       water_col_light: document.getElementById("water_col_light").value,
 
       water_tex_scale: parseFloat(document.getElementById("water_tex_scale").value),
+      grass_tex_scale: parseFloat(document.getElementById("grass_tex_scale").value),
+      mont_tex_scale: parseFloat(document.getElementById("mont_tex_scale").value),
+
+      water_f_m: parseFloat(document.getElementById("water_f_m").value),
+      water_a_m: parseFloat(document.getElementById("water_a_m").value),
 
       volcanoRadius: parseFloat(
         document.getElementById("volcano_radius").value
@@ -134,6 +147,10 @@ export function link_generation_parameters_menu(init_parameters, callback) {
     terrainParams.water_col_dark = generationParametersRaw.water_col_dark;
     terrainParams.water_col_light = generationParametersRaw.water_col_light;
     terrainParams.water_tex_scale = generationParametersRaw.water_tex_scale;
+    terrainParams.grass_tex_scale = generationParametersRaw.grass_tex_scale;
+    terrainParams.mont_tex_scale = generationParametersRaw.mont_tex_scale;
+    terrainParams.water_f_m = generationParametersRaw.water_f_m;
+    terrainParams.water_a_m = generationParametersRaw.water_a_m;
 
     const volcanoParams = new VolcanoParameters();
     volcanoParams.m_crater_radius = generationParametersRaw.craterRadius;

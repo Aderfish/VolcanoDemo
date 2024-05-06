@@ -171,9 +171,13 @@ export function init_terrain_actor(
       light_position: regl.prop("light_position"),
       terrain_width: terrain_parameters.terrain.m_terrain_width,
       water_tex_scale: terrain_parameters.terrain.water_tex_scale,
+      grass_tex_scale: terrain_parameters.terrain.grass_tex_scale,
+      mont_tex_scale: terrain_parameters.terrain.mont_tex_scale,
       volcano_h: terrain_parameters.volcano.m_volcano_max_height,
       water_col_dark: hexToRgb(terrain_parameters.terrain.water_col_dark),
-      water_col_light: hexToRgb(terrain_parameters.terrain.water_col_light)
+      water_col_light: hexToRgb(terrain_parameters.terrain.water_col_light),
+      water_f_m: terrain_parameters.terrain.water_f_m,
+      water_a_m: terrain_parameters.terrain.water_a_m,    
     },
     elements: terrain_mesh.faces,
 

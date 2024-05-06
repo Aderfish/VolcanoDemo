@@ -3,9 +3,13 @@ export class TerrainParameters {
     this.m_terrain_width = 300;
     this.m_terrain_length = 300;
     this.side_resolution = 512;
-    this.water_tex_scale = 10.0;
+    this.water_tex_scale = 8.0;
+    this.grass_tex_scale = 2.0;
+    this.mont_tex_scale = 1.0;
     this.water_col_dark = "#1D3B54";
     this.water_col_light = "#5A7082";
+    this.water_f_m = 3.0;
+    this.water_a_m = 0.2;
   }
 }
 
