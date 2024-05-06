@@ -17,27 +17,27 @@ Finally, we have started working on the simulation of the lava flow following th
 		<caption>Achieved Goals</caption>
 		<tr>
 			<th></th>
-			<th>Name 1</th>
-			<th>Name 2</th>
-			<th>Name 3</th>
+			<th>Yoann Lafore</th>
+			<th>Shimeng Ye</th>
+			<th>Alberts Reisons</th>
 		</tr>
 		<tr>
 			<td>Week 1</td>
-			<td></td>
-			<td></td>
-			<td></td>
+			<td>Write the project proposal</td>
+			<td>Find resources on the features for the project</td>
+			<td>Setup the repository for the project</td>
 		</tr>
 		<tr>
 			<td>Week 2</td>
-			<td></td>
-			<td></td>
-			<td></td>
+			<td>Adapt code from Perlin noise homework to have foundation framework for the project + Design the procedural generation of the volcano</td>
+			<td>Design the procedural generation of the volcano terrain texture to get a realistic look</td>
+			<td>Start working on the smoke particles effect</td>
 		</tr>
 		<tr>
 			<td>Week 3</td>
-			<td></td>
-			<td></td>
-			<td></td>
+			<td>Start the implementation of the lava flow simulation</td>
+			<td>Design the procedural texture of the water</td>
+			<td>Have a base implementation for the smoke particles effect</td>
 		</tr>
 	</table>
 
