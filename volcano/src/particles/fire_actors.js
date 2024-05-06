@@ -20,12 +20,7 @@ export function init_billboard_actor(
     resources,
 ) {
     const vertices = [[-0.5, -0.5], [-0.5, 0.5], [0.5, -0.5], [0.5, 0.5]];
-    const faces = [[0, 2, 1], [2, 3, 1]];
-
-    mat_model_view = regl.prop("mat_model_view");
-
-    camera_right_world = {mat_model_view[0][0], mat_model_view[1][0], mat_model_view[2][0]};
-    camera_up_world    = {mat_model_view[0][1], mat_model_view[1][1], mat_model_view[2][1]};
+    const faces = [[0, 1, 2], [2, 3, 1]];
 
     const pipeline_draw_billboard = regl({
         attributes: {
@@ -33,10 +28,10 @@ export function init_billboard_actor(
         },
         uniforms: {
             mat_mvp: regl.prop("mat_mvp"),
-            camera_right_world: camera_right_world,
-            camera_up_world: camera_up_world,
-            billboard_size: [10, 5],
-            billboard_center_worldspace: [0, 0, 200],
+            camera_right_world: regl.prop("camera_right_world"),
+            camera_up_world: regl.prop("camera_right_world"),
+            billboard_size: [100, 100],
+            billboard_center_worldspace: [0, 0, 0],
         },
         elements: faces,
 
@@ -50,6 +45,8 @@ export function init_billboard_actor(
             this.mat_model_view = mat4.create();
             this.mat_normals = mat3.create();
             this.mat_model_to_world = mat4.create();
+            this.camera_right_world = [0, 0, 0];
+            this.camera_up_world =    [0, 0, 0];
         }
 
         draw({ mat_projection, mat_view, light_position_cam }) {
@@ -60,12 +57,15 @@ export function init_billboard_actor(
             mat3.transpose(this.mat_normals, this.mat_normals);
             mat3.invert(this.mat_normals, this.mat_normals);
 
+            this.camera_right_world = [this.mat_model_view[0][0], this.mat_model_view[1][0], this.mat_model_view[2][0]];
+            this.camera_up_world    = [this.mat_model_view[0][1], this.mat_model_view[1][1], this.mat_model_view[2][1]];
+        
+
             pipeline_draw_billboard({
                 mat_mvp: this.mat_mvp,
-                mat_model_view: this.mat_model_view,
-                mat_normals: this.mat_normals,
-
-                light_position: light_position_cam,
+                
+                camera_right_world: this.camera_right_world,
+                camera_right_world: this.camera_right_world,
             });
         }
     }

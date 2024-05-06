@@ -14,5 +14,6 @@ void main(){
         + camera_right_world * square_position.x * billboard_size.x
         + camera_up_world * square_position.y * billboard_size.y;
 
-    gl_Position = mat_mvp * vec4(vertex_position_worldspace, 1);
+    //gl_Position = mat_mvp * vec4(vertex_position_worldspace, 1);
+    gl_Position = mat_mvp * vec4(square_position, 0, 1.);
 }
