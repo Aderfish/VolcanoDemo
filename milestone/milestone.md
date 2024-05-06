@@ -2,12 +2,16 @@
 title: Milestone Report CS-341 2024
 ---
 
-# Project Title
+# Volcano
 
 
 ## Progress Summary
 
-1. Summarize what you have accomplished so far.
+1. So far, we have started by creating a framework that will allow us to efficiently add features to our project. Then, we designed an algorithm using perlin noise to create the heightmap of a volcano on a island. And we have integrated a UI menu that allows to set the generation parameters in live (17 different parameters in total). \
+In parallel, we have worked on generating a procedural texture for the volcano in order to get a more realistic look. \
+We have also worked on the smoke particles coming out of the volcano crater. \
+Finally, we have started working on the simulation of the lava flow following the process described in the paper [Animating lava flows](http://www-evasion.imag.fr/Publications/1999/SACNG99/gi99.pdf).
+
 
 	<table>
 		<caption>Achieved Goals</caption>
