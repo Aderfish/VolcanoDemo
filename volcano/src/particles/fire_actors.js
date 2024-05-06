@@ -19,12 +19,15 @@ export function init_billboard_actor(
     regl,
     resources,
 ) {
-    const vertices = [[-0.5, -0.5], [-0.5, 0.5], [0.5, -0.5], [0.5, 0.5]];
+    const positions = [[-0.5, -0.5], [-0.5, 0.5], [0.5, -0.5], [0.5, 0.5]];
     const faces = [[0, 1, 2], [2, 3, 1]];
 
     const pipeline_draw_billboard = regl({
         attributes: {
-            square_position : vertices,
+            square_position : {
+                buffer: regl.buffer(positions),
+                size: positions[0].length,
+              },
         },
         uniforms: {
             mat_mvp: regl.prop("mat_mvp"),
