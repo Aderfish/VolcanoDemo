@@ -24,26 +24,26 @@ Finally, we have started working on the simulation of the lava flow following th
 		<tr>
 			<td>Week 1</td>
 			<td>Write the project proposal</td>
-			<td>Find resources on the features for the project</td>
+			<td>Find resources for textures needed to render terrain/rock/grass and etc</td>
 			<td>Setup the repository for the project</td>
 		</tr>
 		<tr>
 			<td>Week 2</td>
 			<td>Adapt code from Perlin noise homework to have foundation framework for the project + Design the procedural generation of the volcano</td>
-			<td>Design the procedural generation of the volcano terrain texture to get a realistic look</td>
+			<td>Try found textures on the terrain and adjust the parameters according to the visual effect</td>
 			<td>Start working on the smoke particles effect</td>
 		</tr>
 		<tr>
 			<td>Week 3</td>
 			<td>Start the implementation of the lava flow simulation</td>
-			<td>Design the procedural texture of the water</td>
+			<td>Study the techniques for the generation of the textures and clean-up the code for the implementation. Add water texture and fine tune all textures</td>
 			<td>Have a base implementation for the smoke particles effect</td>
 		</tr>
 	</table>
 
 2. Show some preliminary results.
 
-![An image showing your progress](images/demo.jpg){width="300px"}
+![An image showing your progress](images/reference.png){width="300px"}
 
 3. Optionally present the validation of any feature you have already implemented. This is not mandatory, but it can help you get useful feedback for the final report.
 
@@ -78,8 +78,21 @@ Finally, we have started working on the simulation of the lava flow following th
 
     - Implementation
 
+		We implement two textures to represent the mountain rocks and the low-altitude grass-like texture. The grass-like texture is achieved by using Voronoi method (cellular noise) combined with perlin noise. The mountain-rock like texture is done by employing fractal brownian motion on a type of cell noise (by taking the weighted sum of noise in the neighboring noise cells of a certain kernel size). This texture is highlighted by evaluating the dot product of the derivative of the generated texture and a fixed-direction light source. The final texture is a blending of these two textures depending on the height of the terrain in order to achieve a visual transition of grass to rock like texture. \
+
+		The water texture is created by using the same base function of the mountain texture with different parameters and a twist on top of it. In order to make the sea wave realistic, the twist involves an adaptation on pure mountain texture function, which a third-order polynomial is used to intepolate the dark side of the water to the lighter wave, creating a sharper transition. In addition to that, a cellular noise is added on to the water to achieve sort of different depth of the water in different regions. \
+
+		Finally, normal mapping (false color converted to grey-scale) is added to make it more realistic.
+
     - Validation
 
+		Mountain/Grass/Water Blending Texture: \
+
+		<img src="images/terrain_texture_val.png" width=700> \
+
+		Normal Mapping: \
+
+		<img src="images/terrain_normal_val.JPG" width=700> 
 
   - Smoke particles coming out of the volcano
 
@@ -101,19 +114,19 @@ Finally, we have started working on the simulation of the lava flow following th
 		<tr>
 			<td>Week 1</td>
 			<td>8</td>
-			<td></td>
+			<td>5</td>
 			<td></td>
 		</tr>
 		<tr>
 			<td>Week 2</td>
 			<td>10</td>
-			<td></td>
+			<td>13</td>
 			<td></td>
 		</tr>
 		<tr>
 			<td>Week 3</td>
 			<td>10</td>
-			<td></td>
+			<td>14</td>
 			<td></td>
 		</tr>
 	</table>

@@ -38,8 +38,7 @@
             <li class="active"><a href="#">Overview <span class="sr-only">(current)</span></a></li>
           </ul>-->
           <ul>
-          <li><a href="#project-title" id="toc-project-title">Project
-          Title</a>
+          <li><a href="#volcano" id="toc-volcano">Volcano</a>
           <ul>
           <li><a href="#progress-summary"
           id="toc-progress-summary">Progress Summary</a></li>
@@ -50,10 +49,22 @@
         </div>
         <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
         
-<h1 id="project-title">Project Title</h1>
+<h1 id="volcano">Volcano</h1>
 <h2 id="progress-summary">Progress Summary</h2>
 <ol type="1">
-<li><p>Summarize what you have accomplished so far.</p>
+<li><p>So far, we have started by creating a framework that will allow
+us to efficiently add features to our project. Then, we designed an
+algorithm using perlin noise to create the heightmap of a volcano on a
+island. And we have integrated a UI menu that allows to set the
+generation parameters in live (17 different parameters in total).<br />
+In parallel, we have worked on generating a procedural texture for the
+volcano in order to get a more realistic look.<br />
+We have also worked on the smoke particles coming out of the volcano
+crater.<br />
+Finally, we have started working on the simulation of the lava flow
+following the process described in the paper <a
+href="http://www-evasion.imag.fr/Publications/1999/SACNG99/gi99.pdf">Animating
+lava flows</a>.</p>
 <table>
 <caption>
 <p>Achieved Goals</p>
@@ -62,13 +73,13 @@
 <th>
 </th>
 <th>
-<p>Name 1</p>
-</th>
-<th>
-<p>Name 2</p>
+<p>Yoann Lafore</p>
 </th>
 <th>
 <p>Shimeng Ye</p>
+</th>
+<th>
+<p>Alberts Reisons</p>
 </th>
 </tr>
 <tr>
@@ -76,10 +87,14 @@
 <p>Week 1</p>
 </td>
 <td>
+<p>Write the project proposal</p>
 </td>
 <td>
+<p>Find resources for textures needed to render terrain/rock/grass and
+etc</p>
 </td>
-<td>Find resources for textures needed to render terrain/rock/grass and etc.
+<td>
+<p>Setup the repository for the project</p>
 </td>
 </tr>
 <tr>
@@ -87,10 +102,15 @@
 <p>Week 2</p>
 </td>
 <td>
+<p>Adapt code from Perlin noise homework to have foundation framework
+for the project + Design the procedural generation of the volcano</p>
 </td>
 <td>
+<p>Try found textures on the terrain and adjust the parameters according
+to the visual effect</p>
 </td>
-<td>Try found textures on the terrain and adjust the parameters according to the visual effect. 
+<td>
+<p>Start working on the smoke particles effect</p>
 </td>
 </tr>
 <tr>
@@ -98,17 +118,22 @@
 <p>Week 3</p>
 </td>
 <td>
+<p>Start the implementation of the lava flow simulation</p>
 </td>
 <td>
+<p>Study the techniques for the generation of the textures and clean-up
+the code for the implementation. Add water texture and fine tune all
+textures</p>
 </td>
-<td>Study the techniques for the generation of the textures and clean-up the code for the implementation. Start working on the lava texture.
+<td>
+<p>Have a base implementation for the smoke particles effect</p>
 </td>
 </tr>
 </table></li>
 <li><p>Show some preliminary results.</p></li>
 </ol>
 <figure>
-<img src="images/demo.jpg" width="300"
+<img src="images/reference.png" width="300"
 alt="An image showing your progress" />
 <figcaption aria-hidden="true">An image showing your
 progress</figcaption>
@@ -121,23 +146,78 @@ feedback for the final report.</p>
 <li><p>Feature Name</p>
 <ul>
 <li><p>Implementation</p>
-<p>Briefly describe how you implemented the feature.</p>
-<p>Terrain texture: we implement two textures to represent the mountain rocks
- and the low-altitude grass-like texture. The grass-like texture is achieved by
-  using Voronoi method (cellular noise) combined with perlin noise. The mountain-rock like
-  texture is done by employing fractal brownian motion on a type of cell noise  (by taking 
-  the weighted sum of noise in the neighboring noise cells of a certain kernel size). This 
-  texture is highlighted by evaluating the dot product of the derivative of the generated 
-  texture and a fixed-direction light source.
-  The final texture is a blending of these two textures depending on the height of the 
-  terrain in order to achieve a visual transition of grass to rock like texture.
-</p>
-</li>
+<p>Briefly describe how you implemented the feature.</p></li>
 <li><p>Validation</p>
 <p>Provide evidence (plots, screenshots, animations, etc.) that the
 feature works as expected.</p></li>
 </ul></li>
 </ul></li>
+</ol>
+<ul>
+<li><p>Volcanic island terrain generation</p>
+<ul>
+<li><p>Implementation</p>
+<p>The creation of the terrain has been splitted into two parts: the
+island and the volcano itself.<br />
+The island is first generated as a disk whose elevation smoothly
+decreases when approaching the edge in order to get a good transition
+with the water. Then, a combination of perlin FBM noises is used to get
+a more realistic terrain as well as little remote islands.<br />
+The volcano shape is created by generating a conic shape that descreases
+exponontially. Then, in the middle, we create a crater for where the
+lava particles will be emitted. Also, a combination of perlin FBM and
+turbulence noises are used to get the “rocky” look of the volcano.<br />
+Finally, both heightmaps are combined in order to get the look of a
+volcanic island.</p>
+<p>Also, to enhance interactivity, we have created a menu that allows to
+play with the various parameters of the generation. This allows to
+create all sort of volcanic islands by adjusting a total of 17 different
+parameters that play in the generation process.</p></li>
+<li><p>Validation</p>
+<p><img src="images/terrain_generation_val.png" width=700></p></li>
+</ul></li>
+<li><p>Terrain texture generation</p>
+<ul>
+<li><p>Implementation</p>
+<p>We implement two textures to represent the mountain rocks and the
+low-altitude grass-like texture. The grass-like texture is achieved by
+using Voronoi method (cellular noise) combined with perlin noise. The
+mountain-rock like texture is done by employing fractal brownian motion
+on a type of cell noise (by taking the weighted sum of noise in the
+neighboring noise cells of a certain kernel size). This texture is
+highlighted by evaluating the dot product of the derivative of the
+generated texture and a fixed-direction light source. The final texture
+is a blending of these two textures depending on the height of the
+terrain in order to achieve a visual transition of grass to rock like
+texture.<br />
+</p>
+<p>The water texture is created by using the same base function of the
+mountain texture with different parameters and a twist on top of it. In
+order to make the sea wave realistic, the twist involves an adaptation
+on pure mountain texture function, which a third-order polynomial is
+used to intepolate the dark side of the water to the lighter wave,
+creating a sharper transition. In addition to that, a cellular noise is
+added on to the water to achieve sort of different depth of the water in
+different regions.<br />
+</p>
+<p>Finally, normal mapping (false color converted to grey-scale) is
+added to make it more realistic.</p></li>
+<li><p>Validation</p>
+<p>Mountain/Grass/Water Blending Texture:<br />
+</p>
+<p><img src="images/terrain_texture_val.png" width=700><br />
+</p>
+<p>Normal Mapping:<br />
+</p>
+<p><img src="images/terrain_normal_val.JPG" width=700></p></li>
+</ul></li>
+<li><p>Smoke particles coming out of the volcano</p>
+<ul>
+<li><p>Implementation</p></li>
+<li><p>Validation</p></li>
+</ul></li>
+</ul>
+<ol start="4" type="1">
 <li><p>Report the number of hours each team member has dedicated to the
 project (as recorded on Moodle). Comment on the accuracy of your initial
 time estimates. Critically reflect on your work plan and assess if you
@@ -150,13 +230,13 @@ are on track.</p>
 <th>
 </th>
 <th>
-<p>Name 1</p>
-</th>
-<th>
-<p>Name 2</p>
+<p>Yoann Lafore</p>
 </th>
 <th>
 <p>Shimeng Ye</p>
+</th>
+<th>
+<p>Alberts Reisons</p>
 </th>
 </tr>
 <tr>
@@ -164,10 +244,12 @@ are on track.</p>
 <p>Week 1</p>
 </td>
 <td>
+<p>8</p>
 </td>
 <td>
+<p>5</p>
 </td>
-<td>5
+<td>
 </td>
 </tr>
 <tr>
@@ -175,11 +257,12 @@ are on track.</p>
 <p>Week 2</p>
 </td>
 <td>
+<p>10</p>
 </td>
 <td>
+<p>13</p>
 </td>
 <td>
-  13
 </td>
 </tr>
 <tr>
@@ -187,8 +270,10 @@ are on track.</p>
 <p>Week 3</p>
 </td>
 <td>
+<p>10</p>
 </td>
 <td>
+<p>14</p>
 </td>
 <td>
 </td>
@@ -199,7 +284,46 @@ are on track.</p>
 <ol type="1">
 <li><p>Acknowledge any delays or unexpected issues, and motivate
 proposed changes to the schedule, if needed.</p>
-<p>TODO</p></li>
+<p>We did not encountered any particular delay.<br />
+However, when digging further into the implementation of certain
+features we noticed a potential issue which is the following :<br />
+We initially planed to apply a voronoi tesselation of the lava particles
+system in order to generate the mesh. However, after looking at further
+documentations, we realised that this was going to be a hard task to
+implement properly. And this is amplified by the fact that we need to
+apply other constraints to the tessalation in order to keep a consistent
+mesh of the lava flowing. Moreover, the implementation of this feature
+is necessary before starting working on the rendering of the lava. So,
+we believe that continuing on the voronoi tesselation will introduce too
+much delay to finish the project correctly. We then propose the
+following alternative:<br />
+<br />
+Instead of using voronoi tesselation to create the lava mesh we will
+render each particle individually.<br />
+In order to keep some realism, some randomness will be introduced in the
+mesh generation of each lava particle. Regarding the rendering, it will
+still be physically based on the temperature of the particle combined
+with a procedural lava texture.<br />
+In order to compensate for the removing of the voronoi tesselation
+feature, we propose to implement the normal mapping feature (10 points)
+for the volcano and the water. This will allow to enhance the “rocky”
+look of the volcano as well as giving a more volumetric look to the
+water.<br />
+<br />
+To resume, we propose the following changes in the features:</p></li>
+</ol>
+<p><strong>Remove :</strong></p>
+<ul>
+<li>Lava rendering (voronoï tesselation of particles flow,
+semi-physically based rendering) (20 points)</li>
+</ul>
+<p><strong>Add :</strong></p>
+<ul>
+<li>Lava rendering (individual particle, semi-physically based
+rendering) (10 points)</li>
+<li>Normal mapping (for water and volcano) (10 points)</li>
+</ul>
+<ol start="2" type="1">
 <li><p>Present the work plan for the remaining time.</p>
 <table>
 <caption>
@@ -209,13 +333,13 @@ proposed changes to the schedule, if needed.</p>
 <th>
 </th>
 <th>
-<p>Name 1</p>
-</th>
-<th>
-<p>Name 2</p>
+<p>Yoann Lafore</p>
 </th>
 <th>
 <p>Shimeng Ye</p>
+</th>
+<th>
+<p>Alberts Reisons</p>
 </th>
 </tr>
 <tr>
@@ -223,10 +347,13 @@ proposed changes to the schedule, if needed.</p>
 <p>Week 4</p>
 </td>
 <td>
+<p>Fluid simulation of the lava (2/2)</p>
 </td>
 <td>
+<p>Normal mapping of the volcano terrain and water</p>
 </td>
-<td>Add procedural texture to the physically-based lava texture
+<td>
+<p>Create the procedural mesh of a lava particle</p>
 </td>
 </tr>
 <tr>
@@ -234,10 +361,13 @@ proposed changes to the schedule, if needed.</p>
 <p>Week 5</p>
 </td>
 <td>
+<p>Add ways for the user to interact with the simulation</p>
 </td>
 <td>
+<p>Procedural/Temperature based rendering of a lava particle</p>
 </td>
-<td>Prepare a cinematic scene for the video recording
+<td>
+<p>Start the writting of the final report</p>
 </td>
 </tr>
 <tr>
@@ -245,10 +375,13 @@ proposed changes to the schedule, if needed.</p>
 <p>Week 6</p>
 </td>
 <td>
+<p>Recording the final video</p>
 </td>
 <td>
+<p>Prepare the final presentation</p>
 </td>
-<td>Prepare the final presentation
+<td>
+<p>Finish the final report</p>
 </td>
 </tr>
 </table></li>
