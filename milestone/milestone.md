@@ -123,14 +123,14 @@ Finally, we have started working on the simulation of the lava flow following th
 1. Acknowledge any delays or unexpected issues, and motivate proposed changes to the schedule, if needed.
 
 	We did not encountered any particular delay. \
-  However, when digging further into the implementation of certain features we noticed a potential issue which is the following :
-  We initially planed to apply a voronoi tesselation of the lava particles system in order to generate the mesh. However, after looking at further documentations, we realised that this was going a hard task to implement properly. And this is amplified by the fact that we need to apply other constraints to the tessalation in order to keep a consistent mesh of the lava flowing.
+  However, when digging further into the implementation of certain features we noticed a potential issue which is the following : \
+  We initially planed to apply a voronoi tesselation of the lava particles system in order to generate the mesh. However, after looking at further documentations, we realised that this was going to be a hard task to implement properly. And this is amplified by the fact that we need to apply other constraints to the tessalation in order to keep a consistent mesh of the lava flowing.
   Moreover, the implementation of this feature is necessary before starting working on the rendering of the lava.
   So, we believe that continuing on the voronoi tesselation will introduce too much delay to finish the project correctly.
   We then propose the following alternative:\
   \
   Instead of using voronoi tesselation to create the lava mesh we will render each particle individually. \
-  In order to keep some realism, some randomness will be introduced in the generation of each lava particle. Regarding the rendering, it will still be physically based on the temperature of the particle combined with a procedural lava texture. \
+  In order to keep some realism, some randomness will be introduced in the mesh generation of each lava particle. Regarding the rendering, it will still be physically based on the temperature of the particle combined with a procedural lava texture. \
   In order to compensate for the removing of the voronoi tesselation feature, we propose to implement the normal mapping feature (10 points) for the volcano and the water. This will allow to enhance the "rocky" look of the volcano as well as giving a more volumetric look to the water. \
   \
   To resume, we propose the following changes in the features:
@@ -153,26 +153,26 @@ Finally, we have started working on the simulation of the lava flow following th
 		<caption>Updated Schedule</caption>
 		<tr>
 			<th></th>
-			<th>Name 1</th>
-			<th>Name 2</th>
-			<th>Name 3</th>
+			<th>Yoann Lafore</th>
+			<th>Shimeng Ye</th>
+			<th>Alberts Reisons</th>
 		</tr>
 		<tr>
 			<td>Week 4</td>
-			<td></td>
-			<td></td>
-			<td></td>
+			<td>Fluid simulation of the lava (2/2)</td>
+			<td>Normal mapping of the volcano terrain and water</td>
+			<td>Create the procedural mesh of a lava particle</td>
 		</tr>
 		<tr>
 			<td>Week 5</td>
-			<td></td>
-			<td></td>
-			<td></td>
+			<td>Add ways for the user to interact with the simulation</td>
+			<td>Procedural/Temperature based rendering of a lava particle</td>
+			<td>Start the writting of the final report</td>
 		</tr>
 		<tr>
 			<td>Week 6</td>
-			<td></td>
-			<td></td>
-			<td></td>
+			<td>Recording the final video</td>
+			<td>Prepare the final presentation</td>
+			<td>Finish the final report</td>
 		</tr>
 	</table>
