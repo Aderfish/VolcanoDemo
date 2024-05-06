@@ -86,7 +86,7 @@ Finally, we have started working on the simulation of the lava flow following th
     - Implementation
 
     - Validation
-    
+
 
 4. Report the number of hours each team member has dedicated to the project (as recorded on Moodle). Comment on the accuracy of your initial time estimates. Critically reflect on your work plan and assess if you are on track.
 
@@ -94,25 +94,25 @@ Finally, we have started working on the simulation of the lava flow following th
 		<caption>Worked Hours</caption>
 		<tr>
 			<th></th>
-			<th>Name 1</th>
-			<th>Name 2</th>
-			<th>Name 3</th>
+			<th>Yoann Lafore</th>
+			<th>Shimeng Ye</th>
+			<th>Alberts Reisons</th>
 		</tr>
 		<tr>
 			<td>Week 1</td>
-			<td></td>
+			<td>8</td>
 			<td></td>
 			<td></td>
 		</tr>
 		<tr>
 			<td>Week 2</td>
-			<td></td>
+			<td>10</td>
 			<td></td>
 			<td></td>
 		</tr>
 		<tr>
 			<td>Week 3</td>
-			<td></td>
+			<td>10</td>
 			<td></td>
 			<td></td>
 		</tr>
