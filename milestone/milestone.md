@@ -73,6 +73,21 @@ Finally, we have started working on the simulation of the lava flow following th
 
       <img src="images/terrain_generation_val.png" width=700>
 
+
+  - Terrain texture generation
+
+    - Implementation
+
+    - Validation
+
+
+  - Smoke particles coming out of the volcano
+
+    - Implementation
+
+    - Validation
+    
+
 4. Report the number of hours each team member has dedicated to the project (as recorded on Moodle). Comment on the accuracy of your initial time estimates. Critically reflect on your work plan and assess if you are on track.
 
 	<table>
