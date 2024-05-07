@@ -48,6 +48,9 @@ export function init_billboard_actor(
             this.mat_model_view = mat4.create();
             this.mat_normals = mat3.create();
             this.mat_model_to_world = mat4.create();
+            
+            this.mat_view_to_model = mat3.create();
+
             this.camera_right_world = vec3.create();
             this.camera_up_world =   vec3.create();
         }
@@ -60,20 +63,20 @@ export function init_billboard_actor(
             mat3.transpose(this.mat_normals, this.mat_normals);
             mat3.invert(this.mat_normals, this.mat_normals);
 
-            //this.camera_right_world = [this.mat_model_view[0][0], this.mat_model_view[1][0], this.mat_model_view[2][0]];
-            //this.camera_up_world    = [this.mat_model_view[0][1], this.mat_model_view[1][1], this.mat_model_view[2][1]];
-        
-            vec3.set(this.camera_right_world, 1., 0., 0.);
-            vec3.set(this.camera_up_world, 0., 1., 0.);
+            mat3.fromMat4(this.mat_view_to_model, this.mat_model_view);
+            mat3.invert(this.mat_view_to_model, this.mat_view_to_model);
 
+            vec3.transformMat3(this.camera_right_world, [1., 0., 0.], this.mat_view_to_model);
+            vec3.transformMat3(this.camera_up_world, [0., 1., 0.], this.mat_view_to_model);
+        
             pipeline_draw_billboard({
                 mat_mvp: this.mat_mvp,
                 
                 camera_right_world: this.camera_right_world,
                 camera_up_world: this.camera_up_world,
 
-                billboard_size: vec2.fromValues(1., 3.),
-                billboard_center_worldspace: vec3.fromValues(0., 0., 1.),
+                billboard_size: vec2.fromValues(30., 10.),
+                billboard_center_worldspace: vec3.fromValues(0., 0., 50.),
             });
         }
     }
