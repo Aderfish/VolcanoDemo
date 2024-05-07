@@ -71,7 +71,7 @@ async function main() {
 
   let cam_angle_z = -0.5; // in radians!
   let cam_angle_y = -0.42; // in radians!
-  let cam_distance_factor = 2048;
+  let cam_distance_factor = 10;
 
   let cam_target = [0, 0, 0];
 
@@ -205,7 +205,7 @@ async function main() {
       // Set the whole image to black
       regl.clear({ color: [0.9, 0.9, 1, 1] });
 
-      terrain_actor.draw(scene_info);
+      //terrain_actor.draw(scene_info);
       billboard_actor.draw(scene_info);
     }
   });
