@@ -79,18 +79,18 @@ Finally, we have started working on the simulation of the lava flow following th
     - Implementation
 
 		We implement two textures to represent the mountain rocks and the low-altitude grass-like texture. The grass-like texture is achieved by using Voronoi method (cellular noise) combined with perlin noise. The mountain-rock like texture is done by employing fractal brownian motion on a type of cell noise (by taking the weighted sum of noise in the neighboring noise cells of a certain kernel size). This texture is highlighted by evaluating the dot product of the derivative of the generated texture and a fixed-direction light source. The final texture is a blending of these two textures depending on the height of the terrain in order to achieve a visual transition of grass to rock like texture. \
-
+    \
 		The water texture is created by using the same base function of the mountain texture with different parameters and a twist on top of it. In order to make the sea wave realistic, the twist involves an adaptation on pure mountain texture function, which a third-order polynomial is used to intepolate the dark side of the water to the lighter wave, creating a sharper transition. In addition to that, a cellular noise is added on to the water to achieve sort of different depth of the water in different regions. \
-
+    \
 		Finally, normal mapping (false color converted to grey-scale) is added to make it more realistic.
 
     - Validation
 
-		Mountain/Grass/Water Blending Texture: \
+		Mountain/Grass/Water Blending Texture: 
 
 		<img src="images/terrain_texture_val.png" width=700> \
 
-		Normal Mapping: \
+		Normal Mapping: 
 
 		<img src="images/terrain_normal_val.JPG" width=700> 
 

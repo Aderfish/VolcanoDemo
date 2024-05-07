@@ -38,10 +38,12 @@
             <li class="active"><a href="#">Overview <span class="sr-only">(current)</span></a></li>
           </ul>-->
           <ul>
-          <li><a href="#volcano">Volcano</a>
+          <li><a href="#volcano" id="toc-volcano">Volcano</a>
           <ul>
-          <li><a href="#progress-summary">Progress Summary</a></li>
-          <li><a href="#schedule-update">Schedule Update</a></li>
+          <li><a href="#progress-summary"
+          id="toc-progress-summary">Progress Summary</a></li>
+          <li><a href="#schedule-update"
+          id="toc-schedule-update">Schedule Update</a></li>
           </ul></li>
           </ul>
         </div>
@@ -189,8 +191,8 @@ generated texture and a fixed-direction light source. The final texture
 is a blending of these two textures depending on the height of the
 terrain in order to achieve a visual transition of grass to rock like
 texture.<br />
-</p>
-<p>The water texture is created by using the same base function of the
+<br />
+The water texture is created by using the same base function of the
 mountain texture with different parameters and a twist on top of it. In
 order to make the sea wave realistic, the twist involves an adaptation
 on pure mountain texture function, which a third-order polynomial is
@@ -198,16 +200,14 @@ used to intepolate the dark side of the water to the lighter wave,
 creating a sharper transition. In addition to that, a cellular noise is
 added on to the water to achieve sort of different depth of the water in
 different regions.<br />
-</p>
-<p>Finally, normal mapping (false color converted to grey-scale) is
-added to make it more realistic.</p></li>
+<br />
+Finally, normal mapping (false color converted to grey-scale) is added
+to make it more realistic.</p></li>
 <li><p>Validation</p>
-<p>Mountain/Grass/Water Blending Texture:<br />
-</p>
+<p>Mountain/Grass/Water Blending Texture:</p>
 <p><img src="images/terrain_texture_val.png" width=700><br />
 </p>
-<p>Normal Mapping:<br />
-</p>
+<p>Normal Mapping:</p>
 <p><img src="images/terrain_normal_val.JPG" width=700></p></li>
 </ul></li>
 </ul>
