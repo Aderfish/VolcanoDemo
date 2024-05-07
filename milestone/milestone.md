@@ -31,13 +31,13 @@ Finally, we have started working on the simulation of the lava flow following th
 			<td>Week 2</td>
 			<td>Adapt code from Perlin noise homework to have foundation framework for the project + Design the procedural generation of the volcano</td>
 			<td>Try found textures on the terrain and adjust the parameters according to the visual effect</td>
-			<td>Start working on the smoke particles effect</td>
+			<td>Read ressources explaining how to add particles</td>
 		</tr>
 		<tr>
 			<td>Week 3</td>
 			<td>Start the implementation of the lava flow simulation</td>
 			<td>Study the techniques for the generation of the textures and clean-up the code for the implementation. Add water texture and fine tune all textures</td>
-			<td>Have a base implementation for the smoke particles effect</td>
+			<td>Have a base implementation for adding billboards and particles to the scene</td>
 		</tr>
 	</table>
 
@@ -94,12 +94,6 @@ Finally, we have started working on the simulation of the lava flow following th
 
 		<img src="images/terrain_normal_val.JPG" width=700> 
 
-  - Smoke particles coming out of the volcano
-
-    - Implementation
-
-    - Validation
-
 
 4. Report the number of hours each team member has dedicated to the project (as recorded on Moodle). Comment on the accuracy of your initial time estimates. Critically reflect on your work plan and assess if you are on track.
 
@@ -115,19 +109,19 @@ Finally, we have started working on the simulation of the lava flow following th
 			<td>Week 1</td>
 			<td>8</td>
 			<td>5</td>
-			<td></td>
+			<td>4</td>
 		</tr>
 		<tr>
 			<td>Week 2</td>
 			<td>10</td>
 			<td>13</td>
-			<td></td>
+			<td>2</td>
 		</tr>
 		<tr>
 			<td>Week 3</td>
 			<td>10</td>
 			<td>14</td>
-			<td></td>
+			<td>6</td>
 		</tr>
 	</table>
 
@@ -135,8 +129,9 @@ Finally, we have started working on the simulation of the lava flow following th
 
 1. Acknowledge any delays or unexpected issues, and motivate proposed changes to the schedule, if needed.
 
-	We did not encountered any particular delay. \
-  However, when digging further into the implementation of certain features we noticed a potential issue which is the following : \
+	Alberts did not have a lot of time to spend on the project these last weeks so the particle effects are still not completed. He also found it hard to get started with creating a new actor from scratch and adding new meshes to the render, since this was already in large part provided in the labs. He will therefore spend another week to finish his work on particle effects.
+
+	When digging further into the implementation of certain features we noticed a potential issue which is the following : \
   We initially planed to apply a voronoi tesselation of the lava particles system in order to generate the mesh. However, after looking at further documentations, we realised that this was going to be a hard task to implement properly. And this is amplified by the fact that we need to apply other constraints to the tessalation in order to keep a consistent mesh of the lava flowing.
   Moreover, the implementation of this feature is necessary before starting working on the rendering of the lava.
   So, we believe that continuing on the voronoi tesselation will introduce too much delay to finish the project correctly.
@@ -174,18 +169,18 @@ Finally, we have started working on the simulation of the lava flow following th
 			<td>Week 4</td>
 			<td>Fluid simulation of the lava (2/2)</td>
 			<td>Normal mapping of the volcano terrain and water</td>
-			<td>Create the procedural mesh of a lava particle</td>
+			<td>Create specific effects for smoke and projections</td>
 		</tr>
 		<tr>
 			<td>Week 5</td>
 			<td>Add ways for the user to interact with the simulation</td>
 			<td>Procedural/Temperature based rendering of a lava particle</td>
-			<td>Start the writting of the final report</td>
+			<td>Create the procedural mesh of a lava particle</td>
 		</tr>
 		<tr>
 			<td>Week 6</td>
 			<td>Recording the final video</td>
 			<td>Prepare the final presentation</td>
-			<td>Finish the final report</td>
+			<td>Write the final report</td>
 		</tr>
 	</table>
