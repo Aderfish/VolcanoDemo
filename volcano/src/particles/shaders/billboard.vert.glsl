@@ -1,3 +1,7 @@
+precision highp float;
+
+attribute vec2 square_position;
+
 uniform mat4 mat_mvp;
 
 uniform vec3 camera_right_world;
@@ -5,8 +9,6 @@ uniform vec3 camera_up_world;
 
 uniform vec2 billboard_size;
 uniform vec3 billboard_center_worldspace;
-
-varying vec2 square_position;
 
 void main(){
     vec3 vertex_position_worldspace =
