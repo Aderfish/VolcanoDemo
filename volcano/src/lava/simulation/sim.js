@@ -256,7 +256,7 @@ export class LavaSimulation {
    */
   gravity_force(particle) {
     // We use gravity as a force of -9.81 m/s^2 in the z direction
-    return [0, 0, -9.81];
+    return [0, 0, -9.81 * particle.mass];
   }
 
   /**
