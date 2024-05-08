@@ -349,6 +349,19 @@ export class LavaSimulation {
   }
 
   /**
+   * The pressure of a particle
+   *
+   * @param {LavaParticle} particle The particle for which to compute the particle pressure
+   * @returns the pressure of the particle
+   */
+  particle_pressure(particle) {
+    return (
+      this.incompressibility_factor_k *
+      (particle.density - this.density_at_rest)
+    );
+  }
+
+  /**
    * Compute the temperature laplacian of a particle
    *
    * @param {LavaParticle} particle The particle for which to compute the temperature laplacian
@@ -394,7 +407,7 @@ export class LavaSimulation {
    * @param {Array<LavaParticle>} neighbors The list of neighbors of the particle
    */
   set_pressure_force(particle, neighbors) {
-    particle.pressure = this.pressure_force(particle, neighbors);
+    particle.pressure_force = this.pressure_force(particle, neighbors);
   }
 
   /**
@@ -413,6 +426,15 @@ export class LavaSimulation {
    */
   set_particle_density(particle, neighbors) {
     particle.density = this.particle_density(particle, neighbors);
+  }
+
+  /**
+   * Set the pressure of a particle
+   * @param {LavaParticle} particle The particle for which to set the pressure
+   * @returns the pressure of the particle
+   */
+  set_particle_pressure(particle) {
+    particle.pressure = this.particle_pressure(particle);
   }
 
   /**
@@ -442,11 +464,18 @@ export class LavaSimulation {
       this.set_particle_density(particle, particle.neighbors);
     }
 
+    // Compute the pressure of each particle
+    for (let particle of this.particles) {
+      this.set_particle_pressure(particle);
+    }
+
     // Compute the pressure and viscosity forces of each particle
     for (let particle of this.particles) {
       this.set_pressure_force(particle, particle.neighbors);
       this.set_viscosity_force(particle, particle.neighbors);
     }
+
+    console.log(this.particles);
 
     // Create an updated list of particles
     const updated_particles = this.clone_particles_without_neighbors(
