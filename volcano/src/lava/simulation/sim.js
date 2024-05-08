@@ -13,11 +13,14 @@ class LavaParticle {
     // Physics characteristics
     this.pressure = 0;
     this.density = 0;
-    this.mass = 0;
     this.temperature = 0;
 
     // Simulation metrics
     this.temp_grad = [0, 0, 0];
+
+    // Constant characteristics
+    this.mass = 0;
+    this.radius = 0;
   }
 
   /**
@@ -56,6 +59,20 @@ class LavaSimulation {
     // See section 2.3 of the paper "Animating Lava Flows" (http://www-evasion.imag.fr/Publications/1999/SACNG99/gi99.pdf)
     this.visc_a_factor = 220;
     this.visc_b_factor = 0.5;
+
+    // The density of the lava at rest
+    this.density_at_rest = 2500; // In kg/m^3
+    this.incompressibility_factor_k = 90000;
+
+    // The mass and radius of the particles (constant throughout the simulation)
+    this.particle_mass = 1; // In kg
+    this.particle_radius = Math.pow(
+      (3 / (4 * Math.PI)) * (this.particle_mass / this.density_at_rest),
+      1 / 3
+    ); // In m
+
+    // The initial temperature of the lava particles
+    this.initial_temperature = 1200 + 273.15; // In Kelvin
   }
 
   /**
@@ -127,6 +144,11 @@ class LavaSimulation {
 
     // Create the particle
     const particle = new LavaParticle(x, y, z);
+
+    // Set the constant characteristics of the particle
+    particle.mass = this.particle_mass;
+    particle.radius = this.particle_radius;
+    particle.temperature = this.initial_temperature;
 
     // Add the particle to the simulation
     this.particles.push(particle);
@@ -306,4 +328,6 @@ class LavaSimulation {
   set_temperature_gradient(particle, neighbors) {
     particle.temp_grad = this.temperature_gradient(particle, neighbors);
   }
+
+  // --- Simulation methods
 }
