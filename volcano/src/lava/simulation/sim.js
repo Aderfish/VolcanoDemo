@@ -21,6 +21,10 @@ class LavaParticle {
     // Constant characteristics
     this.mass = 0;
     this.radius = 0;
+
+    // Forces
+    this.pressure_force = [0, 0, 0];
+    this.viscosity_force = [0, 0, 0];
   }
 
   /**
@@ -327,6 +331,25 @@ class LavaSimulation {
    */
   set_temperature_gradient(particle, neighbors) {
     particle.temp_grad = this.temperature_gradient(particle, neighbors);
+  }
+
+  /**
+   * Set the pressure force that is exerted a particle
+   *
+   * @param {LavaParticle} particle The particle for which to set the pressure force
+   * @param {Array<LavaParticle>} neighbors The list of neighbors of the particle
+   */
+  set_pressure_force(particle, neighbors) {
+    particle.pressure = this.pressure_force(particle, neighbors);
+  }
+
+  /**
+   * Set the viscosity force that is exerted a particle
+   * @param {LavaParticle} particle The particle for which to set the viscosity force
+   * @param {Array<LavaParticle>} neighbors The list of neighbors of the particle
+   */
+  set_viscosity_force(particle, neighbors) {
+    particle.viscosity_force = this.viscosity_force(particle, neighbors);
   }
 
   // --- Simulation methods
