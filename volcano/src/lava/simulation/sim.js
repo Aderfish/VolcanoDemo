@@ -1,5 +1,5 @@
-import { exp } from "../../../lib/gl-matrix_3.3.0/esm/quat";
-import { BufferData } from "../../terrain/terrain_actor";
+import { exp } from "../../../lib/gl-matrix_3.3.0/esm/quat.js";
+import { BufferData } from "../../terrain/terrain_actor.js";
 
 class LavaParticle {
   constructor(x, y, z) {
@@ -68,10 +68,10 @@ class LavaParticle {
   }
 }
 
-class LavaSimulation {
-  constructor(terrain_heightmap_buffer, generation_parameters) {
+export class LavaSimulation {
+  constructor(regl, terrain_heightmap_buffer, generation_parameters) {
     this.particles = [];
-    this.terrain_heightmap = new BufferData(terrain_heightmap_buffer);
+    this.terrain_heightmap = new BufferData(regl, terrain_heightmap_buffer);
     this.generation_parameters = generation_parameters;
 
     // ---- Smoothing kernel parameters
@@ -95,11 +95,12 @@ class LavaSimulation {
     this.incompressibility_factor_k = 90000;
 
     // The mass and radius of the particles (constant throughout the simulation)
-    this.particle_mass = 1; // In kg
-    this.particle_radius = Math.pow(
-      (3 / (4 * Math.PI)) * (this.particle_mass / this.density_at_rest),
-      1 / 3
-    ); // In m
+    this.particle_radius = 0.5; // In m
+    this.particle_mass =
+      (4 / 3) *
+      Math.PI *
+      Math.pow(this.particle_radius, 3) *
+      this.density_at_rest; // In kg
 
     // The initial temperature of the lava particles
     this.initial_temperature = 1200 + 273.15; // In Kelvin
@@ -200,7 +201,7 @@ class LavaSimulation {
     const neighbors = [];
     const neighbors_radius = 4 * particle.m_kernel_h2;
 
-    for (p in this.particles) {
+    for (let p of this.particles) {
       if (p != particle) {
         const dist2 = particle.distance_square_with(p);
         if (dist2 < neighbors_radius) {
@@ -244,7 +245,7 @@ class LavaSimulation {
   pressure_force(particle, neighbors) {
     let force = [0, 0, 0];
 
-    for (neigh_particle in neighbors) {
+    for (let neigh_particle of neighbors) {
       // Compute the kernel gradient between the particle and its neighbor
       const kernel_grad = this.kernel_gradient(particle, neigh_particle);
 
@@ -280,7 +281,7 @@ class LavaSimulation {
 
     let force = [0, 0, 0];
 
-    for (neigh_particle in neighbors) {
+    for (let neigh_particle of neighbors) {
       const d_vx = particle.vx - neigh_particle.vx;
       const d_vy = particle.vy - neigh_particle.vy;
       const d_vz = particle.vz - neigh_particle.vz;
@@ -308,7 +309,7 @@ class LavaSimulation {
   temperature_gradient(particle, neighbors) {
     let grad = [0, 0, 0];
 
-    for (neigh_particle in neighbors) {
+    for (let neigh_particle of neighbors) {
       const kernel_grad = this.kernel_gradient(particle, neigh_particle);
 
       const d_temp = particle.temperature - neigh_particle.temperature;
@@ -333,7 +334,7 @@ class LavaSimulation {
   particle_density(particle, neightbors) {
     let density = 0;
 
-    for (neigh_particle in neightbors) {
+    for (let neigh_particle of neightbors) {
       const kernel_value = this.kernel(particle, neigh_particle);
       density += neigh_particle.mass * kernel_value;
     }
@@ -351,7 +352,7 @@ class LavaSimulation {
   temperature_laplacian(particle, neighbors) {
     let laplacian = 0;
 
-    for (neigh_particle in neighbors) {
+    for (let neigh_particle of neighbors) {
       const kernel_grad = this.kernel_gradient(particle, neigh_particle);
       const temp_grad = neigh_particle.temp_grad;
 
@@ -416,7 +417,7 @@ class LavaSimulation {
    */
   clone_particles_without_neighbors(particles) {
     const clone = [];
-    for (p in particles) {
+    for (let p of particles) {
       clone.push(p.clone_without_neighbors());
     }
 
@@ -426,17 +427,17 @@ class LavaSimulation {
   // --- Simulation methods
   euler_explicit(step) {
     // Compute the list of neightbors of each particle
-    for (particle in this.particles) {
+    for (let particle of this.particles) {
       particle.neighbors = this.get_neighbors(particle);
     }
 
     // Compute the density of each particle
-    for (particle in this.particles) {
+    for (let particle of this.particles) {
       this.set_particle_density(particle, particle.neighbors);
     }
 
     // Compute the pressure and viscosity forces of each particle
-    for (particle in this.particles) {
+    for (let particle of this.particles) {
       this.set_pressure_force(particle, particle.neighbors);
       this.set_viscosity_force(particle, particle.neighbors);
     }
@@ -474,7 +475,24 @@ class LavaSimulation {
     this.particles = updated_particles;
   }
 
+  add_n_particles(n) {
+    for (let i = 0; i < n; i++) {
+      this.add_particle();
+    }
+  }
+
   do_one_step() {
     this.euler_explicit(this.timestep);
+  }
+
+  get_particles_data() {
+    const data = [];
+    console.log(this.particles);
+
+    for (let particle of this.particles) {
+      data.push([particle.x, particle.y, particle.z, particle.temperature]);
+    }
+
+    return data;
   }
 }
