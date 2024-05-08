@@ -124,9 +124,10 @@ export class LavaSimulation {
    * @param {LavaParticle} particle_j the particle to compute the kernel with
    * @returns the kernel value between the two particles
    */
-  kernel(particle_i, particle_j) {
+  kernel_between(particle_i, particle_j) {
     const dist2 = particle_i.distance_square_with(particle_j);
-    return this.kernel(Math.sqrt(dist2));
+
+    return this.gaussian_kernel(Math.sqrt(dist2));
   }
 
   /**
@@ -139,7 +140,7 @@ export class LavaSimulation {
    */
   kernel_gradient(particle_i, particle_j) {
     const kernel_value_factor =
-      (-2 * this.kernel(particle_i, particle_j)) / this.m_kernel_h2;
+      (-2 * this.kernel_between(particle_i, particle_j)) / this.m_kernel_h2;
 
     const dx = particle_i.x - particle_j.x;
     const dy = particle_i.y - particle_j.y;
@@ -201,7 +202,7 @@ export class LavaSimulation {
    */
   get_neighbors(particle) {
     const neighbors = [];
-    const neighbors_radius = 4 * particle.m_kernel_h2;
+    const neighbors_radius = 4 * this.m_kernel_h2;
 
     for (let p of this.particles) {
       if (p != particle) {
@@ -291,7 +292,7 @@ export class LavaSimulation {
       const d_vy = particle.vy - neigh_particle.vy;
       const d_vz = particle.vz - neigh_particle.vz;
 
-      const kernel_value = this.kernel(particle, neigh_particle);
+      const kernel_value = this.kernel_between(particle, neigh_particle);
 
       const norm_factor = neigh_particle.mass / neigh_particle.density;
 
@@ -333,14 +334,14 @@ export class LavaSimulation {
    * Compute the density of a particle
    *
    * @param {LavaParticle} particle The particle for which to compute the density
-   * @param {Array<LavaParticle>} neightbors The list of neighbors of the particle
+   * @param {Array<LavaParticle>} neighbors The list of neighbors of the particle
    * @returns the density of the particle
    */
-  particle_density(particle, neightbors) {
+  particle_density(particle, neighbors) {
     let density = 0;
 
-    for (let neigh_particle of neightbors) {
-      const kernel_value = this.kernel(particle, neigh_particle);
+    for (const neigh_particle of neighbors) {
+      const kernel_value = this.kernel_between(particle, neigh_particle);
       density += neigh_particle.mass * kernel_value;
     }
 
@@ -492,7 +493,7 @@ export class LavaSimulation {
 
   get_particles_data() {
     const data = [];
-    console.log(this.particles);
+    // console.log(this.particles);
 
     for (let particle of this.particles) {
       data.push([particle.x, particle.y, particle.z, particle.temperature]);
