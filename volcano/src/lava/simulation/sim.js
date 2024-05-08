@@ -73,15 +73,6 @@ export class LavaSimulation {
     this.terrain_heightmap = new BufferData(regl, terrain_heightmap_buffer);
     this.generation_parameters = generation_parameters;
 
-    // ---- Smoothing kernel parameters
-    // This is the kernel radius of action
-    this.m_kernel_h = 1.0;
-    this.m_kernel_h2 = this.m_kernel_h * this.m_kernel_h;
-
-    // This is the normalisation factor of the kernel
-    this.m_kernel_alpha =
-      15 / (Math.PI * this.m_kernel_h * this.m_kernel_h * this.m_kernel_h);
-
     // ---- Simulation parameters
 
     // Evolution of the viscosity of the lava with temperature
@@ -91,30 +82,86 @@ export class LavaSimulation {
 
     // The density of the lava at rest
     this.density_at_rest = 2500; // In kg/m^3
-    this.incompressibility_factor_k = 90000;
+    this.incompressibility_factor_k = 100;
 
     // The mass and radius of the particles (constant throughout the simulation)
-    this.particle_radius = 0.5; // In m
+    this.particle_radius = 0.1; // In m
     this.particle_mass =
       (4 / 3) *
       Math.PI *
       Math.pow(this.particle_radius, 3) *
       this.density_at_rest; // In kg
 
+    // ---- Smoothing kernel parameters
+    // This is the kernel radius of action
+    this.m_kernel_h = this.particle_radius * Math.pow(5 / 2, 1 / 3);
+    this.m_kernel_h2 = this.m_kernel_h * this.m_kernel_h;
+    this.m_kernel_h3 = this.m_kernel_h2 * this.m_kernel_h;
+
+    this.kernel_alpha_factor = 15 / (Math.PI * 64 * this.m_kernel_h3);
+
     // The initial temperature of the lava particles
     this.initial_temperature = 1200 + 273.15; // In Kelvin
 
     // The timestep of the simulation
-    this.timestep = 0.1; // In seconds
+    this.timestep = 0.01; // In seconds
   }
 
   /**
-   * Compute the gaussian kernel value at distance d from the center
-   *
-   * @param {number} d The distance from the center of the kernel
+   * Compute the kernel function
+   * The kernel is taken from the alternative kernel proposed in the paper
+   * "Smoothed Particles : A new paradigm for animating highly deformable bodies"
+   * [http://www.geometry.caltech.edu/pubs/DC_EW96.pdf]
+   * @param {*} r
    */
-  gaussian_kernel(d) {
-    return this.m_kernel_alpha * Math.exp((-d * d) / this.m_kernel_h2);
+  kernel_function(r) {
+    if (r < 0) {
+      // Should not happen
+      console.error("r should be positive");
+      return 0;
+    }
+
+    if (r > 2 * this.m_kernel_h) {
+      return 0;
+    }
+
+    const pow_factor = 2 - r / this.m_kernel_h;
+
+    return this.kernel_alpha_factor * Math.pow(pow_factor, 3);
+  }
+
+  /**
+   * Compute the gradient of the kernel function
+   *
+   * @param {LavaParticle} particle_i the particle for which to compute the gradient
+   * @param {LavaParticle} particle_j the particle to compute the gradient with
+   * @returns the gradient of the kernel function between the two particles
+   */
+  kernel_function_gradient(particle_i, particle_j) {
+    const dist2 = particle_i.distance_square_with(particle_j);
+
+    const dist = Math.sqrt(dist2);
+
+    if (dist > 2 * this.m_kernel_h) {
+      return [0, 0, 0];
+    }
+
+    const pow_factor = 2 - dist / this.m_kernel_h;
+
+    const derivative_factor =
+      -this.kernel_alpha_factor *
+      Math.pow(pow_factor, 2) *
+      (2 / (this.m_kernel_h * dist));
+
+    const dx = particle_i.x - particle_j.x;
+    const dy = particle_i.y - particle_j.y;
+    const dz = particle_i.z - particle_j.z;
+
+    return [
+      derivative_factor * dx,
+      derivative_factor * dy,
+      derivative_factor * dz,
+    ];
   }
 
   /**
@@ -127,30 +174,7 @@ export class LavaSimulation {
   kernel_between(particle_i, particle_j) {
     const dist2 = particle_i.distance_square_with(particle_j);
 
-    return this.gaussian_kernel(Math.sqrt(dist2));
-  }
-
-  /**
-   * Compute the gradient of the kernel between two particles
-   * with respect to the position of the first particle [particle_i]
-   *
-   * @param {LavaParticle} particle_i the particle for which to compute the gradient
-   * @param {LavaParticle} particle_j the particle to compute the gradient with
-   * @returns the gradient of the kernel between the two particles
-   */
-  kernel_gradient(particle_i, particle_j) {
-    const kernel_value_factor =
-      (-2 * this.kernel_between(particle_i, particle_j)) / this.m_kernel_h2;
-
-    const dx = particle_i.x - particle_j.x;
-    const dy = particle_i.y - particle_j.y;
-    const dz = particle_i.z - particle_j.z;
-
-    return [
-      kernel_value_factor * dx,
-      kernel_value_factor * dy,
-      kernel_value_factor * dz,
-    ];
+    return this.kernel_function(Math.sqrt(dist2));
   }
 
   /**
@@ -250,14 +274,19 @@ export class LavaSimulation {
 
     for (let neigh_particle of neighbors) {
       // Compute the kernel gradient between the particle and its neighbor
-      const kernel_grad = this.kernel_gradient(particle, neigh_particle);
+      const kernel_grad = this.kernel_function_gradient(
+        particle,
+        neigh_particle
+      );
+      // console.log("Kernel grad");
+      // console.log(kernel_grad);
 
       // Compute the pressure force
       const pressure =
         particle.mass *
         neigh_particle.mass *
         (particle.pressure / particle.density ** 2 +
-          neigh_particle.pressure / particle.density ** 2);
+          neigh_particle.pressure / neigh_particle.density ** 2);
 
       force[0] -= pressure * kernel_grad[0];
       force[1] -= pressure * kernel_grad[1];
@@ -316,7 +345,10 @@ export class LavaSimulation {
     let grad = [0, 0, 0];
 
     for (let neigh_particle of neighbors) {
-      const kernel_grad = this.kernel_gradient(particle, neigh_particle);
+      const kernel_grad = this.kernel_function_gradient(
+        particle,
+        neigh_particle
+      );
 
       const d_temp = particle.temperature - neigh_particle.temperature;
 
@@ -345,6 +377,8 @@ export class LavaSimulation {
       density += neigh_particle.mass * kernel_value;
     }
 
+    density += particle.mass * this.kernel_function(0);
+
     return density;
   }
 
@@ -372,7 +406,10 @@ export class LavaSimulation {
     let laplacian = 0;
 
     for (let neigh_particle of neighbors) {
-      const kernel_grad = this.kernel_gradient(particle, neigh_particle);
+      const kernel_grad = this.kernel_function_gradient(
+        particle,
+        neigh_particle
+      );
       const temp_grad = neigh_particle.temp_grad;
 
       const kernel_grad_dot_prod =
@@ -475,8 +512,6 @@ export class LavaSimulation {
       this.set_viscosity_force(particle, particle.neighbors);
     }
 
-    console.log(this.particles);
-
     // Create an updated list of particles
     const updated_particles = this.clone_particles_without_neighbors(
       this.particles
@@ -493,9 +528,12 @@ export class LavaSimulation {
       const new_y = particle.y + step * particle.vy;
       const new_z = particle.z + step * particle.vz;
 
-      const new_vx = particle.vx + step * (pressure[0] + viscosity[0]);
-      const new_vy = particle.vy + step * (pressure[1] + viscosity[1]);
-      const new_vz = particle.vz + step * (pressure[2] + viscosity[2]);
+      const new_vx =
+        particle.vx + (step * (pressure[0] + viscosity[0])) / particle.mass;
+      const new_vy =
+        particle.vy + (step * (pressure[1] + viscosity[1])) / particle.mass;
+      const new_vz =
+        particle.vz + (step * (pressure[2] + viscosity[2])) / particle.mass;
 
       updated_particles[i].x = new_x;
       updated_particles[i].y = new_y;
