@@ -1,4 +1,3 @@
-import { exp } from "../../../lib/gl-matrix_3.3.0/esm/quat.js";
 import { BufferData } from "../../terrain/terrain_actor.js";
 
 class LavaParticle {
@@ -173,8 +172,11 @@ export class LavaSimulation {
     const radius_at_z = this.generation_parameters.volcano.m_crater_radius / 2;
 
     // Add a random offset to the spawn position
-    x += Math.random() * radius_at_z;
-    y += Math.random() * radius_at_z;
+    const random_radius = Math.random() * radius_at_z * 0.9;
+    const random_angle = Math.random() * 2 * Math.PI;
+
+    x += random_radius * Math.cos(random_angle);
+    y += random_radius * Math.sin(random_angle);
 
     // Create the particle
     const particle = new LavaParticle(x, y, z);
@@ -275,8 +277,11 @@ export class LavaSimulation {
    * @returns the viscosity force acting on the particle
    */
   viscosity_force(particle, neighbors) {
+    let buffer = 0;
+
     const visc_factor =
-      this.visc_b_factor * exp(-this.visc_a_factor * particle.temperature);
+      this.visc_b_factor *
+      Math.exp(buffer, -this.visc_a_factor * particle.temperature);
     const global_factor = (visc_factor * particle.mass) / particle.density;
 
     let force = [0, 0, 0];
