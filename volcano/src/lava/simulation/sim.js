@@ -44,7 +44,7 @@ class LavaParticle {
     return dx * dx + dy * dy + dz * dz;
   }
 
-  clone() {
+  clone_without_neighbors() {
     const clone = new LavaParticle(this.x, this.y, this.z);
     clone.vx = this.vx;
     clone.vy = this.vy;
@@ -62,8 +62,7 @@ class LavaParticle {
     clone.pressure_force = this.pressure_force;
     clone.viscosity_force = this.viscosity_force;
 
-    // No need to deep copy the neighbors because they are not modified
-    clone.neighbors = this.neighbors;
+    clone.neighbors = [];
 
     return clone;
   }
@@ -412,17 +411,17 @@ class LavaSimulation {
    * @param {Array<LavaParticle>} particles The list of particles to clone
    * @returns the cloned list of particles
    */
-  clone_particles(particles) {
+  clone_particles_without_neighbors(particles) {
     const clone = [];
     for (p in particles) {
-      clone.push(p.clone());
+      clone.push(p.clone_without_neighbors());
     }
 
     return clone;
   }
 
   // --- Simulation methods
-  runge_kutta_2_(step) {
+  euler_explicit(step) {
     // Compute the list of neightbors of each particle
     for (particle in this.particles) {
       particle.neighbors = this.get_neighbors(particle);
@@ -440,6 +439,35 @@ class LavaSimulation {
     }
 
     // Create an updated list of particles
-    const updated_particles = this.particles.copyWithin();
+    const updated_particles = this.clone_particles_without_neighbors(
+      this.particles
+    );
+
+    // Compute the new position of each particle
+    for (let i = 0; i < this.particles.length; i++) {
+      const particle = this.particles[i];
+
+      const pressure = particle.pressure_force;
+      const viscosity = particle.viscosity_force;
+
+      const new_x = particle.x + step * particle.vx;
+      const new_y = particle.y + step * particle.vy;
+      const new_z = particle.z + step * particle.vz;
+
+      const new_vx = particle.vx + step * (pressure[0] + viscosity[0]);
+      const new_vy = particle.vy + step * (pressure[1] + viscosity[1]);
+      const new_vz = particle.vz + step * (pressure[2] + viscosity[2]);
+
+      updated_particles[i].x = new_x;
+      updated_particles[i].y = new_y;
+      updated_particles[i].z = new_z;
+
+      updated_particles[i].vx = new_vx;
+      updated_particles[i].vy = new_vy;
+      updated_particles[i].vz = new_vz;
+    }
+
+    // Update the list of particles
+    this.particles = updated_particles;
   }
 }
