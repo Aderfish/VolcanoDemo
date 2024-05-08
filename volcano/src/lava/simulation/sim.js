@@ -43,6 +43,30 @@ class LavaParticle {
 
     return dx * dx + dy * dy + dz * dz;
   }
+
+  clone() {
+    const clone = new LavaParticle(this.x, this.y, this.z);
+    clone.vx = this.vx;
+    clone.vy = this.vy;
+    clone.vz = this.vz;
+
+    clone.pressure = this.pressure;
+    clone.density = this.density;
+    clone.temperature = this.temperature;
+
+    clone.temp_grad = this.temp_grad;
+
+    clone.mass = this.mass;
+    clone.radius = this.radius;
+
+    clone.pressure_force = this.pressure_force;
+    clone.viscosity_force = this.viscosity_force;
+
+    // No need to deep copy the neighbors because they are not modified
+    clone.neighbors = this.neighbors;
+
+    return clone;
+  }
 }
 
 class LavaSimulation {
@@ -382,6 +406,21 @@ class LavaSimulation {
     particle.density = this.particle_density(particle, neighbors);
   }
 
+  /**
+   * Clone a list of particles
+   *
+   * @param {Array<LavaParticle>} particles The list of particles to clone
+   * @returns the cloned list of particles
+   */
+  clone_particles(particles) {
+    const clone = [];
+    for (p in particles) {
+      clone.push(p.clone());
+    }
+
+    return clone;
+  }
+
   // --- Simulation methods
   runge_kutta_2_(step) {
     // Compute the list of neightbors of each particle
@@ -393,5 +432,14 @@ class LavaSimulation {
     for (particle in this.particles) {
       this.set_particle_density(particle, particle.neighbors);
     }
+
+    // Compute the pressure and viscosity forces of each particle
+    for (particle in this.particles) {
+      this.set_pressure_force(particle, particle.neighbors);
+      this.set_viscosity_force(particle, particle.neighbors);
+    }
+
+    // Create an updated list of particles
+    const updated_particles = this.particles.copyWithin();
   }
 }
