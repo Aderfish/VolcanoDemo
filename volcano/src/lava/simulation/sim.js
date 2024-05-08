@@ -383,21 +383,6 @@ class LavaSimulation {
   }
 
   // --- Simulation methods
-
-  /**
-   * Compute the forces acting on the particles
-   *
-   * @param {Array<LavaParticle>} particles The list of particles for which to compute the forces
-   */
-  compute_forces(particles) {
-    for (particle in particles) {
-      const neighbors = this.get_neighbors(particle);
-
-      this.set_pressure_force(particle, neighbors);
-      this.set_viscosity_force(particle, neighbors);
-    }
-  }
-
   runge_kutta_2_(step) {
     // Compute the list of neightbors of each particle
     for (particle in this.particles) {
