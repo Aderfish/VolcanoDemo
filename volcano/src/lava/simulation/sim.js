@@ -103,6 +103,9 @@ class LavaSimulation {
 
     // The initial temperature of the lava particles
     this.initial_temperature = 1200 + 273.15; // In Kelvin
+
+    // The timestep of the simulation
+    this.timestep = 0.1; // In seconds
   }
 
   /**
@@ -469,5 +472,9 @@ class LavaSimulation {
 
     // Update the list of particles
     this.particles = updated_particles;
+  }
+
+  do_one_step() {
+    this.euler_explicit(this.timestep);
   }
 }
