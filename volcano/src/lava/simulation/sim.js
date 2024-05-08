@@ -25,6 +25,9 @@ class LavaParticle {
     // Forces
     this.pressure_force = [0, 0, 0];
     this.viscosity_force = [0, 0, 0];
+
+    // Neighbors
+    this.neighbors = [];
   }
 
   /**
@@ -295,6 +298,24 @@ class LavaSimulation {
   }
 
   /**
+   * Compute the density of a particle
+   *
+   * @param {LavaParticle} particle The particle for which to compute the density
+   * @param {Array<LavaParticle>} neightbors The list of neighbors of the particle
+   * @returns the density of the particle
+   */
+  particle_density(particle, neightbors) {
+    let density = 0;
+
+    for (neigh_particle in neightbors) {
+      const kernel_value = this.kernel(particle, neigh_particle);
+      density += neigh_particle.mass * kernel_value;
+    }
+
+    return density;
+  }
+
+  /**
    * Compute the temperature laplacian of a particle
    *
    * @param {LavaParticle} particle The particle for which to compute the temperature laplacian
@@ -352,5 +373,40 @@ class LavaSimulation {
     particle.viscosity_force = this.viscosity_force(particle, neighbors);
   }
 
+  /**
+   * Set the density of a particle
+   * @param {LavaParticle} particle The particle for which to set the density
+   * @param {Array<LavaParticle>} neighbors The list of neighbors of the particle
+   */
+  set_particle_density(particle, neighbors) {
+    particle.density = this.particle_density(particle, neighbors);
+  }
+
   // --- Simulation methods
+
+  /**
+   * Compute the forces acting on the particles
+   *
+   * @param {Array<LavaParticle>} particles The list of particles for which to compute the forces
+   */
+  compute_forces(particles) {
+    for (particle in particles) {
+      const neighbors = this.get_neighbors(particle);
+
+      this.set_pressure_force(particle, neighbors);
+      this.set_viscosity_force(particle, neighbors);
+    }
+  }
+
+  runge_kutta_2_(step) {
+    // Compute the list of neightbors of each particle
+    for (particle in this.particles) {
+      particle.neighbors = this.get_neighbors(particle);
+    }
+
+    // Compute the density of each particle
+    for (particle in this.particles) {
+      this.set_particle_density(particle, particle.neighbors);
+    }
+  }
 }
