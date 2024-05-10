@@ -7,6 +7,8 @@ import { init_terrain_actor } from "./terrain/terrain_actor.js";
 import { init_volcano_heightmap } from "./noise/volcano_heightmap.js";
 import { GenerationParameters } from "./noise/generation_parameters.js";
 import { link_generation_parameters_menu } from "./ui/generation_parameters_menu.js";
+import { LavaRenderingActor } from "./lava/lava_actor.js";
+import { LavaSimulation } from "./lava/simulation/sim.js";
 
 async function main() {
   // Create the regl canvas
@@ -50,6 +52,9 @@ async function main() {
 
     "noise/shaders/volcano_heightmap.vert.glsl",
     "noise/shaders/volcano_heightmap.frag.glsl",
+
+    "lava/shaders/lava_particle.vert.glsl",
+    "lava/shaders/lava_particle.frag.glsl",
   ].forEach((shader_filename) => {
     resources[`${shader_filename}`] = load_text(`./src/${shader_filename}`);
   });
@@ -129,6 +134,15 @@ async function main() {
     update_needed = true;
   });
 
+  let do_sim_step = false;
+  window.addEventListener("keydown", (event) => {
+    if (event.key === "s") {
+      // Code to execute when the "s" key is pressed
+      do_sim_step = !do_sim_step;
+      // Add your code here
+    }
+  });
+
   let regenerate_terrain_needed = true;
   let generation_parameters = new GenerationParameters();
 
@@ -147,11 +161,16 @@ async function main() {
 
   const volcano_heightmap = init_volcano_heightmap(regl, resources);
   let terrain_actor;
+  let lava_simulation;
+  let particles_data = [];
+
+  const lava_actor = new LavaRenderingActor(regl, resources);
 
   /*---------------------------------------------------------------
 		Frame render
 	---------------------------------------------------------------*/
   const mat_projection = mat4.create();
+
   const mat_view = mat4.create();
 
   let light_position_world = [-800, -800, 800, 1.0];
@@ -172,6 +191,22 @@ async function main() {
         generation_parameters.terrain
       );
       console.log("Terrain regenerated");
+
+      lava_simulation = new LavaSimulation(
+        regl,
+        volcano_heightmap.get_buffer(),
+        generation_parameters
+      );
+
+      lava_simulation.add_n_particles(20);
+      particles_data = lava_simulation.get_particles_data();
+    }
+
+    if (do_sim_step) {
+      //do_sim_step = false;
+      lava_simulation.do_one_step();
+      particles_data = lava_simulation.get_particles_data();
+      update_needed = true;
     }
 
     if (update_needed) {
@@ -191,6 +226,7 @@ async function main() {
       vec4.transformMat4(light_position_cam, light_position_world, mat_view);
 
       const scene_info = {
+        particles_data: particles_data,
         mat_view: mat_view,
         mat_projection: mat_projection,
         light_position_cam: light_position_cam,
@@ -200,6 +236,7 @@ async function main() {
       regl.clear({ color: [0.9, 0.9, 1, 1] });
 
       terrain_actor.draw(scene_info);
+      lava_actor.draw(scene_info);
     }
   });
 }
