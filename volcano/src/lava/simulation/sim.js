@@ -104,8 +104,8 @@ export class LavaSimulation {
 
     // The temperature transfer coefficient
     this.temp_transfer_coeff_internal = 0.1;
-    this.temp_transfer_coeff_surface = 800;
-    this.temp_transfer_coeff_ground = 2000;
+    this.temp_transfer_coeff_surface = 400;
+    this.temp_transfer_coeff_ground = 1000;
 
     // The timestep of the simulation
     this.timestep = 0.01; // In seconds
@@ -237,6 +237,8 @@ export class LavaSimulation {
       particle.grid_y = new_grid_y;
       this.add_particle_to_grid(particle);
     }
+
+    return true;
   }
 
   /**
@@ -873,7 +875,12 @@ export class LavaSimulation {
     // Update the grid
     for (let i = 0; i < this.particles.length; i++) {
       const particle = this.particles[i];
-      this.update_grid_position(particle);
+      const still_in_terrain = this.update_grid_position(particle);
+
+      if (!still_in_terrain) {
+        this.particles.splice(i, 1);
+        i--;
+      }
     }
   }
 
@@ -899,13 +906,10 @@ export class LavaSimulation {
     }
 
     console.log(this.particles.length);
-    //console.log(this.particles_grid);
   }
 
   get_particles_data() {
     const data = [];
-    // console.log(this.particles);
-
     for (let particle of this.particles) {
       data.push([particle.x, particle.y, particle.z, particle.temperature]);
     }
