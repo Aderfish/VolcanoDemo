@@ -1,4 +1,5 @@
-import { BufferData } from "../../terrain/terrain_actor.js";
+import { vec2, vec3 } from "../../../lib/gl-matrix_3.3.0/esm/index.js";
+import { TerrainHeighmap } from "./terrain_heighmap.js";
 
 class LavaParticle {
   constructor(x, y, z) {
@@ -16,6 +17,8 @@ class LavaParticle {
 
     // Simulation metrics
     this.temp_grad = [0, 0, 0];
+    this.temp_laplacian = 0;
+    this.temp_dt = 0;
 
     // Constant characteristics
     this.mass = 0;
@@ -24,9 +27,18 @@ class LavaParticle {
     // Forces
     this.pressure_force = [0, 0, 0];
     this.viscosity_force = [0, 0, 0];
+    this.gravity_force = [0, 0, 0];
 
     // Neighbors
     this.neighbors = [];
+
+    // Position in the grid
+    this.grid_x = 0;
+    this.grid_y = 0;
+
+    // Surface
+    this.is_on_surface = false;
+    this.is_on_ground = false;
   }
 
   /**
@@ -42,50 +54,32 @@ class LavaParticle {
 
     return dx * dx + dy * dy + dz * dz;
   }
-
-  clone_without_neighbors() {
-    const clone = new LavaParticle(this.x, this.y, this.z);
-    clone.vx = this.vx;
-    clone.vy = this.vy;
-    clone.vz = this.vz;
-
-    clone.pressure = this.pressure;
-    clone.density = this.density;
-    clone.temperature = this.temperature;
-
-    clone.temp_grad = this.temp_grad;
-
-    clone.mass = this.mass;
-    clone.radius = this.radius;
-
-    clone.pressure_force = this.pressure_force;
-    clone.viscosity_force = this.viscosity_force;
-
-    clone.neighbors = [];
-
-    return clone;
-  }
 }
 
 export class LavaSimulation {
   constructor(regl, terrain_heightmap_buffer, generation_parameters) {
     this.particles = [];
-    this.terrain_heightmap = new BufferData(regl, terrain_heightmap_buffer);
+    this.terrain_heightmap = new TerrainHeighmap(
+      regl,
+      terrain_heightmap_buffer,
+      generation_parameters.terrain
+    );
     this.generation_parameters = generation_parameters;
 
     // ---- Simulation parameters
 
     // Evolution of the viscosity of the lava with temperature
-    // See section 2.3 of the paper "Animating Lava Flows" (http://www-evasion.imag.fr/Publications/1999/SACNG99/gi99.pdf)
-    this.visc_a_factor = 220;
-    this.visc_b_factor = 0.5;
+    this.max_viscosity = 1000000; // The maximum viscosity of the lava
+    this.viscosity_evolution_factor = 1.5; // The factor of the viscosity evolution
 
     // The density of the lava at rest
     this.density_at_rest = 2500; // In kg/m^3
     this.incompressibility_factor_k = 100;
 
     // The mass and radius of the particles (constant throughout the simulation)
-    this.particle_radius = 0.1; // In m
+    this.particle_radius = 0.15; // In m
+    this.particle_radius2 = this.particle_radius * this.particle_radius;
+
     this.particle_mass =
       (4 / 3) *
       Math.PI *
@@ -95,6 +89,7 @@ export class LavaSimulation {
     // ---- Smoothing kernel parameters
     // This is the kernel radius of action
     this.m_kernel_h = this.particle_radius * Math.pow(5 / 2, 1 / 3);
+    //this.m_kernel_h = this.particle_radius / 3;
     this.m_kernel_h2 = this.m_kernel_h * this.m_kernel_h;
     this.m_kernel_h3 = this.m_kernel_h2 * this.m_kernel_h;
 
@@ -103,8 +98,182 @@ export class LavaSimulation {
     // The initial temperature of the lava particles
     this.initial_temperature = 1200 + 273.15; // In Kelvin
 
+    // Other temperatures
+    this.temp_ground = 20 + 273.15;
+    this.temp_surface = 20 + 273.15; // Temperature of the air
+
+    // The temperature transfer coefficient
+    this.temp_transfer_coeff_internal = 0.1;
+    this.temp_transfer_coeff_surface = 800;
+    this.temp_transfer_coeff_ground = 2000;
+
     // The timestep of the simulation
     this.timestep = 0.01; // In seconds
+
+    this.total_time = 0;
+    this.total_it = 0;
+
+    // How many iterations to wait before recomputing the neighbors
+    // We can do this because the particles are not moving that fast
+    this.recompute_neighbors_every = 10;
+
+    // Create the grid of particles
+    this.terrain_width = this.generation_parameters.terrain.m_terrain_width;
+    this.terrain_length = this.generation_parameters.terrain.m_terrain_length;
+
+    this.cell_size = 2 * this.m_kernel_h;
+    this.particles_grid_length = Math.ceil(
+      this.terrain_length / this.cell_size
+    );
+    this.particles_grid_width = Math.ceil(this.terrain_width / this.cell_size);
+
+    this.particles_grid = [];
+
+    for (let i = 0; i < this.particles_grid_length; i++) {
+      this.particles_grid.push([]);
+      for (let j = 0; j < this.particles_grid_width; j++) {
+        this.particles_grid[i].push([]);
+      }
+    }
+  }
+
+  // --- Grid methods ---
+
+  /**
+   * Get the grid index of a particle
+   * /!\ The grid index might be outside the grid
+   *
+   * @param {LavaParticle} particle the particle for which to get the grid index
+   * @returns the grid index of the particle (they might be outside the grid)
+   */
+  get_grid_index(particle) {
+    const grid_x = Math.floor(
+      (particle.x + this.terrain_width / 2) / this.cell_size
+    );
+    const grid_y = Math.floor(
+      (particle.y + this.terrain_length / 2) / this.cell_size
+    );
+    return [grid_x, grid_y];
+  }
+
+  /**
+   * Add a particle to the grid
+   *
+   * @param {LavaParticle} particle The particle to add to the grid
+   * @returns true if the particle was added to the grid (i.e is inside the terrain), false otherwise
+   */
+  add_particle_to_grid(particle) {
+    const grid_indexes = this.get_grid_index(particle);
+
+    const grid_x = grid_indexes[0];
+    const grid_y = grid_indexes[1];
+
+    if (
+      grid_x < 0 ||
+      grid_x >= this.particles_grid.length ||
+      grid_y < 0 ||
+      grid_y >= this.particles_grid[0].length
+    ) {
+      return false;
+    }
+
+    particle.grid_x = grid_x;
+    particle.grid_y = grid_y;
+
+    this.particles_grid[grid_x][grid_y].push(particle);
+    return true;
+  }
+
+  /**
+   * Remove a particle from the grid
+   * @param {LavaParticle} particle The particle to remove from the grid
+   * @returns true if the particle was removed from the grid, false otherwise
+   */
+  remove_particle_from_grid(particle) {
+    const grid_x = particle.grid_x;
+    const grid_y = particle.grid_y;
+
+    if (
+      grid_x < 0 ||
+      grid_x >= this.particles_grid.length ||
+      grid_y < 0 ||
+      grid_y >= this.particles_grid[0].length
+    ) {
+      return false;
+    }
+
+    const index = this.particles_grid[grid_x][grid_y].indexOf(particle);
+    if (index != -1) {
+      this.particles_grid[grid_x][grid_y].splice(index, 1);
+    }
+
+    return true;
+  }
+
+  /**
+   * Update the grid position of a particle
+   *
+   * @param {LavaParticle} particle The particle for which to update the grid position
+   * @returns true is the particle is still inside the grid, false otherwise
+   */
+  update_grid_position(particle) {
+    const new_grid_indexes = this.get_grid_index(particle);
+
+    const new_grid_x = new_grid_indexes[0];
+    const new_grid_y = new_grid_indexes[1];
+
+    if (
+      new_grid_x < 0 ||
+      new_grid_x >= this.particles_grid.length ||
+      new_grid_y < 0 ||
+      new_grid_y >= this.particles_grid[0].length
+    ) {
+      return false;
+    }
+
+    if (new_grid_x != particle.grid_x || new_grid_y != particle.grid_y) {
+      this.remove_particle_from_grid(particle);
+      particle.grid_x = new_grid_x;
+      particle.grid_y = new_grid_y;
+      this.add_particle_to_grid(particle);
+    }
+  }
+
+  /**
+   * Get the neighbors of a particle from the grid
+   * (Two particles are neighbors if they are at a distance less than 2 * kernel_h
+   * <=> dist^2 < 4 * kernel_h^2)
+   *
+   * @param {LavaParticle} particle The particle for which to get the neighbors
+   * @returns the list of neighbors of the input particle
+   */
+  get_neighbors_from_grid(particle) {
+    const grid_x = particle.grid_x;
+    const grid_y = particle.grid_y;
+
+    const neighbors = [];
+
+    for (let i = grid_x - 1; i <= grid_x + 1; i++) {
+      for (let j = grid_y - 1; j <= grid_y + 1; j++) {
+        if (
+          i >= 0 &&
+          i < this.particles_grid.length &&
+          j >= 0 &&
+          j < this.particles_grid[0].length
+        ) {
+          for (let p of this.particles_grid[i][j]) {
+            if (
+              p != particle &&
+              p.distance_square_with(particle) < 4 * this.m_kernel_h2
+            ) {
+              neighbors.push(p);
+            }
+          }
+        }
+      }
+    }
+
+    return neighbors;
   }
 
   /**
@@ -112,7 +281,8 @@ export class LavaSimulation {
    * The kernel is taken from the alternative kernel proposed in the paper
    * "Smoothed Particles : A new paradigm for animating highly deformable bodies"
    * [http://www.geometry.caltech.edu/pubs/DC_EW96.pdf]
-   * @param {*} r
+   * @param {number} r the distance at which to compute the kernel
+   * @returns the value of the kernel at distance r
    */
   kernel_function(r) {
     if (r < 0) {
@@ -131,7 +301,8 @@ export class LavaSimulation {
   }
 
   /**
-   * Compute the gradient of the kernel function
+   * Compute the gradient of the kernel function with respect to dx, dy, dz
+   * where dx, dy, dz are the differences of the coordinates of two particles
    *
    * @param {LavaParticle} particle_i the particle for which to compute the gradient
    * @param {LavaParticle} particle_j the particle to compute the gradient with
@@ -191,9 +362,11 @@ export class LavaSimulation {
     const crater_height = this.generation_parameters.volcano.m_crater_height;
 
     // The particles are generated inside the crater
-    const z = (volcano_height + crater_height) / 2;
+    const z =
+      this.terrain_heightmap.get_height(x, y) +
+      (volcano_height - crater_height) / 2;
 
-    // The radius of the crater is divided by 2 to get the radius at z
+    // The radius of the crater is divided by 2 to get an approximation of the radius at z
     const radius_at_z = this.generation_parameters.volcano.m_crater_radius / 2;
 
     // Add a random offset to the spawn position
@@ -213,40 +386,12 @@ export class LavaSimulation {
 
     // Add the particle to the simulation
     this.particles.push(particle);
+
+    // Add the particle to the grid
+    this.add_particle_to_grid(particle);
   }
 
-  /**
-   * Get the list of neighbors of a particle
-   * A neighbor is a particle different from the input particle
-   * such that the distance between the two particles is less than the 2 times the kernel radius
-   * (dist < 2 * h <=> dist^2 < 4 * h^2)
-   *
-   * @param {LavaParticle} particle
-   * @returns the list of neighbors of the input particle
-   */
-  get_neighbors(particle) {
-    const neighbors = [];
-    const neighbors_radius = 4 * this.m_kernel_h2;
-
-    for (let p of this.particles) {
-      if (p != particle) {
-        const dist2 = particle.distance_square_with(p);
-        if (dist2 < neighbors_radius) {
-          neighbors.push(p);
-        }
-      }
-    }
-
-    return neighbors;
-  }
-
-  // TODO: We need to compute the forces acting on the particles that are:
-  // - The pressure force F_Pi [done]
-  // - The viscosity force F_vi
-  // - The gravity force F_g [done]
-  // - The collision force F_ci
-  // We also need to compute the density and pressure of the particles (see section 2.2 for initial values)
-  // as well as the temperature of the particles
+  // --- Forces computation ---
 
   /**
    * Compute the gravity force acting on a particle
@@ -307,19 +452,21 @@ export class LavaSimulation {
    * @returns the viscosity force acting on the particle
    */
   viscosity_force(particle, neighbors) {
-    let buffer = 0;
-
     const visc_factor =
-      this.visc_b_factor *
-      Math.exp(buffer, -this.visc_a_factor * particle.temperature);
+      this.max_viscosity *
+      Math.exp(
+        (-this.viscosity_evolution_factor * particle.temperature) /
+          this.initial_temperature
+      );
+
     const global_factor = (visc_factor * particle.mass) / particle.density;
 
     let force = [0, 0, 0];
 
     for (let neigh_particle of neighbors) {
-      const d_vx = particle.vx - neigh_particle.vx;
-      const d_vy = particle.vy - neigh_particle.vy;
-      const d_vz = particle.vz - neigh_particle.vz;
+      const d_vx = neigh_particle.vx - particle.vx;
+      const d_vy = neigh_particle.vy - particle.vy;
+      const d_vz = neigh_particle.vz - particle.vz;
 
       const kernel_value = this.kernel_between(particle, neigh_particle);
 
@@ -333,34 +480,7 @@ export class LavaSimulation {
     return force;
   }
 
-  /**
-   * Compute the gradient of the temperature of a particle and set it
-   * into the particle's temp_grad attribute
-   *
-   * @param {LavaParticle} particle The particle for which to compute the temperature gradient
-   * @param {Array<LavaParticle>} neighbors The list of neighbors of the particle
-   * @returns the gradient of the temperature of the particle
-   */
-  temperature_gradient(particle, neighbors) {
-    let grad = [0, 0, 0];
-
-    for (let neigh_particle of neighbors) {
-      const kernel_grad = this.kernel_function_gradient(
-        particle,
-        neigh_particle
-      );
-
-      const d_temp = particle.temperature - neigh_particle.temperature;
-
-      const norm_factor = neigh_particle.mass / neigh_particle.density;
-
-      grad[0] += d_temp * kernel_grad[0] * norm_factor;
-      grad[1] += d_temp * kernel_grad[1] * norm_factor;
-      grad[2] += d_temp * kernel_grad[2] * norm_factor;
-    }
-
-    return grad;
-  }
+  // --- Physics characteristics computation ---
 
   /**
    * Compute the density of a particle
@@ -396,6 +516,34 @@ export class LavaSimulation {
   }
 
   /**
+   * Compute the gradient of the temperature of a particle
+   *
+   * @param {LavaParticle} particle The particle for which to compute the temperature gradient
+   * @param {Array<LavaParticle>} neighbors The list of neighbors of the particle
+   * @returns the gradient of the temperature of the particle
+   */
+  temperature_gradient(particle, neighbors) {
+    let grad = [0, 0, 0];
+
+    for (let neigh_particle of neighbors) {
+      const kernel_grad = this.kernel_function_gradient(
+        particle,
+        neigh_particle
+      );
+
+      const d_temp = particle.temperature - neigh_particle.temperature;
+
+      const norm_factor = neigh_particle.mass / neigh_particle.density;
+
+      grad[0] += d_temp * kernel_grad[0] * norm_factor;
+      grad[1] += d_temp * kernel_grad[1] * norm_factor;
+      grad[2] += d_temp * kernel_grad[2] * norm_factor;
+    }
+
+    return grad;
+  }
+
+  /**
    * Compute the temperature laplacian of a particle
    *
    * @param {LavaParticle} particle The particle for which to compute the temperature laplacian
@@ -425,7 +573,106 @@ export class LavaSimulation {
     return laplacian;
   }
 
-  // --- Set methods for the simulation parameters
+  /**
+   * Compute the internal temperature transfer of a particle (inside the lava)
+   *
+   * @param {LavaParticle} particle The particle for which to compute the internal temperature transfer
+   * @returns the internal temperature transfer of the particle
+   */
+  temperature_dt_internal(particle) {
+    return this.temp_transfer_coeff_internal * particle.temp_laplacian;
+  }
+
+  /**
+   * Compute the temperature transfer coefficient between a particle and the surface of the lava
+   *
+   * @param {LavaParticle} particle The particle for which to compute the temperature transfer coefficient
+   * @returns the temperature transfer coefficient between the particle and the surface of the lava
+   */
+  temperature_dt_surface(particle) {
+    return (
+      this.temp_transfer_coeff_surface *
+      (particle.temperature - this.temp_surface) *
+      (this.particle_radius2 / particle.density)
+    );
+  }
+
+  /**
+   * Compute the temperature transfer coefficient between a particle and the ground
+   *
+   * @param {LavaParticle} particle The particle for which to compute the temperature transfer coefficient
+   * @returns the temperature transfer coefficient between the particle and the ground
+   */
+  temperature_dt_ground(particle) {
+    return (
+      this.temp_transfer_coeff_ground *
+      (particle.temperature - this.temp_ground) *
+      (this.particle_radius2 / particle.density)
+    );
+  }
+
+  /**
+   * Compute the total temperature transfer of a particle
+   *
+   * @param {LavaParticle} particle The particle for which to compute the total temperature transfer
+   * @returns the total temperature transfer of the particle
+   */
+  temperature_dt_total(particle) {
+    let ground = 0;
+    let surface = 0;
+
+    if (particle.is_on_ground) {
+      ground = this.temperature_dt_ground(particle);
+    }
+
+    if (particle.is_on_surface) {
+      surface = this.temperature_dt_surface(particle);
+    }
+
+    const internal = this.temperature_dt_internal(particle);
+
+    return internal + surface + ground;
+  }
+
+  /**
+   * Check if a particle is at the surface of the lava
+   *
+   * @param {LavaParticle} particle The particle for which we check if it is at the surface
+   * @param {Array<LavaParticle>} neighbors The list of neighbors of the particle
+   * @returns true if the particle is at the surface, false otherwise
+   */
+  is_particle_at_surface(particle, neighbors) {
+    for (let neigh_particle of neighbors) {
+      if (neigh_particle.z > particle.z) {
+        const neigh_post_2d = vec2.fromValues(
+          neigh_particle.x,
+          neigh_particle.y
+        );
+        const particle_pos_2d = vec2.fromValues(particle.x, particle.y);
+        const dist_2d = vec2.dist(neigh_post_2d, particle_pos_2d);
+
+        if (dist_2d < this.particle_radius) {
+          return false;
+        }
+      }
+    }
+    return true;
+  }
+
+  /**
+   * Check if a particle is on the ground
+   *
+   * @param {LavaParticle} particle The particle for which to check if it is on the ground
+   * @returns true if the particle is on the ground, false otherwise
+   */
+  is_particle_on_ground(particle) {
+    return (
+      particle.z - this.particle_radius <
+      this.terrain_heightmap.get_height(particle.x, particle.y)
+    );
+  }
+
+  // --- Setter methods for the simulation parameters
 
   /**
    * Set the temperature gradient of a particle
@@ -435,6 +682,34 @@ export class LavaSimulation {
    */
   set_temperature_gradient(particle, neighbors) {
     particle.temp_grad = this.temperature_gradient(particle, neighbors);
+  }
+
+  /**
+   * Set the temperature laplacian of a particle
+   *
+   * @param {LavaParticle} particle The particle for which to set the temperature laplacian
+   * @param {Array<LavaParticle>} neighbors The list of neighbors of the particle
+   */
+  set_temperature_laplacian(particle, neighbors) {
+    particle.temp_laplacian = this.temperature_laplacian(particle, neighbors);
+  }
+
+  /**
+   * Set the temperature dt total of a particle
+   *
+   * @param {LavaParticle} particle The particle for which to set the temperature dt total
+   */
+  set_temperature_dt_total(particle) {
+    particle.temp_dt = this.temperature_dt_total(particle);
+  }
+
+  /**
+   * Set the gravity force that is exerted a particle
+   *
+   * @param {LavaParticle} particle The particle for which to set the gravity force
+   */
+  set_gravity_force(particle) {
+    particle.gravity_force = this.gravity_force(particle);
   }
 
   /**
@@ -475,25 +750,38 @@ export class LavaSimulation {
   }
 
   /**
-   * Clone a list of particles
+   * Set the is_on_surface attribute of a particle
    *
-   * @param {Array<LavaParticle>} particles The list of particles to clone
-   * @returns the cloned list of particles
+   * @param {LavaParticle} particle The particle for which to set the is_on_surface attribute
+   * @param {Array<LavaParticle>} neighbors The list of neighbors of the particle
    */
-  clone_particles_without_neighbors(particles) {
-    const clone = [];
-    for (let p of particles) {
-      clone.push(p.clone_without_neighbors());
-    }
-
-    return clone;
+  set_particle_is_on_surface(particle, neighbors) {
+    particle.is_on_surface = this.is_particle_at_surface(particle, neighbors);
   }
 
-  // --- Simulation methods
+  /**
+   * Set the is_on_ground attribute of a particle
+   *
+   * @param {LavaParticle} particle The particle for which to set the is_on_ground attribute
+   */
+  set_particle_is_on_ground(particle) {
+    particle.is_on_ground = this.is_particle_on_ground(particle);
+  }
+
+  // --- Simulation methods ---
+
+  /**
+   * Perform one step of the simulation using the Euler explicit method
+   *
+   * @param {LavaParticle} step The timestep of the simulation
+   */
   euler_explicit(step) {
     // Compute the list of neightbors of each particle
-    for (let particle of this.particles) {
-      particle.neighbors = this.get_neighbors(particle);
+    // The modulo make the simulation faster (but the flow is less stable)
+    if (this.total_it % 10 == 0) {
+      for (let particle of this.particles) {
+        particle.neighbors = this.get_neighbors_from_grid(particle);
+      }
     }
 
     // Compute the density of each particle
@@ -506,16 +794,32 @@ export class LavaSimulation {
       this.set_particle_pressure(particle);
     }
 
+    // Check if each particle is on the surface or on the ground
+    for (let particle of this.particles) {
+      this.set_particle_is_on_surface(particle, particle.neighbors);
+      this.set_particle_is_on_ground(particle);
+    }
+
+    // Note: we cannot merge the following two loops because the temperature gradient
+    // of the neighbors is needed to compute the temperature laplacian
+    for (let particle of this.particles) {
+      this.set_temperature_gradient(particle, particle.neighbors);
+    }
+
+    for (let particle of this.particles) {
+      this.set_temperature_laplacian(particle, particle.neighbors);
+    }
+
+    for (let particle of this.particles) {
+      this.set_temperature_dt_total(particle);
+    }
+
     // Compute the pressure and viscosity forces of each particle
     for (let particle of this.particles) {
       this.set_pressure_force(particle, particle.neighbors);
       this.set_viscosity_force(particle, particle.neighbors);
+      this.set_gravity_force(particle);
     }
-
-    // Create an updated list of particles
-    const updated_particles = this.clone_particles_without_neighbors(
-      this.particles
-    );
 
     // Compute the new position of each particle
     for (let i = 0; i < this.particles.length; i++) {
@@ -523,29 +827,54 @@ export class LavaSimulation {
 
       const pressure = particle.pressure_force;
       const viscosity = particle.viscosity_force;
+      const gravity = particle.gravity_force;
 
+      const all_forces = [
+        pressure[0] + viscosity[0] + gravity[0],
+        pressure[1] + viscosity[1] + gravity[1],
+        pressure[2] + viscosity[2] + gravity[2],
+      ];
+
+      // Compute the new position and velocity of the particle
       const new_x = particle.x + step * particle.vx;
       const new_y = particle.y + step * particle.vy;
       const new_z = particle.z + step * particle.vz;
 
-      const new_vx =
-        particle.vx + (step * (pressure[0] + viscosity[0])) / particle.mass;
-      const new_vy =
-        particle.vy + (step * (pressure[1] + viscosity[1])) / particle.mass;
-      const new_vz =
-        particle.vz + (step * (pressure[2] + viscosity[2])) / particle.mass;
+      const new_vx = particle.vx + (step * all_forces[0]) / particle.mass;
+      const new_vy = particle.vy + (step * all_forces[1]) / particle.mass;
+      const new_vz = particle.vz + (step * all_forces[2]) / particle.mass;
 
-      updated_particles[i].x = new_x;
-      updated_particles[i].y = new_y;
-      updated_particles[i].z = new_z;
+      // Update the position and velocity of the particle
+      particle.x = new_x;
+      particle.y = new_y;
+      particle.z = new_z;
 
-      updated_particles[i].vx = new_vx;
-      updated_particles[i].vy = new_vy;
-      updated_particles[i].vz = new_vz;
+      particle.vx = new_vx;
+      particle.vy = new_vy;
+      particle.vz = new_vz;
+
+      // Update the temperature of the particle
+      particle.temperature -= step * particle.temp_dt;
+
+      // Check if the particle is under the terrain
+      if (new_z < this.terrain_heightmap.get_height(new_x, new_y)) {
+        // If a particle is under the terrain, we set its velocity to 0 to represent
+        // the fact that it is stuck to the terrain
+        // This might not be physically accurate but it is a simple way to handle this case
+        // and it gave convincing results after some experiments
+        particle.vx = 0.0;
+        particle.vy = 0.0;
+        particle.vz = 0.0;
+
+        particle.z = this.terrain_heightmap.get_height(new_x, new_y);
+      }
     }
 
-    // Update the list of particles
-    this.particles = updated_particles;
+    // Update the grid
+    for (let i = 0; i < this.particles.length; i++) {
+      const particle = this.particles[i];
+      this.update_grid_position(particle);
+    }
   }
 
   add_n_particles(n) {
@@ -556,6 +885,21 @@ export class LavaSimulation {
 
   do_one_step() {
     this.euler_explicit(this.timestep);
+    this.total_time += this.timestep;
+    this.total_it++;
+
+    const particles_per_second = 1;
+    const particle_every_it = Math.floor(
+      particles_per_second / (this.timestep * 10)
+    );
+
+    if (this.total_it % particle_every_it == 0) {
+      console.log(this.particles);
+      this.add_n_particles(10);
+    }
+
+    console.log(this.particles.length);
+    //console.log(this.particles_grid);
   }
 
   get_particles_data() {
