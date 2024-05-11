@@ -1,4 +1,6 @@
 import { vec2, vec3 } from "../../../lib/gl-matrix_3.3.0/esm/index.js";
+import { GenerationParameters } from "../../noise/generation_parameters.js";
+import { SimulationParameters } from "./sim_parameters.js";
 import { TerrainHeighmap } from "./terrain_heighmap.js";
 
 class LavaParticle {
@@ -56,6 +58,9 @@ class LavaParticle {
   }
 }
 
+// The evolution that a particle undergoes
+// This is used to store the forces acting on the particle
+// in the Runge-Kutta 2 method
 class Evolution {
   constructor() {
     this.force = [0, 0, 0];
@@ -64,7 +69,20 @@ class Evolution {
 }
 
 export class LavaSimulation {
-  constructor(regl, terrain_heightmap_buffer, generation_parameters) {
+  /**
+   * Create a new lava simulation
+   *
+   * @param {*} regl
+   * @param {*} terrain_heightmap_buffer The buffer containing the heightmap of the terrain
+   * @param {GenerationParameters} generation_parameters The generation parameters of the terrain
+   * @param {SimulationParameters } simulation_parameters The simulation parameters
+   */
+  constructor(
+    regl,
+    terrain_heightmap_buffer,
+    generation_parameters,
+    simulation_parameters
+  ) {
     this.particles = [];
     this.terrain_heightmap = new TerrainHeighmap(
       regl,
@@ -76,15 +94,17 @@ export class LavaSimulation {
     // ---- Simulation parameters
 
     // Evolution of the viscosity of the lava with temperature
-    this.max_viscosity = 1000000; // The maximum viscosity of the lava
-    this.viscosity_evolution_factor = 1.5; // The factor of the viscosity evolution
+    this.max_viscosity = simulation_parameters.max_viscosity; // The maximum viscosity of the lava
+    this.viscosity_evolution_factor =
+      simulation_parameters.viscosity_evolution_factor; // The factor of the viscosity evolution
 
     // The density of the lava at rest
-    this.density_at_rest = 2500; // In kg/m^3
-    this.incompressibility_factor_k = 100;
+    this.density_at_rest = simulation_parameters.density_at_rest; // In kg/m^3
+    this.incompressibility_factor_k =
+      simulation_parameters.incompressibility_factor_k;
 
     // The mass and radius of the particles (constant throughout the simulation)
-    this.particle_radius = 0.15; // In m
+    this.particle_radius = simulation_parameters.particle_radius; // In m
     this.particle_radius2 = this.particle_radius * this.particle_radius;
 
     this.particle_mass =
@@ -103,26 +123,31 @@ export class LavaSimulation {
     this.kernel_alpha_factor = 15 / (Math.PI * 64 * this.m_kernel_h3);
 
     // The initial temperature of the lava particles
-    this.initial_temperature = 1200 + 273.15; // In Kelvin
+    this.initial_temperature = simulation_parameters.initial_temperature; // In Kelvin
 
     // Other temperatures
-    this.temp_ground = 20 + 273.15;
-    this.temp_surface = 20 + 273.15; // Temperature of the air
+    this.temp_ground = simulation_parameters.temp_ground;
+    this.temp_surface = simulation_parameters.temp_surface; // Temperature of the air
 
     // The temperature transfer coefficient
-    this.temp_transfer_coeff_internal = 0.1;
-    this.temp_transfer_coeff_surface = 400;
-    this.temp_transfer_coeff_ground = 1000;
+    this.temp_transfer_coeff_internal =
+      simulation_parameters.temp_transfer_coeff_internal;
+    this.temp_transfer_coeff_surface =
+      simulation_parameters.temp_transfer_coeff_surface;
+    this.temp_transfer_coeff_ground =
+      simulation_parameters.temp_transfer_coeff_ground;
 
     // The timestep of the simulation
-    this.timestep = 0.01; // In seconds
+    this.timestep = simulation_parameters.timestep; // In seconds
 
-    this.total_time = 0;
-    this.total_it = 0;
+    // The current time and iteration of the simulation
+    this.current_time = 0;
+    this.current_it = 0;
 
     // How many iterations to wait before recomputing the neighbors
     // We can do this because the particles are not moving that fast
-    this.recompute_neighbors_every = 10;
+    this.recompute_neighbors_every =
+      simulation_parameters.recompute_neighbors_every;
 
     // Create the grid of particles
     this.terrain_width = this.generation_parameters.terrain.m_terrain_width;
@@ -873,7 +898,7 @@ export class LavaSimulation {
    */
   runge_kutta_2(particles, step) {
     const recompute_neighbors =
-      this.total_it % this.recompute_neighbors_every == 0;
+      this.current_it % this.recompute_neighbors_every == 0;
 
     let init_positions = [];
     let init_velocities = [];
@@ -956,7 +981,7 @@ export class LavaSimulation {
    */
   euler_explicit(particles, step) {
     const recompute_neighbors =
-      this.total_it % this.recompute_neighbors_every == 0;
+      this.current_it % this.recompute_neighbors_every == 0;
 
     // Compute the evolution of the particles
     const evolution = this.get_evolution(particles, recompute_neighbors);
@@ -1021,15 +1046,15 @@ export class LavaSimulation {
 
   do_one_step() {
     this.update_particles(this.timestep);
-    this.total_time += this.timestep;
-    this.total_it++;
+    this.current_time += this.timestep;
+    this.current_it++;
 
     const particles_per_second = 1;
     const particle_every_it = Math.floor(
       particles_per_second / (this.timestep * 10)
     );
 
-    if (this.total_it % particle_every_it == 0) {
+    if (this.current_it % particle_every_it == 0) {
       this.add_n_particles(10);
     }
   }
