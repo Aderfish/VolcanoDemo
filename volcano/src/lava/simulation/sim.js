@@ -115,14 +115,14 @@ export class LavaSimulation {
     this.temp_transfer_coeff_ground = 1000;
 
     // The timestep of the simulation
-    this.timestep = 0.04; // In seconds
+    this.timestep = 0.01; // In seconds
 
     this.total_time = 0;
     this.total_it = 0;
 
     // How many iterations to wait before recomputing the neighbors
     // We can do this because the particles are not moving that fast
-    this.recompute_neighbors_every = 1;
+    this.recompute_neighbors_every = 10;
 
     // Create the grid of particles
     this.terrain_width = this.generation_parameters.terrain.m_terrain_width;
@@ -1009,12 +1009,7 @@ export class LavaSimulation {
     // Update the grid
     for (let i = 0; i < this.particles.length; i++) {
       const particle = this.particles[i];
-      const still_in_terrain = this.update_grid_position(particle);
-
-      if (!still_in_terrain) {
-        this.particles.splice(i, 1);
-        i--;
-      }
+      this.update_grid_position(particle);
     }
   }
 
@@ -1035,11 +1030,8 @@ export class LavaSimulation {
     );
 
     if (this.total_it % particle_every_it == 0) {
-      console.log(this.particles);
       this.add_n_particles(10);
     }
-
-    console.log(this.particles.length);
   }
 
   get_particles_data() {
