@@ -3,9 +3,8 @@ import { mat4_matmul_many } from "../utils/icg_math.js";
 import { icg_mesh_make_uv_sphere } from "../utils/icg_mesh.js";
 
 export class LavaRenderingActor {
-  constructor(regl, resources) {
-    // TODO : use simulation parameters
-    this.particle_radius = 0.15;
+  constructor(regl, resources, simulation_parameters) {
+    this.particle_radius = simulation_parameters.particle_radius;
 
     const mesh_uvsphere = icg_mesh_make_uv_sphere(15);
     this.resources = resources;
