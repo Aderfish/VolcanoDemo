@@ -56,6 +56,13 @@ class LavaParticle {
   }
 }
 
+class Evolution {
+  constructor() {
+    this.force = [0, 0, 0];
+    this.temp_dt = 0;
+  }
+}
+
 export class LavaSimulation {
   constructor(regl, terrain_heightmap_buffer, generation_parameters) {
     this.particles = [];
@@ -108,14 +115,14 @@ export class LavaSimulation {
     this.temp_transfer_coeff_ground = 1000;
 
     // The timestep of the simulation
-    this.timestep = 0.01; // In seconds
+    this.timestep = 0.04; // In seconds
 
     this.total_time = 0;
     this.total_it = 0;
 
     // How many iterations to wait before recomputing the neighbors
     // We can do this because the particles are not moving that fast
-    this.recompute_neighbors_every = 10;
+    this.recompute_neighbors_every = 1;
 
     // Create the grid of particles
     this.terrain_width = this.generation_parameters.terrain.m_terrain_width;
@@ -128,6 +135,11 @@ export class LavaSimulation {
     this.particles_grid_width = Math.ceil(this.terrain_width / this.cell_size);
 
     this.particles_grid = [];
+
+    // Use the Runge-Kutta 2 method for the simulation
+    // If false, use the Euler explicit method is used
+    // (faster but less stable)
+    this.use_runge_kutta = true;
 
     for (let i = 0; i < this.particles_grid_length; i++) {
       this.particles_grid.push([]);
@@ -773,93 +785,215 @@ export class LavaSimulation {
   // --- Simulation methods ---
 
   /**
-   * Perform one step of the simulation using the Euler explicit method
+   * Get the evolution of the particles
    *
-   * @param {LavaParticle} step The timestep of the simulation
+   * @param {Array<LavaParticle>} particles The list of particles to evolve
+   * @param {number} step The timestep of the simulation
+   * @param {boolean} recompute_neighbors If true, recompute the neighbors of the particles
+   *
+   * @returns {Array<Evolution>} the evolution of the particles
    */
-  euler_explicit(step) {
+  get_evolution(particles, recompute_neighbors = false) {
     // Compute the list of neightbors of each particle
     // The modulo make the simulation faster (but the flow is less stable)
-    if (this.total_it % 10 == 0) {
-      for (let particle of this.particles) {
+    if (recompute_neighbors) {
+      for (let particle of particles) {
         particle.neighbors = this.get_neighbors_from_grid(particle);
       }
     }
 
     // Compute the density of each particle
-    for (let particle of this.particles) {
+    for (let particle of particles) {
       this.set_particle_density(particle, particle.neighbors);
     }
 
     // Compute the pressure of each particle
-    for (let particle of this.particles) {
+    for (let particle of particles) {
       this.set_particle_pressure(particle);
     }
 
     // Check if each particle is on the surface or on the ground
-    for (let particle of this.particles) {
+    for (let particle of particles) {
       this.set_particle_is_on_surface(particle, particle.neighbors);
       this.set_particle_is_on_ground(particle);
     }
 
     // Note: we cannot merge the following two loops because the temperature gradient
     // of the neighbors is needed to compute the temperature laplacian
-    for (let particle of this.particles) {
+    for (let particle of particles) {
       this.set_temperature_gradient(particle, particle.neighbors);
     }
 
-    for (let particle of this.particles) {
+    for (let particle of particles) {
       this.set_temperature_laplacian(particle, particle.neighbors);
     }
 
-    for (let particle of this.particles) {
+    for (let particle of particles) {
       this.set_temperature_dt_total(particle);
     }
 
     // Compute the pressure and viscosity forces of each particle
-    for (let particle of this.particles) {
+    for (let particle of particles) {
       this.set_pressure_force(particle, particle.neighbors);
       this.set_viscosity_force(particle, particle.neighbors);
       this.set_gravity_force(particle);
     }
 
-    // Compute the new position of each particle
-    for (let i = 0; i < this.particles.length; i++) {
-      const particle = this.particles[i];
+    const evolution = [];
 
-      const pressure = particle.pressure_force;
-      const viscosity = particle.viscosity_force;
-      const gravity = particle.gravity_force;
+    // Return the evolution of the particles
+    for (let particle of particles) {
+      const evol = new Evolution();
 
-      const all_forces = [
-        pressure[0] + viscosity[0] + gravity[0],
-        pressure[1] + viscosity[1] + gravity[1],
-        pressure[2] + viscosity[2] + gravity[2],
+      evol.force = [
+        particle.pressure_force[0] +
+          particle.viscosity_force[0] +
+          particle.gravity_force[0],
+        particle.pressure_force[1] +
+          particle.viscosity_force[1] +
+          particle.gravity_force[1],
+        particle.pressure_force[2] +
+          particle.viscosity_force[2] +
+          particle.gravity_force[2],
       ];
 
-      // Compute the new position and velocity of the particle
-      const new_x = particle.x + step * particle.vx;
-      const new_y = particle.y + step * particle.vy;
-      const new_z = particle.z + step * particle.vz;
+      evol.temp_dt = particle.temp_dt;
 
-      const new_vx = particle.vx + (step * all_forces[0]) / particle.mass;
-      const new_vy = particle.vy + (step * all_forces[1]) / particle.mass;
-      const new_vz = particle.vz + (step * all_forces[2]) / particle.mass;
+      evolution.push(evol);
+    }
+
+    return evolution;
+  }
+
+  /**
+   * Perform one step of the simulation using the Runge-Kutta 2 method
+   *
+   * @param {Array<LavaParticle>} particles The list of particles to evolve
+   * @param {number} step The timestep of the simulation
+   */
+  runge_kutta_2(particles, step) {
+    const recompute_neighbors =
+      this.total_it % this.recompute_neighbors_every == 0;
+
+    let init_positions = [];
+    let init_velocities = [];
+    let init_temperatures = [];
+
+    for (let particle of particles) {
+      init_positions.push([particle.x, particle.y, particle.z]);
+      init_velocities.push([particle.vx, particle.vy, particle.vz]);
+      init_temperatures.push(particle.temperature);
+    }
+
+    // The velocity at the beginning of the step
+    let pos_k1 = [];
+    for (let particle of particles) {
+      pos_k1.push([particle.vx, particle.vy, particle.vz]);
+    }
+
+    // The evolutions at the beginning of the step
+    const vel_temp_k1 = this.get_evolution(particles, recompute_neighbors);
+
+    let pos_k2 = [];
+    for (let i = 0; i < particles.length; i++) {
+      const particle = particles[i];
+      const evol = vel_temp_k1[i];
+
+      particle.x += 0.5 * step * particle.vx;
+      particle.y += 0.5 * step * particle.vy;
+      particle.z += 0.5 * step * particle.vz;
+
+      particle.vx += (0.5 * step * evol.force[0]) / particle.mass;
+      particle.vy += (0.5 * step * evol.force[1]) / particle.mass;
+      particle.vz += (0.5 * step * evol.force[2]) / particle.mass;
+
+      particle.temperature -= 0.5 * step * evol.temp_dt;
+
+      pos_k2.push([particle.vx, particle.vy, particle.vz]);
+    }
+
+    const vel_temp_k2 = this.get_evolution(particles, false);
+
+    for (let i = 0; i < particles.length; i++) {
+      const particle = particles[i];
+
+      const dx_x = (step * (pos_k1[i][0] + pos_k2[i][0])) / 2;
+      const dx_y = (step * (pos_k1[i][1] + pos_k2[i][1])) / 2;
+      const dx_z = (step * (pos_k1[i][2] + pos_k2[i][2])) / 2;
+
+      const dv_x =
+        (step * (vel_temp_k1[i].force[0] + vel_temp_k2[i].force[0])) /
+        (2 * particle.mass);
+      const dv_y =
+        (step * (vel_temp_k1[i].force[1] + vel_temp_k2[i].force[1])) /
+        (2 * particle.mass);
+      const dv_z =
+        (step * (vel_temp_k1[i].force[2] + vel_temp_k2[i].force[2])) /
+        (2 * particle.mass);
+
+      const d_temp =
+        (step * (vel_temp_k1[i].temp_dt + vel_temp_k2[i].temp_dt)) / 2;
 
       // Update the position and velocity of the particle
-      particle.x = new_x;
-      particle.y = new_y;
-      particle.z = new_z;
+      particle.x = init_positions[i][0] + dx_x;
+      particle.y = init_positions[i][1] + dx_y;
+      particle.z = init_positions[i][2] + dx_z;
 
-      particle.vx = new_vx;
-      particle.vy = new_vy;
-      particle.vz = new_vz;
+      particle.vx = init_velocities[i][0] + dv_x;
+      particle.vy = init_velocities[i][1] + dv_y;
+      particle.vz = init_velocities[i][2] + dv_z;
 
-      // Update the temperature of the particle
-      particle.temperature -= step * particle.temp_dt;
+      particle.temperature = init_temperatures[i] - d_temp;
+    }
+  }
+
+  /**
+   * Perform one step of the simulation using the Euler explicit method
+   * (Faster but less stable than the Runge-Kutta 2 method)
+   *
+   * @param {Array<LavaParticle>} particles The list of particles to evolve
+   * @param {LavaParticle} step The timestep of the simulation
+   */
+  euler_explicit(particles, step) {
+    const recompute_neighbors =
+      this.total_it % this.recompute_neighbors_every == 0;
+
+    // Compute the evolution of the particles
+    const evolution = this.get_evolution(particles, recompute_neighbors);
+
+    // Update the position and velocity of the particles
+    for (let i = 0; i < particles.length; i++) {
+      const particle = particles[i];
+      const evol = evolution[i];
+
+      particle.x += step * particle.vx;
+      particle.y += step * particle.vy;
+      particle.z += step * particle.vz;
+
+      particle.vx += (step * evol.force[0]) / particle.mass;
+      particle.vy += (step * evol.force[1]) / particle.mass;
+      particle.vz += (step * evol.force[2]) / particle.mass;
+
+      particle.temperature -= step * evol.temp_dt;
+    }
+  }
+
+  /**
+   * Update the particles of the simulation
+   */
+  update_particles() {
+    if (this.use_runge_kutta) {
+      this.runge_kutta_2(this.particles, this.timestep);
+    } else {
+      this.euler_explicit(this.particles, this.timestep);
+    }
+
+    // Check for collisions with the terrain
+    for (let particle of this.particles) {
+      const height = this.terrain_heightmap.get_height(particle.x, particle.y);
 
       // Check if the particle is under the terrain
-      if (new_z < this.terrain_heightmap.get_height(new_x, new_y)) {
+      if (particle.z < height) {
         // If a particle is under the terrain, we set its velocity to 0 to represent
         // the fact that it is stuck to the terrain
         // This might not be physically accurate but it is a simple way to handle this case
@@ -868,7 +1002,7 @@ export class LavaSimulation {
         particle.vy = 0.0;
         particle.vz = 0.0;
 
-        particle.z = this.terrain_heightmap.get_height(new_x, new_y);
+        particle.z = height;
       }
     }
 
@@ -891,7 +1025,7 @@ export class LavaSimulation {
   }
 
   do_one_step() {
-    this.euler_explicit(this.timestep);
+    this.update_particles(this.timestep);
     this.total_time += this.timestep;
     this.total_it++;
 
