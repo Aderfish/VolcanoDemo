@@ -65,13 +65,25 @@ export class SimulationParameters {
 
     // --- Simulation parameters ---
 
-    // The number of particles emitted in the crater per second
-    // This is used to control the flow leaving the crater
-    this.new_particles_per_second = 100;
+    // The schedule of the emission of new particles
+    // The schedule is an array of objects with the following properties:
+    // - start_time: the time at which the emission starts
+    // - duration: the duration of the emission in seconds
+    // - particles_per_second: the number of particles emitted per second
+    // The schedule MUST be sorted by start_time
+    // If two emissions overlap, the emission with the highest start_time will be used
+    // If the duration is null, the emission will last until the end of the simulation
+    this.new_particles_schedule = [
+      { start_time: 0, duration: 10, particles_per_second: 100 },
+      { start_time: 10, duration: 10, particles_per_second: 400 },
+      { start_time: 20, duration: null, particles_per_second: 200 },
+    ];
 
     // The maximum number of particles in the simulation
-    // After this number is reached, no more particles are emitted
-    this.max_num_particles = 20000; // The maximum number of particles in the simulation
+    // After this number is reached, no more particles are emitted whatever the schedule
+    // You can set this value to null to have an infinite maximum number of particles
+    // However, this is not recommended as it can lead to performance issues and potential crashes
+    this.max_num_particles = 20000;
 
     // The total duration of the simulation in seconds
     this.total_simulation_time = 60;
