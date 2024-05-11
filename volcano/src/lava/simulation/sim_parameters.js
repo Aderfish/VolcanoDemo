@@ -86,6 +86,6 @@ export class SimulationParameters {
     this.max_num_particles = 20000;
 
     // The total duration of the simulation in seconds
-    this.total_simulation_time = 60;
+    this.simulation_duration = 60;
   }
 }

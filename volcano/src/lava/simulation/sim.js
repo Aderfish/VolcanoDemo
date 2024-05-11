@@ -73,20 +73,20 @@ export class LavaSimulation {
    * Create a new lava simulation
    *
    * @param {*} regl
-   * @param {*} terrain_heightmap_buffer The buffer containing the heightmap of the terrain
+   * @param {*} heightmap_buffer The buffer containing the heightmap of the terrain
    * @param {GenerationParameters} generation_parameters The generation parameters of the terrain
    * @param {SimulationParameters } simulation_parameters The simulation parameters
    */
   constructor(
     regl,
-    terrain_heightmap_buffer,
+    heightmap_buffer,
     generation_parameters,
     simulation_parameters
   ) {
     this.particles = [];
     this.terrain_heightmap = new TerrainHeighmap(
       regl,
-      terrain_heightmap_buffer,
+      heightmap_buffer,
       generation_parameters.terrain
     );
     this.generation_parameters = generation_parameters;
@@ -1048,15 +1048,6 @@ export class LavaSimulation {
     this.update_particles(this.timestep);
     this.current_time += this.timestep;
     this.current_it++;
-
-    const particles_per_second = 1;
-    const particle_every_it = Math.floor(
-      particles_per_second / (this.timestep * 10)
-    );
-
-    if (this.current_it % particle_every_it == 0) {
-      this.add_n_particles(10);
-    }
   }
 
   get_particles_data() {
