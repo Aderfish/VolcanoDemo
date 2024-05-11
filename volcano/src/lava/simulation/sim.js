@@ -164,7 +164,7 @@ export class LavaSimulation {
     // Use the Runge-Kutta 2 method for the simulation
     // If false, use the Euler explicit method is used
     // (faster but less stable)
-    this.use_runge_kutta = true;
+    this.use_runge_kutta = simulation_parameters.use_runge_kutta;
 
     for (let i = 0; i < this.particles_grid_length; i++) {
       this.particles_grid.push([]);

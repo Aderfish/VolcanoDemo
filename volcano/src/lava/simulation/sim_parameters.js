@@ -54,6 +54,15 @@ export class SimulationParameters {
     // but slower
     this.recompute_neighbors_every = 10;
 
+    // --- Integration method ---
+
+    // The integration method used to compute the new position of the particles
+    // The two methods are:
+    // - Euler explicit: a simple method that is fast but not very accurate (makes the simulation unstable)
+    // - Runge-Kutta second order: a more complex method that is slower but more accurate
+    // Setting this value to true will use the Runge-Kutta method and false the Euler explicit method
+    this.use_runge_kutta = true;
+
     // --- Simulation parameters ---
 
     // The number of particles emitted in the crater per second
