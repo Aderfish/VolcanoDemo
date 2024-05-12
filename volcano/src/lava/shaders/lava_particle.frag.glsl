@@ -1,15 +1,10 @@
-precision mediump float;
+precision highp float;
 
-uniform vec3 particle_position;
-uniform float particle_radius;
 uniform float particle_temperature;
 
 varying vec3 v2f_dir_from_view;
 varying vec3 v2f_dir_to_light;
 varying vec3 v2f_normal;
-
-
-uniform vec4 light_position;
 
 
 const vec3 light_color = vec3(1.0, 1.0, 1.0);

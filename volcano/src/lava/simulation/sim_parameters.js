@@ -75,7 +75,8 @@ export class SimulationParameters {
     // If the duration is null, the emission will last until the end of the simulation
     this.new_particles_schedule = [
       { start_time: 0, duration: 10, particles_per_second: 100 },
-      { start_time: 10, duration: 5, particles_per_second: 2000 },
+      { start_time: 10, duration: 5, particles_per_second: 300 },
+      { start_time: 15, duration: 15, particles_per_second: 200 },
       // { start_time: 11, duration: 2, particles_per_second: 2000 },
       // { start_time: 13, duration: 10, particles_per_second: 100 },
       // { start_time: 23, duration: 3, particles_per_second: 300 },
@@ -90,12 +91,12 @@ export class SimulationParameters {
     this.max_num_particles = 20000;
 
     // The total duration of the simulation in seconds
-    this.simulation_duration = 10;
+    this.simulation_duration = 30;
 
     // --- Visualization parameters ---
     // The rate at which the simulation data is acquired (per second)
     // A higher value will make the visualization smoother but
     // it consumes more memory
-    this.acquisition_rate = 100;
+    this.acquisition_rate = 500;
   }
 }

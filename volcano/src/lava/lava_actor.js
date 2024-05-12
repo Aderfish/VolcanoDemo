@@ -27,6 +27,7 @@ export class LavaRenderingActor {
         particle_position: regl.prop("particle_position"),
         particle_radius: regl.prop("particle_radius"),
         particle_temperature: regl.prop("particle_temperature"),
+        seed: regl.prop("seed"),
       },
 
       vert: resources["lava/shaders/lava_particle.vert.glsl"],
@@ -48,6 +49,7 @@ export class LavaRenderingActor {
 
     const particles_to_draw = [];
 
+    let seed = 0;
     for (const particle of particles_data) {
       const particle_position = particle.slice(0, 3);
       const particle_temperature = particle[3];
@@ -61,7 +63,10 @@ export class LavaRenderingActor {
         particle_position: particle_position,
         particle_radius: this.particle_radius,
         particle_temperature: particle_temperature,
+        seed: seed,
       });
+
+      seed++;
     }
 
     this.pipeline(particles_to_draw);
