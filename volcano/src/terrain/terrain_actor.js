@@ -9,7 +9,7 @@ import {
 import { TerrainParameters } from "../noise/generation_parameters.js";
 import { mat4_matmul_many } from "../utils/icg_math.js";
 
-class BufferData {
+export class BufferData {
   constructor(regl, buffer) {
     this.width = buffer.width;
     this.height = buffer.height;
@@ -42,7 +42,7 @@ function terrain_build_mesh(height_map, terrain_parameters) {
   const grid_width = height_map.width;
   const grid_height = height_map.height;
 
-  const WATER_LEVEL = -0.03125;
+  const WATER_LEVEL = 0.01;
 
   const vertices = [];
   const normals = [];
@@ -56,7 +56,7 @@ function terrain_build_mesh(height_map, terrain_parameters) {
   for (let gy = 0; gy < grid_height; gy++) {
     for (let gx = 0; gx < grid_width; gx++) {
       const idx = xy_to_v_index(gx, gy);
-      let elevation = height_map.get(gx, gy) - 0.5; // we put the value between 0...1 so that it could be stored in a non-float texture on older browsers/GLES3, the -0.5 brings it back to -0.5 ... 0.5
+      let elevation = height_map.get(gx, gy); // we put the value between 0...1 so that it could be stored in a non-float texture on older browsers/GLES3, the -0.5 brings it back to -0.5 ... 0.5
 
       // normal as finite difference of the height map
       // dz/dx = (h(x+dx) - h(x-dx)) / (2 dx)
