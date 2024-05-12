@@ -7,6 +7,18 @@ varying vec3 v2f_dir_from_view;
 varying vec3 v2f_dir_to_light;
 varying vec3 v2f_normal;
 varying vec2 v2f_uv;
+varying float v2f_terrain_width;
+
+varying float v2f_water_tex_scale;
+varying float v2f_grass_tex_scale;
+varying float v2f_mont_tex_scale;
+
+varying float v2f_volcano_h;
+varying vec3 v2f_water_col_dark;
+varying vec3 v2f_water_col_light;
+
+varying float v2f_water_f_m;
+varying float v2f_water_a_m;
 
 const vec3  light_color = vec3(1.0, 0.941, 0.898) * 1.0;
 // Small perturbation to prevent "z-fighting" on the water on some machines...
@@ -165,6 +177,48 @@ float voronoi(vec2 point) {
     return 1. - pow(m, 0.5) / space * sqrt(float(N)) * 1.;
 }
 
+float voronoi2(vec2 point) {
+	const int N = 5;
+	float m = 10000.0;
+	float space = 10.;
+   
+    vec2 uvi = vec2(floor(point / space)); // index of the square as integer
+    vec2 p1 = uvi * space;
+    vec2 p2 = (uvi + vec2(0, 1)) * space;
+    vec2 p3 = (uvi + vec2(1, 0)) * space;
+    vec2 p4 = (uvi + vec2(1, 1)) * space;
+	vec2 p5 = (uvi + vec2(-1, 0)) * space;
+    vec2 p6 = (uvi + vec2(-1, -1)) * space;
+	vec2 p7 = (uvi + vec2(0, -1)) * space;
+	vec2 p8 = (uvi + vec2(-1, 0)) * space;
+	vec2 p9 = (uvi + vec2(1, -1)) * space;
+
+    vec2 rand_n1 = vec2(3.2, .5);
+    vec2 rand_n2 = vec2(0.5, .6);
+
+    for (int i = 0; i < N; i++) {
+        p1 = (uvi + rand2(rand_n1 * p1 + rand_n2)) * space; // Random point inside selected square
+        m = min(m, distance(p1, point));
+        p2 = (uvi + vec2(0, 1) + rand2(rand_n1 * p2 + rand_n2)) * space; // Random point inside neighbor of the selected square
+        m = min(m, distance(p2, point));
+        p3 = (uvi + vec2(1, 0) + rand2(rand_n1 * p3 + rand_n2)) * space; // '* space' convert the axis back to the main square
+        m = min(m, distance(p3, point));
+        p4 = (uvi + vec2(1, 1) + rand2(rand_n1 * p4 + rand_n2)) * space;
+        m = min(m, distance(p4, point));
+		p5 = (uvi + vec2(-1, 1) + rand2(rand_n1 * p5 + rand_n2)) * space;
+        m = min(m, distance(p5, point));
+		p6 = (uvi + vec2(-1, -1) + rand2(rand_n1 * p6 + rand_n2)) * space;
+        m = min(m, distance(p6, point));
+		p7 = (uvi + vec2(0, -1) + rand2(rand_n1 * p7 + rand_n2)) * space;
+        m = min(m, distance(p7, point));
+		p8 = (uvi + vec2(-1, 0) + rand2(rand_n1 * p8 + rand_n2)) * space;
+        m = min(m, distance(p8, point));
+		p9 = (uvi + vec2(1, -1) + rand2(rand_n1 * p9 + rand_n2)) * space;
+        m = min(m, distance(p9, point));
+    }
+    return 1. - pow(m, 0.5) / space * sqrt(float(N)) * 1.;
+}
+
 vec3 tex_rock(vec2 point){
   vec3 rock_color = vec3(voronoi(point));
   rock_color *= clamp(fbm2(point), 0., 1.);
@@ -212,7 +266,7 @@ float iqnoisep(vec2 x)
     return 2.* va/wt - 1.;
 }
 
-float fbmabs(vec2 p) {
+float fbmabs_9(vec2 p) {
 	// Initial frequency and frequency multiplier
 	float f = 1.;
 	float a = 1.;
@@ -221,7 +275,7 @@ float fbmabs(vec2 p) {
 	const int num_oct = 9;
 
 	float r = 0.0;	
-    for(int i = 0; i < num_oct; i++){	
+    for(int i = 0; i < num_oct ; i++){	
 		r += abs(iqnoisep(p*f))* a;       
 	    f *= f_m;
 		a *= a_m;
@@ -231,22 +285,76 @@ float fbmabs(vec2 p) {
 	return r;
 }
 
+float fbmabs_2(vec2 p) {
+	// Initial frequency and frequency multiplier
+	float f = 1.;
+	float a = 1.;
+	float f_m = v2f_water_f_m;
+	float a_m = v2f_water_a_m;
+
+	float r = 0.0;	
+    for(int i = 0; i < 3; i++){	
+		r += abs(iqnoisep(p*f))* a;       
+	    f *= f_m;
+		a *= a_m;
+		p -= vec2(-.1, .7) * r;
+	}
+	return r;
+}
+
 // Evaluate the derivatives of fbmabs function along xyz directions
-vec3 nor(vec2 p)
+vec3 nor_9(vec2 p)
 {
 	const vec2 e = vec2(0.002, 0.0);
 	return normalize(vec3(
-		fbmabs(p + e.xy) - fbmabs(p - e.xy),
-		fbmabs(p + e.yx) - fbmabs(p - e.yx),
+		fbmabs_9(p + e.xy) - fbmabs_9(p - e.xy),
+		fbmabs_9(p + e.yx) - fbmabs_9(p - e.yx),
+		-.1));
+}
+
+vec3 nor_2(vec2 p)
+{
+	const vec2 e = vec2(0.002, 0.0);
+	return normalize(vec3(
+		fbmabs_2(p + e.xy) - fbmabs_2(p - e.xy),
+		fbmabs_2(p + e.yx) - fbmabs_2(p - e.yx),
 		-.1));
 }
 
 vec3 tex_mont(vec2 point){	
 	float r;
     vec3 light = normalize(vec3(1., 1., -1.));
-    r = max(dot(nor(point), light), 0.1);
+    r = max(dot(nor_9(point), light), 0.1);
     vec3 mont_color = clamp(vec3(r, r, r), 0., 1.);
 	return mont_color;
+}
+
+float find_k(vec2 point, vec2 col){
+	float k = (col.y - col.x)/pow(point.y - point.x, 3.);
+	return k;
+}
+
+vec3 rgb_nor(vec3 col_rgb){
+	float r_nor = col_rgb.x / 255.;
+	float g_nor = col_rgb.y / 255.;
+	float b_nor = col_rgb.z / 255.;
+	return vec3(r_nor, g_nor, b_nor);
+}
+
+vec3 tex_water(vec2 point){	
+	float r;
+	vec3 wa_col_dark = rgb_nor(v2f_water_col_dark);
+	vec3 wa_col_light = rgb_nor(v2f_water_col_light);
+	vec2 wa_tex_range = vec2(0.67, 0.7);
+	float coef_r = find_k(wa_tex_range, vec2(wa_col_dark.x, wa_col_light.x));
+	float coef_g = find_k(wa_tex_range, vec2(wa_col_dark.y, wa_col_light.y));
+	float coef_b = find_k(wa_tex_range, vec2(wa_col_dark.z, wa_col_light.z));
+
+    vec3 light = normalize(vec3(1., 1., -0.5));
+    r = max(dot(nor_2(point), light), 0.1);
+    vec3 water_tex = vec3(1.) - clamp(vec3(r, r, r), 0.295, 0.33);
+	vec3 water_color = vec3(coef_r * pow(water_tex.x - wa_tex_range.x, 3.) + wa_col_dark.x, coef_g * pow(water_tex.x - wa_tex_range.x, 3.) + wa_col_dark.y, coef_b * pow(water_tex.x - wa_tex_range.x, 3.) + wa_col_dark.z);
+	return water_color;
 }
 // ==============================================================
 
@@ -271,8 +379,8 @@ void main()
 
 	if(height > terrain_water_level){
 		shininess = 2.0;
-		float weight = 2. * (height - terrain_water_level) * 0.01;
-		material_color = weight * terrain_color_mountain + (1.-weight) * terrain_color_grass;
+		float weight = (height - terrain_water_level)/v2f_volcano_h;
+		material_color = weight * terrain_color_mountain + (1. - weight) * terrain_color_grass;
 	}
 
 	/* apply the Blinn-Phong lighting model*/
@@ -294,13 +402,21 @@ void main()
 	if(dot(normal, direction_to_light) > 0. && dot(halfway, normal) > 0.){
 		color += material_color * light_color * pow(dot(halfway, normal), shininess);
 	}
-
+	
 	if(height > terrain_water_level){
-	vec3 rock_tex = tex_rock(v2f_uv/10.);
-	vec3 mont_tex = tex_mont(v2f_uv/100.);
-	float ratio = smoothstep(0., 50., height);
-	color *= rock_tex * (1. - ratio)  + mont_tex * ratio; 
+	vec3 rock_tex = tex_rock(v2f_uv * v2f_grass_tex_scale/10.);
+	vec3 mont_tex = tex_mont(v2f_uv * v2f_mont_tex_scale/100.);
+	float ratio = smoothstep(0., v2f_volcano_h, height);
+	color *= (rock_tex * (1. - ratio)  + mont_tex * ratio) * 3.; 
+	}else{
+		color = tex_water(v2f_uv * v2f_water_tex_scale / 60. );
+		vec3 regional_color = vec3(clamp(voronoi2(v2f_uv * 30. / v2f_terrain_width), 0.1, 1.));
+	    color *= regional_color * 2.; 
+		gl_FragColor = vec4(color, 1.);
 	}
 
+	vec3 normal_color_rgb = normal * 0.5 + 0.5; // Calculate the false color
+	float normal_color_grey = normal_color_rgb.x * 0.2126 + normal_color_rgb.y * 0.7152 + normal_color_rgb.y * 0.0722; // Convert rgb to grey-scale
+	color *= normal_color_grey;
 	gl_FragColor = vec4(color, 1.); // output: RGBA in 0..1 range
 }

@@ -215,7 +215,7 @@ async function main() {
         regl,
         resources,
         volcano_heightmap.get_buffer(),
-        generation_parameters.terrain
+        generation_parameters
       );
       console.log("Terrain regenerated");
 
