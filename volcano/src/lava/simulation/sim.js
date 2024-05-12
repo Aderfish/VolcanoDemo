@@ -462,8 +462,6 @@ export class LavaSimulation {
         particle,
         neigh_particle
       );
-      // console.log("Kernel grad");
-      // console.log(kernel_grad);
 
       // Compute the pressure force
       const pressure =
