@@ -33,7 +33,7 @@ export function init_billboard_actor(
                 size: 1,
             },
             time_to_live: {
-                buffer: regl.buffer([2., 2., 2., 2.]),
+                buffer: regl.buffer([10., 10., 10., 10.]),
                 size: 1,
             },
         },
