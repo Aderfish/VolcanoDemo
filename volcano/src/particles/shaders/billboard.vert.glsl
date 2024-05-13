@@ -1,17 +1,15 @@
-precision highp float;
+precision mediump float;
 
 attribute vec2 square_position;
-attribute float life_in;
+attribute float start_time;
+attribute float time_to_live;
 
-varying float life_out;
+varying float alpha;
 
 uniform mat4 mat_mvp;
-
-uniform vec3 camera_right_world;
-uniform vec3 camera_up_world;
-
+uniform vec3 camera_right_world, camera_up_world, billboard_center_worldspace;
 uniform vec2 billboard_size;
-uniform vec3 billboard_center_worldspace;
+uniform float time;
 
 void main(){
     vec3 vertex_position_worldspace = billboard_center_worldspace
@@ -20,6 +18,10 @@ void main(){
 
     gl_Position = mat_mvp * vec4(vertex_position_worldspace, 1);
 
-    const float dt = 1./30.;
-    life_out -= life_in - dt;
+    float lived = time - start_time;
+    alpha = 1. - (lived / time_to_live);
+
+    if (alpha < 0.){
+        alpha = 0.; // dead
+    }
 }

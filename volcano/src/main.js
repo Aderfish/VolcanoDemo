@@ -206,7 +206,9 @@ async function main() {
       regl.clear({ color: [0.9, 0.9, 1, 1] });
 
       terrain_actor.draw(scene_info);
-      billboard_actor.draw(scene_info);
+    
+      const time = frame.time * 0.001; // time in seconds
+      billboard_actor.draw(mat_view, mat_projection, time);
     }
   });
 }

@@ -28,6 +28,14 @@ export function init_billboard_actor(
                 buffer: regl.buffer(positions),
                 size: positions[0].length,
               },
+            start_time: {
+                buffer: regl.buffer([0., 0., 0., 0.]),
+                size: 1,
+            },
+            time_to_live: {
+                buffer: regl.buffer([2., 2., 2., 2.]),
+                size: 1,
+            },
         },
         uniforms: {
             mat_mvp: regl.prop("mat_mvp"),
@@ -35,6 +43,8 @@ export function init_billboard_actor(
             camera_up_world: regl.prop("camera_up_world"),
             billboard_size: regl.prop("billboard_size"),
             billboard_center_worldspace: regl.prop("billboard_center_worldspace"),
+        
+            time: regl.prop("time"),
         },
         elements: faces,
 
@@ -55,7 +65,7 @@ export function init_billboard_actor(
             this.camera_up_world =   vec3.create();
         }
 
-        draw({ mat_projection, mat_view, light_position_cam }) {
+        draw({ mat_projection, mat_view, time}) {
             mat4_matmul_many(this.mat_model_view, mat_view, this.mat_model_to_world);
             mat4_matmul_many(this.mat_mvp, mat_projection, this.mat_model_view);
 
@@ -77,6 +87,8 @@ export function init_billboard_actor(
 
                 billboard_size: vec2.fromValues(30., 10.),
                 billboard_center_worldspace: vec3.fromValues(0., 0., 50.),
+                
+                time: time,
             });
         }
     }
