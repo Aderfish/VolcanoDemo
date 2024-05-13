@@ -1,6 +1,9 @@
 precision highp float;
 
 attribute vec2 square_position;
+attribute float life_in;
+
+varying float life_out;
 
 uniform mat4 mat_mvp;
 
@@ -16,4 +19,7 @@ void main(){
         + square_position.y * billboard_size.y * camera_up_world;
 
     gl_Position = mat_mvp * vec4(vertex_position_worldspace, 1);
+
+    const float dt = 1./30.;
+    life_out -= life_in - dt;
 }
