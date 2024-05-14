@@ -14,13 +14,14 @@ varying float v2f_grass_tex_scale;
 varying float v2f_mont_tex_scale;
 
 varying float v2f_volcano_h;
+varying float v2f_island_h;
 varying vec3 v2f_water_col_dark;
 varying vec3 v2f_water_col_light;
 
 varying float v2f_water_f_m;
 varying float v2f_water_a_m;
 
-const vec3  light_color = vec3(1.0, 0.941, 0.898) * 1.0;
+const vec3  light_color = vec3(1.0, 0.941, 0.898) * 0.5;
 // Small perturbation to prevent "z-fighting" on the water on some machines...
 const float terrain_water_level    = 0.01 + 1e-6;
 const vec3  terrain_color_water    = vec3(0.29, 0.51, 0.62);
@@ -356,11 +357,49 @@ vec3 tex_water(vec2 point){
 	vec3 water_color = vec3(coef_r * pow(water_tex.x - wa_tex_range.x, 3.) + wa_col_dark.x, coef_g * pow(water_tex.x - wa_tex_range.x, 3.) + wa_col_dark.y, coef_b * pow(water_tex.x - wa_tex_range.x, 3.) + wa_col_dark.z);
 	return water_color;
 }
+
+
+
+// Procedural water height function
+float get_water_height(vec2 uv) {
+    return fbmabs_2(uv * v2f_water_tex_scale / 60.0);
+}
+
+// Function to compute normal from height map
+vec3 compute_normal_from_height(vec2 uv) {
+    float h = get_water_height(uv);
+    float epsilon = 1.0;
+    
+    float hx = get_water_height(uv + vec2(epsilon, 0.0)) - h;
+    float hy = get_water_height(uv + vec2(0.0, epsilon)) - h;
+    
+    vec3 normal = normalize(vec3(-hx, -hy, 1.0));
+    return normal;
+}
+
+// Procedural volcano height function
+float get_volcano_height(vec2 uv) {
+    return fbmabs_9(uv * v2f_mont_tex_scale / 100.0);
+}
+
+// Function to compute normal from height map for volcano
+vec3 compute_volcano_normal_from_height(vec2 uv) {
+    float h = get_volcano_height(uv);
+    float epsilon = 1.0;
+    
+    float hx = get_volcano_height(uv + vec2(epsilon, 0.0)) - h;
+    float hy = get_volcano_height(uv + vec2(0.0, epsilon)) - h;
+    
+    vec3 normal = normalize(vec3(-hx, -hy, 1.0));
+    return normal;
+}
+
+
 // ==============================================================
 
 void main()
 {
-	float material_ambient = 0.1; // Ambient light coefficient
+	float material_ambient = 0.4; // Ambient light coefficient
 	float height = v2f_height;
 
 	/* 
@@ -375,23 +414,44 @@ void main()
 	 		shininess = 2.
 	*/
 	vec3 material_color = terrain_color_water;
-	float shininess = 30.0;
+	float shininess_water = 30.0;
+  float shininess_ground = 100.0;
 
 	if(height > terrain_water_level){
-		shininess = 2.0;
-		float weight = (height - terrain_water_level)/v2f_volcano_h;
+		shininess_water = 2.0;
+		float weight = (height - terrain_water_level) / (v2f_volcano_h + v2f_island_h - terrain_water_level);
 		material_color = weight * terrain_color_mountain + (1. - weight) * terrain_color_grass;
 	}
 
 	/* apply the Blinn-Phong lighting model*/
 
 	vec3 normal = normalize(v2f_normal);
+  if(height <= terrain_water_level){
+    normal = compute_normal_from_height(v2f_uv);
+  }
+  else {
+    normal = compute_volcano_normal_from_height(v2f_uv);
+  }
+
+
 	vec3 direction_to_light = normalize(v2f_dir_to_light);
 	vec3 direction_to_camera = normalize(v2f_dir_from_view);
 
 	vec3 halfway = normalize(direction_to_camera + direction_to_light);
 
-	vec3 mat_ambient = material_color * light_color * material_ambient;
+
+	if(height > terrain_water_level){
+    vec3 rock_tex = (tex_rock(v2f_uv * v2f_grass_tex_scale/10.));
+    vec3 mont_tex = tex_mont(v2f_uv * v2f_mont_tex_scale/100.);
+    float ratio = smoothstep(0., v2f_volcano_h + v2f_island_h - terrain_water_level, height);
+    material_color *= (rock_tex * (1. - ratio)  + mont_tex * ratio) * 3.; 
+	}else{
+		material_color = tex_water(v2f_uv * v2f_water_tex_scale / 60. );
+		vec3 regional_color = vec3(clamp(voronoi2(v2f_uv * 30. / v2f_terrain_width), 0.1, 1.));
+	  material_color *= regional_color * 2.; 
+	}
+
+	vec3 mat_ambient = material_color *  material_ambient;
 
 	vec3 color = mat_ambient;
 
@@ -400,23 +460,13 @@ void main()
 	}
 
 	if(dot(normal, direction_to_light) > 0. && dot(halfway, normal) > 0.){
+    float shininess = height > terrain_water_level ? shininess_ground : shininess_water;
 		color += material_color * light_color * pow(dot(halfway, normal), shininess);
 	}
 	
-	if(height > terrain_water_level){
-	vec3 rock_tex = tex_rock(v2f_uv * v2f_grass_tex_scale/10.);
-	vec3 mont_tex = tex_mont(v2f_uv * v2f_mont_tex_scale/100.);
-	float ratio = smoothstep(0., v2f_volcano_h, height);
-	color *= (rock_tex * (1. - ratio)  + mont_tex * ratio) * 3.; 
-	}else{
-		color = tex_water(v2f_uv * v2f_water_tex_scale / 60. );
-		vec3 regional_color = vec3(clamp(voronoi2(v2f_uv * 30. / v2f_terrain_width), 0.1, 1.));
-	    color *= regional_color * 2.; 
-		gl_FragColor = vec4(color, 1.);
-	}
 
-	vec3 normal_color_rgb = normal * 0.5 + 0.5; // Calculate the false color
-	float normal_color_grey = normal_color_rgb.x * 0.2126 + normal_color_rgb.y * 0.7152 + normal_color_rgb.y * 0.0722; // Convert rgb to grey-scale
-	color *= normal_color_grey;
+	// vec3 normal_color_rgb = normal * 0.5 + 0.5; // Calculate the false color
+	// float normal_color_grey = normal_color_rgb.x * 0.2126 + normal_color_rgb.y * 0.7152 + normal_color_rgb.y * 0.0722; // Convert rgb to grey-scale
+	// color *= normal_color_grey;
 	gl_FragColor = vec4(color, 1.); // output: RGBA in 0..1 range
 }

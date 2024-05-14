@@ -126,7 +126,7 @@ function terrain_build_mesh(height_map, terrain_parameters) {
 }
 
 function hexToRgb(hex) {
-  hex = hex.replace(/^#/, '');
+  hex = hex.replace(/^#/, "");
 
   var bigint = parseInt(hex, 16);
 
@@ -174,10 +174,11 @@ export function init_terrain_actor(
       grass_tex_scale: terrain_parameters.terrain.grass_tex_scale,
       mont_tex_scale: terrain_parameters.terrain.mont_tex_scale,
       volcano_h: terrain_parameters.volcano.m_volcano_max_height,
+      island_h: terrain_parameters.island.m_island_height,
       water_col_dark: hexToRgb(terrain_parameters.terrain.water_col_dark),
       water_col_light: hexToRgb(terrain_parameters.terrain.water_col_light),
       water_f_m: terrain_parameters.terrain.water_f_m,
-      water_a_m: terrain_parameters.terrain.water_a_m,    
+      water_a_m: terrain_parameters.terrain.water_a_m,
     },
     elements: terrain_mesh.faces,
 
@@ -200,7 +201,7 @@ export function init_terrain_actor(
       mat3.fromMat4(this.mat_normals, this.mat_model_view);
       mat3.transpose(this.mat_normals, this.mat_normals);
       mat3.invert(this.mat_normals, this.mat_normals);
-      
+
       pipeline_draw_terrain({
         mat_mvp: this.mat_mvp,
         mat_model_view: this.mat_model_view,

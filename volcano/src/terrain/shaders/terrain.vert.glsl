@@ -15,6 +15,7 @@ varying float v2f_grass_tex_scale;
 varying float v2f_mont_tex_scale;
 
 varying float v2f_volcano_h;
+varying float v2f_island_h;
 varying vec3 v2f_water_col_dark;
 varying vec3 v2f_water_col_light;
 
@@ -30,6 +31,8 @@ uniform float water_tex_scale;
 uniform float grass_tex_scale;
 uniform float mont_tex_scale;
 uniform float volcano_h;
+uniform float island_h;
+
 uniform vec3 water_col_dark;
 uniform vec3 water_col_light;
 
@@ -47,6 +50,7 @@ void main()
 	v2f_terrain_width = terrain_width;
 
 	v2f_volcano_h = volcano_h;
+  v2f_island_h = island_h;
 	v2f_water_col_dark = water_col_dark;
 	v2f_water_col_light = water_col_light;
 
