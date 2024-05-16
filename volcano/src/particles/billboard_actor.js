@@ -50,7 +50,7 @@ export function init_billboard_actor(
         for(let dx = -1; dx <= 1; dx += 2) {
             for(let dy = -1; dy <= 1; dy += 2) {
                 positions.push([dx*0.5, dy*0.5]);
-                start_time.push(start_time);
+                start_time.push(particle_start_time);
 
                 time_to_live.push(particle.time_to_live);
                 billboard_center_worldspace.push(particle.center);
