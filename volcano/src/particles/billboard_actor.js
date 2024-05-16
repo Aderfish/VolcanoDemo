@@ -39,8 +39,8 @@ export function init_billboard_actor(
     let faces = [];
     let start_time = [];
     let time_to_live = [];
-    let billboard_sizes = [];
-    let billboard_centers_worldspace = [];
+    let billboard_size = [];
+    let billboard_center_worldspace = [];
 
     for (let i = 0; i < n_particles; i++) {
         let particle = random_smoke_particle();
@@ -51,8 +51,8 @@ export function init_billboard_actor(
                 start_time.push(0.);
 
                 time_to_live.push(particle.time_to_live);
-                billboard_centers_worldspace.push(particle.center);
-                billboard_sizes.push(particle.size);
+                billboard_center_worldspace.push(particle.center);
+                billboard_size.push(particle.size);
             }
         }
         faces.push([4*i, 4*i+1, 4*i+2]);
@@ -65,7 +65,7 @@ export function init_billboard_actor(
                 buffer: regl.buffer(positions),
                 size: positions[0].length,
               },
-            start_time: {
+            /*start_time: {
                 buffer: regl.buffer(start_time),
                 size: 1,
             },
@@ -74,13 +74,18 @@ export function init_billboard_actor(
                 size: 1,
             },
             billboard_size: {
-                buffer: regl.buffer(billboard_sizes),
+                buffer: regl.buffer(billboard_size),
                 size: 2,
             },
             billboard_center_worldspace: {
-                buffer: regl.buffer(billboard_centers_worldspace),
+                buffer: regl.buffer(billboard_center_worldspace),
                 size: 3,
-            },
+            },*/
+
+            start_time: regl.prop("start_time"),
+            time_to_live: regl.prop("time_to_live"),
+            billboard_size: regl.prop("billboard_size"),
+            billboard_center_worldspace: regl.prop("billboard_center_worldspace"),
         },
         uniforms: {
             mat_mvp: regl.prop("mat_mvp"),
@@ -106,6 +111,11 @@ export function init_billboard_actor(
 
             this.camera_right_world = vec3.create();
             this.camera_up_world =   vec3.create();
+
+            this.start_time = start_time;
+            this.time_to_live = time_to_live;
+            this.billboard_center_worldspace = billboard_center_worldspace;
+            this.billboard_size = billboard_size;
         }
 
         draw({ mat_projection, mat_view, time}) {
@@ -122,7 +132,22 @@ export function init_billboard_actor(
             vec3.transformMat3(this.camera_right_world, [1., 0., 0.], this.mat_view_to_model);
             vec3.transformMat3(this.camera_up_world, [0., 1., 0.], this.mat_view_to_model);
 
-            // 
+            // iterate over all particles and respawn them if they are dead
+            for (let i = 0; i < n_particles; i++) {
+                if (time - this.start_time[4*i] > this.time_to_live[4*i]) {
+                    let new_particle = random_smoke_particle();
+                
+                    for(let j = 0; j < 4; j++) {
+                        let vertex_index = 4*i + j;
+                    
+                        this.start_time[vertex_index] = time;
+                        this.time_to_live[vertex_index] = new_particle.time_to_live;
+                        this.billboard_center_worldspace[vertex_index] = new_particle.center;
+                        this.billboard_size[vertex_index] = new_particle.size;
+                    }
+                }
+            } 
+
 
             pipeline_draw_billboard({
                 mat_mvp: this.mat_mvp,
@@ -134,6 +159,11 @@ export function init_billboard_actor(
                 billboard_center_worldspace: vec3.fromValues(0., 0., 50.),
                 
                 time: time,
+
+                start_time: this.start_time,
+                time_to_live: this.time_to_live,
+                billboard_center_worldspace: this.billboard_center_worldspace,
+                billboard_size: this.billboard_size,
             });
         }
     }
