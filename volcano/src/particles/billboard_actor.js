@@ -25,13 +25,23 @@ export function init_billboard_actor(
     let faces = [];
     let start_time = [];
     let time_to_live = [];
+    let billboard_sizes = [];
+    let billboard_centers_worldspace = [];
 
     for (let i = 0; i < n_particles; i++) {
+        // randomize the billboard size between 5 and 15 in both dimensions
+        let billboard_size = [5. + Math.random()*10., 5. + Math.random()*10.];
+        // randomize the billboard position around (0, 0, 100) with a radius of 10
+        let billboard_center_worldspace = [Math.random()*20.-10., Math.random()*20.-10., 50.];
+
         for(let dx = -1; dx <= 1; dx += 2) {
             for(let dy = -1; dy <= 1; dy += 2) {
                 positions.push([dx*0.5, dy*0.5]);
                 start_time.push(0.);
                 time_to_live.push(10.);
+
+                billboard_sizes.push(billboard_size);
+                billboard_centers_worldspace.push(billboard_center_worldspace);
             }
         }
         faces.push([4*i, 4*i+1, 4*i+2]);
@@ -52,13 +62,19 @@ export function init_billboard_actor(
                 buffer: regl.buffer(time_to_live),
                 size: 1,
             },
+            billboard_size: {
+                buffer: regl.buffer(billboard_sizes),
+                size: 2,
+            },
+            billboard_center_worldspace: {
+                buffer: regl.buffer(billboard_centers_worldspace),
+                size: 3,
+            },
         },
         uniforms: {
             mat_mvp: regl.prop("mat_mvp"),
             camera_right_world: regl.prop("camera_right_world"),
             camera_up_world: regl.prop("camera_up_world"),
-            billboard_size: regl.prop("billboard_size"),
-            billboard_center_worldspace: regl.prop("billboard_center_worldspace"),
         
             time: regl.prop("time"),
         },
