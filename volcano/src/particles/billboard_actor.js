@@ -8,6 +8,20 @@ import {
 } from "../../lib/gl-matrix_3.3.0/esm/index.js";
 import { mat4_matmul_many } from "../utils/icg_math.js";
 
+function random_in_range(min, max) {
+    return Math.random() * (max - min) + min;
+}
+
+function random_smoke_particle(){
+    let size = [random_in_range(5., 15.), random_in_range(2., 8.)];
+    let center = [random_in_range(-10., 10.), random_in_range(-10., 10.), 50.];
+    let time_to_live = random_in_range(5., 10.);
+    return {
+        size: size,
+        center: center,
+        time_to_live: time_to_live,
+    };
+}
 
 /**
  *
@@ -29,19 +43,16 @@ export function init_billboard_actor(
     let billboard_centers_worldspace = [];
 
     for (let i = 0; i < n_particles; i++) {
-        // randomize the billboard size between 5 and 15 in both dimensions
-        let billboard_size = [5. + Math.random()*10., 5. + Math.random()*10.];
-        // randomize the billboard position around (0, 0, 100) with a radius of 10
-        let billboard_center_worldspace = [Math.random()*20.-10., Math.random()*20.-10., 50.];
+        let particle = random_smoke_particle();
 
         for(let dx = -1; dx <= 1; dx += 2) {
             for(let dy = -1; dy <= 1; dy += 2) {
                 positions.push([dx*0.5, dy*0.5]);
                 start_time.push(0.);
-                time_to_live.push(10.);
 
-                billboard_sizes.push(billboard_size);
-                billboard_centers_worldspace.push(billboard_center_worldspace);
+                time_to_live.push(particle.time_to_live);
+                billboard_centers_worldspace.push(particle.center);
+                billboard_sizes.push(particle.size);
             }
         }
         faces.push([4*i, 4*i+1, 4*i+2]);
@@ -110,7 +121,9 @@ export function init_billboard_actor(
 
             vec3.transformMat3(this.camera_right_world, [1., 0., 0.], this.mat_view_to_model);
             vec3.transformMat3(this.camera_up_world, [0., 1., 0.], this.mat_view_to_model);
-        
+
+            // 
+
             pipeline_draw_billboard({
                 mat_mvp: this.mat_mvp,
                 
