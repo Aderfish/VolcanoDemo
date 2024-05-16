@@ -19,8 +19,24 @@ export function init_billboard_actor(
     regl,
     resources,
 ) {
-    const positions = [[-0.5, -0.5], [-0.5, 0.5], [0.5, -0.5], [0.5, 0.5]];
-    const faces = [[0, 1, 2], [2, 3, 1]];
+    const n_particles = 100;
+
+    let positions = [];
+    let faces = [];
+    let start_time = [];
+    let time_to_live = [];
+
+    for (let i = 0; i < n_particles; i++) {
+        for(let dx = -1; dx <= 1; dx += 2) {
+            for(let dy = -1; dy <= 1; dy += 2) {
+                positions.push([dx*0.5, dy*0.5]);
+                start_time.push(0.);
+                time_to_live.push(10.);
+            }
+        }
+        faces.push([4*i, 4*i+1, 4*i+2]);
+        faces.push([4*i+2, 4*i+3, 4*i+1]);
+    }
 
     const pipeline_draw_billboard = regl({
         attributes: {
@@ -29,11 +45,11 @@ export function init_billboard_actor(
                 size: positions[0].length,
               },
             start_time: {
-                buffer: regl.buffer([0., 0., 0., 0.]),
+                buffer: regl.buffer(start_time),
                 size: 1,
             },
             time_to_live: {
-                buffer: regl.buffer([10., 10., 10., 10.]),
+                buffer: regl.buffer(time_to_live),
                 size: 1,
             },
         },
