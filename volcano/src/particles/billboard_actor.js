@@ -45,10 +45,12 @@ export function init_billboard_actor(
     for (let i = 0; i < n_particles; i++) {
         let particle = random_smoke_particle();
 
+        let particle_start_time = -Math.random() * particle.time_to_live;
+
         for(let dx = -1; dx <= 1; dx += 2) {
             for(let dy = -1; dy <= 1; dy += 2) {
                 positions.push([dx*0.5, dy*0.5]);
-                start_time.push(0.);
+                start_time.push(start_time);
 
                 time_to_live.push(particle.time_to_live);
                 billboard_center_worldspace.push(particle.center);
@@ -64,23 +66,7 @@ export function init_billboard_actor(
             square_position : {
                 buffer: regl.buffer(positions),
                 size: positions[0].length,
-              },
-            /*start_time: {
-                buffer: regl.buffer(start_time),
-                size: 1,
             },
-            time_to_live: {
-                buffer: regl.buffer(time_to_live),
-                size: 1,
-            },
-            billboard_size: {
-                buffer: regl.buffer(billboard_size),
-                size: 2,
-            },
-            billboard_center_worldspace: {
-                buffer: regl.buffer(billboard_center_worldspace),
-                size: 3,
-            },*/
 
             start_time: regl.prop("start_time"),
             time_to_live: regl.prop("time_to_live"),
