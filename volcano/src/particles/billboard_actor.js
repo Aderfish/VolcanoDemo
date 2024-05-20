@@ -81,7 +81,13 @@ export function init_billboard_actor(
             time: regl.prop("time"),
         },
         elements: faces,
-
+        blend: {
+          enable: true,
+          func: {
+              src: 'one',
+              dst: 'one',
+          },
+        },
         vert: resources["particles/shaders/billboard.vert.glsl"],
         frag: resources["particles/shaders/billboard.frag.glsl"],
     });
