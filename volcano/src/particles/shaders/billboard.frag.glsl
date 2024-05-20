@@ -4,6 +4,12 @@ varying float alpha;
 
 const vec3 grey = vec3(0.6, 0.6, 0.6);
 
+varying vec2 frag_square_coords;
+
 void main(){
-    gl_FragColor = vec4(grey * alpha, alpha);
+    if(length(frag_square_coords) < 0.5) {
+        gl_FragColor = vec4(grey * alpha, alpha);
+    } else {
+        gl_FragColor = vec4(1, 1, 1, 0);
+    }
 }

@@ -7,6 +7,7 @@ attribute vec2 billboard_size;
 attribute vec3 billboard_center_worldspace;
 
 varying float alpha;
+varying vec2 frag_square_coords;
 
 uniform mat4 mat_mvp;
 uniform vec3 camera_right_world, camera_up_world;
@@ -27,4 +28,6 @@ void main(){
     if (alpha < 0.){
         alpha = 0.; // dead
     }
+
+    frag_square_coords = square_position;
 }
