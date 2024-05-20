@@ -82,12 +82,16 @@ export function init_billboard_actor(
         },
         elements: faces,
         blend: {
-          enable: true,
-          func: {
-              src: 'one',
-              dst: 'one',
-          },
+            enable: true,
+            func: {
+                srcRGB: 'src alpha',
+                srcAlpha: 'src alpha',
+                dstRGB: 'one minus src alpha',
+                dstAlpha: 'one minus src alpha',
+            },
         },
+        depth: { enable: false },
+        
         vert: resources["particles/shaders/billboard.vert.glsl"],
         frag: resources["particles/shaders/billboard.frag.glsl"],
     });

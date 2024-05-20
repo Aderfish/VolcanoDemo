@@ -10,6 +10,6 @@ void main(){
     if(length(frag_square_coords) < 0.5) {
         gl_FragColor = vec4(grey * alpha, alpha);
     } else {
-        gl_FragColor = vec4(1, 1, 1, 0);
+        gl_FragColor = vec4(1., 0., 0., 0.);
     }
 }
