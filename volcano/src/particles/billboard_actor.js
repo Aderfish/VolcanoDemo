@@ -90,8 +90,11 @@ export function init_billboard_actor(
                 dstAlpha: 'one minus src alpha',
             },
         },
-        depth: { enable: false },
-        
+        depth: {
+            enable: true,
+            mask: false,
+        },
+
         vert: resources["particles/shaders/billboard.vert.glsl"],
         frag: resources["particles/shaders/billboard.frag.glsl"],
     });
