@@ -16,7 +16,7 @@ export class TerrainParameters {
 export class VolcanoParameters {
   constructor() {
     this.m_crater_radius = 10;
-    this.m_crater_height = 20;
+    this.m_crater_height = 50;
     this.m_volcano_max_height = 50;
     this.m_volcano_center = [0, 0];
     this.m_volcano_radius = 50;

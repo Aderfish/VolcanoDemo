@@ -20,6 +20,7 @@ varying vec3 v2f_water_col_light;
 varying float v2f_water_f_m;
 varying float v2f_water_a_m;
 
+
 const vec3  light_color = vec3(1.0, 0.941, 0.898) * 1.0;
 // Small perturbation to prevent "z-fighting" on the water on some machines...
 const float terrain_water_level    = 0.01 + 1e-6;

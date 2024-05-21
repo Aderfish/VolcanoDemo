@@ -15,7 +15,7 @@ export class SimulationParameters {
     this.viscosity_evolution_factor = 1.5; // The factor of the viscosity evolution
 
     // The radius of the particles in the simulation
-    this.particle_radius = 0.15; // In m
+    this.particle_radius = 0.3; // In m
 
     // --- Temperature parameters ---
     // The initial temperature of the lava particles when they are emitted
@@ -45,7 +45,7 @@ export class SimulationParameters {
     // The timestep of the simulation
     // The smaller the timestep, the more accurate the simulation but the slower
     // it is crucial to set it to a value that is small enough to avoid instabilities
-    this.timestep = 0.01; // In seconds
+    this.timestep = 0.005; // In seconds
 
     // How many iterations to wait before recomputing the neighbors
     // of the particles
@@ -74,9 +74,9 @@ export class SimulationParameters {
     // If two emissions overlap, the emission with the highest start_time will be used
     // If the duration is null, the emission will last until the end of the simulation
     this.new_particles_schedule = [
-      { start_time: 0, duration: 10, particles_per_second: 100 },
-      { start_time: 10, duration: 5, particles_per_second: 300 },
-      { start_time: 15, duration: 15, particles_per_second: 200 },
+      { start_time: 0, duration: 10, particles_per_second: 200 },
+      { start_time: 10, duration: 10, particles_per_second: 150 },
+      { start_time: 20, duration: 20, particles_per_second: 250 },
       // { start_time: 11, duration: 2, particles_per_second: 2000 },
       // { start_time: 13, duration: 10, particles_per_second: 100 },
       // { start_time: 23, duration: 3, particles_per_second: 300 },
@@ -88,10 +88,10 @@ export class SimulationParameters {
     // After this number is reached, no more particles are emitted whatever the schedule
     // You can set this value to null to have an infinite maximum number of particles
     // However, this is not recommended as it can lead to performance issues and potential crashes
-    this.max_num_particles = 20000;
+    this.max_num_particles = 2000000000;
 
     // The total duration of the simulation in seconds
-    this.simulation_duration = 30;
+    this.simulation_duration = 40;
 
     // --- Visualization parameters ---
     // The rate at which the simulation data is acquired (per second)
