@@ -2,7 +2,7 @@
 title: Final Project Report CS-341 2024
 ---
 
-# Project Title
+# Volcano
 
 ![An image showing the final result](images/demo.jpg){width="300px"}
 
