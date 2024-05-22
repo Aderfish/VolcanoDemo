@@ -127,6 +127,50 @@ Or we can adjust the noise proportion to create a spikier-looking volcano:
 ![Spiky volcano](images/generation/volcano/examples/spiky.png){width="400px"}
 
 
+### Combined
+
+##### Implementation 
+
+We then simply combine both heightmaps by adding them.
+
+##### Validation
+
+These implementations of the island and volcano heightmaps allow for the creation of various types of volcanic islands. Here are a few variations:
+
+Here is a normal, pretty small volcanic island:
+
+![Normal volcanic island](images/generation/combined/normal/normal.png){width="400px"}
+
+And here are some top views where we vary the island transition parameter to highlight its influence:
+
+![Top view, small transition factor](images/generation/combined/normal/normal_top.png){width="400px"}
+
+![Top view, high transition factor](images/generation/combined/normal/normal_transition.png){width="400px"}
+
+We can create large volcanoes:
+
+![Large volcano](images/generation/combined/big_volcano/big_volcano.png){width="400px"}
+
+We can reduce the terrain size to get a close-up view of a volcano:
+
+![Close up view of volcano](images/generation/combined/close_up/close.png){width="400px"}
+
+Setting a large island radius, we can create a terrain with no water:
+
+![No water volcano](images/generation/combined/no_water/no_water.png){width="400px"}
+
+Using the same parameters with various noise offsets, we can generate diverse volcanic islands:
+
+![Noise offset 0](images/generation/combined/noise/1.png){width="400px"}
+
+![Noise offset 1](images/generation/combined/noise/2.png){width="400px"}
+
+![Noise offset 2](images/generation/combined/noise/3.png){width="400px"}
+
+
+
+
+
 ### Feature 2
 
 #### Implementation

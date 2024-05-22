@@ -48,6 +48,7 @@
           <li><a href="#procedural-volcano-terrain-generation"
           id="toc-procedural-volcano-terrain-generation">Procedural
           Volcano Terrain Generation</a></li>
+          <li><a href="#combined" id="toc-combined">Combined</a></li>
           <li><a href="#feature-2" id="toc-feature-2">Feature 2</a></li>
           <li><a href="#feature-3" id="toc-feature-3">Feature 3</a></li>
           </ul></li>
@@ -292,15 +293,79 @@ volcano:</p>
 alt="Spiky volcano" />
 <figcaption aria-hidden="true">Spiky volcano</figcaption>
 </figure>
+<h3 id="combined">Combined</h3>
+<h5 id="implementation-2">Implementation</h5>
+<p>We then simply combine both heightmaps by adding them.</p>
+<h5 id="validation-2">Validation</h5>
+<p>These implementations of the island and volcano heightmaps allow for
+the creation of various types of volcanic islands. Here are a few
+variations:</p>
+<p>Here is a normal, pretty small volcanic island:</p>
+<figure>
+<img src="images/generation/combined/normal/normal.png" width="400"
+alt="Normal volcanic island" />
+<figcaption aria-hidden="true">Normal volcanic island</figcaption>
+</figure>
+<p>And here are some top views where we vary the island transition
+parameter to highlight its influence:</p>
+<figure>
+<img src="images/generation/combined/normal/normal_top.png" width="400"
+alt="Top view, small transition factor" />
+<figcaption aria-hidden="true">Top view, small transition
+factor</figcaption>
+</figure>
+<figure>
+<img src="images/generation/combined/normal/normal_transition.png"
+width="400" alt="Top view, high transition factor" />
+<figcaption aria-hidden="true">Top view, high transition
+factor</figcaption>
+</figure>
+<p>We can create large volcanoes:</p>
+<figure>
+<img src="images/generation/combined/big_volcano/big_volcano.png"
+width="400" alt="Large volcano" />
+<figcaption aria-hidden="true">Large volcano</figcaption>
+</figure>
+<p>We can reduce the terrain size to get a close-up view of a
+volcano:</p>
+<figure>
+<img src="images/generation/combined/close_up/close.png" width="400"
+alt="Close up view of volcano" />
+<figcaption aria-hidden="true">Close up view of volcano</figcaption>
+</figure>
+<p>Setting a large island radius, we can create a terrain with no
+water:</p>
+<figure>
+<img src="images/generation/combined/no_water/no_water.png" width="400"
+alt="No water volcano" />
+<figcaption aria-hidden="true">No water volcano</figcaption>
+</figure>
+<p>Using the same parameters with various noise offsets, we can generate
+diverse volcanic islands:</p>
+<figure>
+<img src="images/generation/combined/noise/1.png" width="400"
+alt="Noise offset 0" />
+<figcaption aria-hidden="true">Noise offset 0</figcaption>
+</figure>
+<figure>
+<img src="images/generation/combined/noise/2.png" width="400"
+alt="Noise offset 1" />
+<figcaption aria-hidden="true">Noise offset 1</figcaption>
+</figure>
+<figure>
+<img src="images/generation/combined/noise/3.png" width="400"
+alt="Noise offset 2" />
+<figcaption aria-hidden="true">Noise offset 2</figcaption>
+</figure>
 <h3 id="feature-2">Feature 2</h3>
-<h4 id="implementation-2">Implementation</h4>
-<p>TODO</p>
-<h4 id="validation-2">Validation</h4>
-<p>TODO</p>
-<h3 id="feature-3">Feature 3</h3>
 <h4 id="implementation-3">Implementation</h4>
 <p>TODO</p>
 <h4 id="validation-3">Validation</h4>
+<p>TODO</p>
+<h3 id="feature-3">Feature 3</h3>
+<h4 id="implementation-4">Implementation</h4>
+<p>TODO</p>
+<h4 id="validation-4">Validation</h4>
 <p>TODO</p>
 <h2 id="discussion">Discussion</h2>
 <p>TODO</p>
