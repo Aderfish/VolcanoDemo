@@ -1,0 +1,22 @@
+Plan:
+
+- Pressure - V
+- Viscosity - V
+- Gravity - V
+- Ground collision - V
+- Temperature exchange ground - V
+- Temperature exchange surface - V
+- Temperature exchange between particles - V
+- Temperature based viscosity - V
+- Surface detection - V
+- Euler explicit VS Runge Kutta 2 - V
+- Euler explicit
+- Runge kutta 2
+- Add particles working
+- Grid layout for efficiency - V
+- Lazy neighbor recomputation - X
+- Kernel function (computation for rho_0 and h based on the radius)
+
+- Simulation manager
+- Linear interpolation for memory efficiency
+- Scheduling mechanic - V
