@@ -83,13 +83,49 @@ Finally, we can adjust the noise amplitude to create a spikier-looking island:
 
 #### Volcano
 
+The second step to creating the volcanic island is the volcano itself. We follow a similar approach to the island generation by defining a base structure and adding noise on top of it.
+
 ##### Implementation
 
-TODO
+The first step is to create the global shape of the volcano. We define a volcano using four parameters: the volcano height and radius $h_v, r_v$, and the crater height and radius $h_c, r_c$. For similar reasons to the island generation, we also include a transition factor parameter, denoted $trans$.
+
+We then use two functions to determine the height based on the distance to the volcano center $x$:
+
+- If $x < r_c$, we use a smoothstep interpolation between $h_c$ at $0$ and $h_v$ at $r_c$.
+- If $x > r_c$, we use a smoothstep interpolation between $h_v$ at $r_c$ and $0$ at $r_v \cdot trans$.
+
+This creates the following basic shape of a volcano:
+
+![Basic volcano shape](images/generation/volcano/process/base.png){width="400px"}
+
+Next, we add a combination of FBM and turbulence noise within the volcano radius. The result is:
+
+![Volcano shape with noise](images/generation/volcano/process/noise.png){width="400px"}
+
+Then, we gradually remove the noise over the distance $r_v$ to $r_v \cdot trans$, allowing for a smooth transition. The result is shown below:
+
+![Volcano shape with noise transition](images/generation/volcano/process/noise_transition.png){width="400px"}
+
+We also made the noise offsets and center position adjustable to enable the creation of diverse volcanoes. Here is an example with an offset center:
+
+![Center offset volcano](images/generation/volcano/process/move.png){width="400px"}
 
 ##### Validation
 
-TODO
+Using this framework, we can create various kinds of volcanoes. Here are a few possibilities:
+
+We can create a "small" volcano with a large crater, resulting in steeper sides:
+
+![Big crater volcano](images/generation/volcano/examples/big_crater.png){width="400px"}
+
+We can also generate larger volcanoes:
+
+![Large volcano](images/generation/volcano/examples/large.png){width="400px"}
+
+Or we can adjust the noise proportion to create a spikier-looking volcano:
+
+![Spiky volcano](images/generation/volcano/examples/spiky.png){width="400px"}
+
 
 ### Feature 2
 

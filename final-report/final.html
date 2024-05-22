@@ -206,10 +206,92 @@ alt="Spiky island" />
 <figcaption aria-hidden="true">Spiky island</figcaption>
 </figure>
 <h4 id="volcano-1">Volcano</h4>
+<p>The second step to creating the volcanic island is the volcano
+itself. We follow a similar approach to the island generation by
+defining a base structure and adding noise on top of it.</p>
 <h5 id="implementation-1">Implementation</h5>
-<p>TODO</p>
+<p>The first step is to create the global shape of the volcano. We
+define a volcano using four parameters: the volcano height and radius
+<span
+class="math inline"><em>h</em><sub><em>v</em></sub>, <em>r</em><sub><em>v</em></sub></span>,
+and the crater height and radius <span
+class="math inline"><em>h</em><sub><em>c</em></sub>, <em>r</em><sub><em>c</em></sub></span>.
+For similar reasons to the island generation, we also include a
+transition factor parameter, denoted <span
+class="math inline"><em>t</em><em>r</em><em>a</em><em>n</em><em>s</em></span>.</p>
+<p>We then use two functions to determine the height based on the
+distance to the volcano center <span
+class="math inline"><em>x</em></span>:</p>
+<ul>
+<li>If <span
+class="math inline"><em>x</em> &lt; <em>r</em><sub><em>c</em></sub></span>,
+we use a smoothstep interpolation between <span
+class="math inline"><em>h</em><sub><em>c</em></sub></span> at <span
+class="math inline">0</span> and <span
+class="math inline"><em>h</em><sub><em>v</em></sub></span> at <span
+class="math inline"><em>r</em><sub><em>c</em></sub></span>.</li>
+<li>If <span
+class="math inline"><em>x</em> &gt; <em>r</em><sub><em>c</em></sub></span>,
+we use a smoothstep interpolation between <span
+class="math inline"><em>h</em><sub><em>v</em></sub></span> at <span
+class="math inline"><em>r</em><sub><em>c</em></sub></span> and <span
+class="math inline">0</span> at <span
+class="math inline"><em>r</em><sub><em>v</em></sub> ⋅ <em>t</em><em>r</em><em>a</em><em>n</em><em>s</em></span>.</li>
+</ul>
+<p>This creates the following basic shape of a volcano:</p>
+<figure>
+<img src="images/generation/volcano/process/base.png" width="400"
+alt="Basic volcano shape" />
+<figcaption aria-hidden="true">Basic volcano shape</figcaption>
+</figure>
+<p>Next, we add a combination of FBM and turbulence noise within the
+volcano radius. The result is:</p>
+<figure>
+<img src="images/generation/volcano/process/noise.png" width="400"
+alt="Volcano shape with noise" />
+<figcaption aria-hidden="true">Volcano shape with noise</figcaption>
+</figure>
+<p>Then, we gradually remove the noise over the distance <span
+class="math inline"><em>r</em><sub><em>v</em></sub></span> to <span
+class="math inline"><em>r</em><sub><em>v</em></sub> ⋅ <em>t</em><em>r</em><em>a</em><em>n</em><em>s</em></span>,
+allowing for a smooth transition. The result is shown below:</p>
+<figure>
+<img src="images/generation/volcano/process/noise_transition.png"
+width="400" alt="Volcano shape with noise transition" />
+<figcaption aria-hidden="true">Volcano shape with noise
+transition</figcaption>
+</figure>
+<p>We also made the noise offsets and center position adjustable to
+enable the creation of diverse volcanoes. Here is an example with an
+offset center:</p>
+<figure>
+<img src="images/generation/volcano/process/move.png" width="400"
+alt="Center offset volcano" />
+<figcaption aria-hidden="true">Center offset volcano</figcaption>
+</figure>
 <h5 id="validation-1">Validation</h5>
-<p>TODO</p>
+<p>Using this framework, we can create various kinds of volcanoes. Here
+are a few possibilities:</p>
+<p>We can create a “small” volcano with a large crater, resulting in
+steeper sides:</p>
+<figure>
+<img src="images/generation/volcano/examples/big_crater.png" width="400"
+alt="Big crater volcano" />
+<figcaption aria-hidden="true">Big crater volcano</figcaption>
+</figure>
+<p>We can also generate larger volcanoes:</p>
+<figure>
+<img src="images/generation/volcano/examples/large.png" width="400"
+alt="Large volcano" />
+<figcaption aria-hidden="true">Large volcano</figcaption>
+</figure>
+<p>Or we can adjust the noise proportion to create a spikier-looking
+volcano:</p>
+<figure>
+<img src="images/generation/volcano/examples/spiky.png" width="400"
+alt="Spiky volcano" />
+<figcaption aria-hidden="true">Spiky volcano</figcaption>
+</figure>
 <h3 id="feature-2">Feature 2</h3>
 <h4 id="implementation-2">Implementation</h4>
 <p>TODO</p>
