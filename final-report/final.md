@@ -194,7 +194,31 @@ In particular, one can set various kinds of resolution depending on the performa
 
 
 
-### Lava flow fluid simulation
+### Lava Flow Fluid Simulation
+
+This feature aims to provide a convincing flow of lava. To achieve this goal, we'll perform a particle-based simulation with additional constraints. Our work is highly inspired by the implementation proposed in [Animating Lava Flows](http://www-evasion.imag.fr/Publications/1999/SACNG99/gi99.pdf).
+
+#### Global Concepts
+
+Firstly, each particle will have a radius of $r_p$ and an initial density $\rho_0 = 2500 \; \text{kg/m}^3$. We then have a kernel that describes the particle mass distribution in space. We use the kernel function proposed by [Smoother Particles: A new paradigm for highly deformable bodies](http://www.geometry.caltech.edu/pubs/DC_EW96.pdf):
+
+$$
+W_h(\textbf{r}) = \dfrac{15}{\pi(4h)^3} \begin{cases}
+    (2 - \frac{r}{h})^3 \quad \text{if } 0 \leq r \leq 2h \\
+    0 \quad \text{if } r > 2h
+\end{cases}
+$$
+
+Note that the particle mass $m_p$ and the kernel parameter $h$ are constrained by the particle radius.
+
+Then, we say that two particles are neighbors if they are at a distance lower than $2h$ from one another.
+
+A high-level view of the simulation is as follows: For each timestep, we first compute all the forces that apply to each particle. Then, we integrate the ODE using the integration method of our choice. Finally, we update the particle characteristics for the next iteration.
+
+
+
+
+
 
 #### Implementation
 

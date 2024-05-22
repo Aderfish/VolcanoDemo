@@ -49,8 +49,8 @@
           id="toc-procedural-volcano-terrain-generation">Procedural
           Volcano Terrain Generation</a></li>
           <li><a href="#lava-flow-fluid-simulation"
-          id="toc-lava-flow-fluid-simulation">Lava flow fluid
-          simulation</a></li>
+          id="toc-lava-flow-fluid-simulation">Lava Flow Fluid
+          Simulation</a></li>
           <li><a href="#feature-3" id="toc-feature-3">Feature 3</a></li>
           </ul></li>
           <li><a href="#discussion"
@@ -130,13 +130,17 @@ Terrain Generation</h3>
 generated components: the island and the volcano.</p>
 <h4 id="island">Island</h4>
 <h5 id="implementation">Implementation</h5>
-<p>The base of the island is created from a conic shape of radius <span
-class="math inline"><em>r</em></span> with an inner flat area at a
-determined height <span class="math inline"><em>h</em></span>. Beyond
-the flat area, the height is linearly interpolated from the height <span
-class="math inline"><em>h</em></span> at the edge of the flat part to
-<span class="math inline">0</span> at the distance <span
-class="math inline"><em>r</em></span>.</p>
+<p>The base of the island is created from a conic shape of radius
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>r</mi><annotation encoding="application/x-tex">r</annotation></semantics></math>
+with an inner flat area at a determined height
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>h</mi><annotation encoding="application/x-tex">h</annotation></semantics></math>.
+Beyond the flat area, the height is linearly interpolated from the
+height
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>h</mi><annotation encoding="application/x-tex">h</annotation></semantics></math>
+at the edge of the flat part to
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mn>0</mn><annotation encoding="application/x-tex">0</annotation></semantics></math>
+at the distance
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>r</mi><annotation encoding="application/x-tex">r</annotation></semantics></math>.</p>
 <p>This gives the following foundation for the island:</p>
 <figure>
 <img src="images/generation/island/process/island_base.png" width="400"
@@ -159,13 +163,13 @@ noise</figcaption>
 contains a major flaw on the sides with visible transitions that reveal
 the circular shape of the island.</p>
 <p>To solve this issue, we introduce a new parameter, denoted by the
-transition factor <span
-class="math inline"><em>t</em><em>r</em><em>a</em><em>n</em><em>s</em></span>.
+transition factor
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>t</mi><mi>r</mi><mi>a</mi><mi>n</mi><mi>s</mi></mrow><annotation encoding="application/x-tex">trans</annotation></semantics></math>.
 This factor determines the distance over which the smooth transition is
 performed after the island radius. In this area, higher frequency FBM
 noise is added to the original noise, with their amplitudes gradually
-decreasing until the distance <span
-class="math inline"><em>r</em> ⋅ <em>t</em><em>r</em><em>a</em><em>n</em><em>s</em></span>,
+decreasing until the distance
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>r</mi><mo>⋅</mo><mi>t</mi><mi>r</mi><mi>a</mi><mi>n</mi><mi>s</mi></mrow><annotation encoding="application/x-tex">r \cdot trans</annotation></semantics></math>,
 where it becomes zero.</p>
 <p>The addition of higher frequency noise creates small “rocks” on the
 edge of the island, giving it a more realistic look and breaking the
@@ -214,31 +218,36 @@ defining a base structure and adding noise on top of it.</p>
 <h5 id="implementation-1">Implementation</h5>
 <p>The first step is to create the global shape of the volcano. We
 define a volcano using four parameters: the volcano height and radius
-<span
-class="math inline"><em>h</em><sub><em>v</em></sub>, <em>r</em><sub><em>v</em></sub></span>,
-and the crater height and radius <span
-class="math inline"><em>h</em><sub><em>c</em></sub>, <em>r</em><sub><em>c</em></sub></span>.
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>h</mi><mi>v</mi></msub><mo>,</mo><msub><mi>r</mi><mi>v</mi></msub></mrow><annotation encoding="application/x-tex">h_v, r_v</annotation></semantics></math>,
+and the crater height and radius
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>h</mi><mi>c</mi></msub><mo>,</mo><msub><mi>r</mi><mi>c</mi></msub></mrow><annotation encoding="application/x-tex">h_c, r_c</annotation></semantics></math>.
 For similar reasons to the island generation, we also include a
-transition factor parameter, denoted <span
-class="math inline"><em>t</em><em>r</em><em>a</em><em>n</em><em>s</em></span>.</p>
+transition factor parameter, denoted
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>t</mi><mi>r</mi><mi>a</mi><mi>n</mi><mi>s</mi></mrow><annotation encoding="application/x-tex">trans</annotation></semantics></math>.</p>
 <p>We then use two functions to determine the height based on the
-distance to the volcano center <span
-class="math inline"><em>x</em></span>:</p>
+distance to the volcano center
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>x</mi><annotation encoding="application/x-tex">x</annotation></semantics></math>:</p>
 <ul>
-<li>If <span
-class="math inline"><em>x</em> &lt; <em>r</em><sub><em>c</em></sub></span>,
-we use a smoothstep interpolation between <span
-class="math inline"><em>h</em><sub><em>c</em></sub></span> at <span
-class="math inline">0</span> and <span
-class="math inline"><em>h</em><sub><em>v</em></sub></span> at <span
-class="math inline"><em>r</em><sub><em>c</em></sub></span>.</li>
-<li>If <span
-class="math inline"><em>x</em> &gt; <em>r</em><sub><em>c</em></sub></span>,
-we use a smoothstep interpolation between <span
-class="math inline"><em>h</em><sub><em>v</em></sub></span> at <span
-class="math inline"><em>r</em><sub><em>c</em></sub></span> and <span
-class="math inline">0</span> at <span
-class="math inline"><em>r</em><sub><em>v</em></sub> ⋅ <em>t</em><em>r</em><em>a</em><em>n</em><em>s</em></span>.</li>
+<li>If
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>x</mi><mo>&lt;</mo><msub><mi>r</mi><mi>c</mi></msub></mrow><annotation encoding="application/x-tex">x &lt; r_c</annotation></semantics></math>,
+we use a smoothstep interpolation between
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>h</mi><mi>c</mi></msub><annotation encoding="application/x-tex">h_c</annotation></semantics></math>
+at
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mn>0</mn><annotation encoding="application/x-tex">0</annotation></semantics></math>
+and
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>h</mi><mi>v</mi></msub><annotation encoding="application/x-tex">h_v</annotation></semantics></math>
+at
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>r</mi><mi>c</mi></msub><annotation encoding="application/x-tex">r_c</annotation></semantics></math>.</li>
+<li>If
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>x</mi><mo>&gt;</mo><msub><mi>r</mi><mi>c</mi></msub></mrow><annotation encoding="application/x-tex">x &gt; r_c</annotation></semantics></math>,
+we use a smoothstep interpolation between
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>h</mi><mi>v</mi></msub><annotation encoding="application/x-tex">h_v</annotation></semantics></math>
+at
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>r</mi><mi>c</mi></msub><annotation encoding="application/x-tex">r_c</annotation></semantics></math>
+and
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mn>0</mn><annotation encoding="application/x-tex">0</annotation></semantics></math>
+at
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>r</mi><mi>v</mi></msub><mo>⋅</mo><mi>t</mi><mi>r</mi><mi>a</mi><mi>n</mi><mi>s</mi></mrow><annotation encoding="application/x-tex">r_v \cdot trans</annotation></semantics></math>.</li>
 </ul>
 <p>This creates the following basic shape of a volcano:</p>
 <figure>
@@ -253,9 +262,10 @@ volcano radius. The result is:</p>
 alt="Volcano shape with noise" />
 <figcaption aria-hidden="true">Volcano shape with noise</figcaption>
 </figure>
-<p>Then, we gradually remove the noise over the distance <span
-class="math inline"><em>r</em><sub><em>v</em></sub></span> to <span
-class="math inline"><em>r</em><sub><em>v</em></sub> ⋅ <em>t</em><em>r</em><em>a</em><em>n</em><em>s</em></span>,
+<p>Then, we gradually remove the noise over the distance
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>r</mi><mi>v</mi></msub><annotation encoding="application/x-tex">r_v</annotation></semantics></math>
+to
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>r</mi><mi>v</mi></msub><mo>⋅</mo><mi>t</mi><mi>r</mi><mi>a</mi><mi>n</mi><mi>s</mi></mrow><annotation encoding="application/x-tex">r_v \cdot trans</annotation></semantics></math>,
 allowing for a smooth transition. The result is shown below:</p>
 <figure>
 <img src="images/generation/volcano/process/noise_transition.png"
@@ -403,7 +413,41 @@ the performance/quality desired:</p>
 alt="Side resolutions: 64 to 2048" />
 <figcaption aria-hidden="true">Side resolutions: 64 to 2048</figcaption>
 </figure>
-<h3 id="lava-flow-fluid-simulation">Lava flow fluid simulation</h3>
+<h3 id="lava-flow-fluid-simulation">Lava Flow Fluid Simulation</h3>
+<p>This feature aims to provide a convincing flow of lava. To achieve
+this goal, we’ll perform a particle-based simulation with additional
+constraints. Our work is highly inspired by the implementation proposed
+in <a
+href="http://www-evasion.imag.fr/Publications/1999/SACNG99/gi99.pdf">Animating
+Lava Flows</a>.</p>
+<h4 id="global-concepts">Global Concepts</h4>
+<p>Firstly, each particle will have a radius of
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>r</mi><mi>p</mi></msub><annotation encoding="application/x-tex">r_p</annotation></semantics></math>
+and an initial density
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>ρ</mi><mn>0</mn></msub><mo>=</mo><mn>2500</mn><mspace width="0.278em"></mspace><msup><mtext mathvariant="normal">kg/m</mtext><mn>3</mn></msup></mrow><annotation encoding="application/x-tex">\rho_0 = 2500 \; \text{kg/m}^3</annotation></semantics></math>.
+We then have a kernel that describes the particle mass distribution in
+space. We use the kernel function proposed by <a
+href="http://www.geometry.caltech.edu/pubs/DC_EW96.pdf">Smoother
+Particles: A new paradigm for highly deformable bodies</a>:</p>
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>W</mi><mi>h</mi></msub><mrow><mo stretchy="true" form="prefix">(</mo><mtext mathvariant="bold">𝐫</mtext><mo stretchy="true" form="postfix">)</mo></mrow><mo>=</mo><mfrac displaystyle="true"><mn>15</mn><mrow><mi>π</mi><msup><mrow><mo stretchy="true" form="prefix">(</mo><mn>4</mn><mi>h</mi><mo stretchy="true" form="postfix">)</mo></mrow><mn>3</mn></msup></mrow></mfrac><mrow><mo stretchy="true" form="prefix">{</mo><mtable><mtr><mtd columnalign="left" style="text-align: left"><msup><mrow><mo stretchy="true" form="prefix">(</mo><mn>2</mn><mo>−</mo><mfrac><mi>r</mi><mi>h</mi></mfrac><mo stretchy="true" form="postfix">)</mo></mrow><mn>3</mn></msup><mspace width="1.0em"></mspace><mrow><mtext mathvariant="normal">if </mtext><mspace width="0.333em"></mspace></mrow><mn>0</mn><mo>≤</mo><mi>r</mi><mo>≤</mo><mn>2</mn><mi>h</mi></mtd></mtr><mtr><mtd columnalign="left" style="text-align: left"><mn>0</mn><mspace width="1.0em"></mspace><mrow><mtext mathvariant="normal">if </mtext><mspace width="0.333em"></mspace></mrow><mi>r</mi><mo>&gt;</mo><mn>2</mn><mi>h</mi></mtd></mtr></mtable></mrow></mrow><annotation encoding="application/x-tex">
+W_h(\textbf{r}) = \dfrac{15}{\pi(4h)^3} \begin{cases}
+    (2 - \frac{r}{h})^3 \quad \text{if } 0 \leq r \leq 2h \\
+    0 \quad \text{if } r &gt; 2h
+\end{cases}
+</annotation></semantics></math></p>
+<p>Note that the particle mass
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>m</mi><mi>p</mi></msub><annotation encoding="application/x-tex">m_p</annotation></semantics></math>
+and the kernel parameter
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>h</mi><annotation encoding="application/x-tex">h</annotation></semantics></math>
+are constrained by the particle radius.</p>
+<p>Then, we say that two particles are neighbors if they are at a
+distance lower than
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>2</mn><mi>h</mi></mrow><annotation encoding="application/x-tex">2h</annotation></semantics></math>
+from one another.</p>
+<p>A high-level view of the simulation is as follows: For each timestep,
+we first compute all the forces that apply to each particle. Then, we
+integrate the ODE using the integration method of our choice. Finally,
+we update the particle characteristics for the next iteration.</p>
 <h4 id="implementation-3">Implementation</h4>
 <p>TODO</p>
 <h4 id="validation-3">Validation</h4>
