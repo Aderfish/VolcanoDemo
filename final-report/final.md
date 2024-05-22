@@ -34,16 +34,62 @@ With all these effects implemented, the user is now able to generate various kin
 ## Feature validation
 
 
-### Feature 1
+### Procedural Volcano Terrain Generation
 
-#### Implementation
+The volcanic island heightmap is composed of two procedurally generated components: the island and the volcano.
+
+#### Island
+
+##### Implementation
+
+The base of the island is created from a conic shape of radius $r$ with an inner flat area at a determined height $h$. Beyond the flat area, the height is linearly interpolated from the height $h$ at the edge of the flat part to $0$ at the distance $r$.
+
+This gives the following foundation for the island:
+
+![Base foundation of the island terrain](images/generation/island/process/island_base.png){width="400px"}
+
+To create an interesting relief, we add a combination of Fractional Brownian Motion (FBM) noises of various frequencies. A frequency factor is made adjustable to allow the user to create terrains with varying degrees of relief.
+
+Following this implementation, we get the following result:
+
+![Simple terrain island with FBM noise](images/generation/island/process/island_noise.png){width="400px"}
+
+The current result starts to resemble an island terrain but still contains a major flaw on the sides with visible transitions that reveal the circular shape of the island.
+
+To solve this issue, we introduce a new parameter, denoted by the transition factor $trans$. This factor determines the distance over which the smooth transition is performed after the island radius. In this area, higher frequency FBM noise is added to the original noise, with their amplitudes gradually decreasing until the distance $r \cdot trans$, where it becomes zero.
+
+The addition of higher frequency noise creates small "rocks" on the edge of the island, giving it a more realistic look and breaking the circular shape. After these adjustments, we achieve the following smooth transition from the island to the water:
+
+![Island terrain with transition](images/generation/island/process/island_noise_transition.png){width="400px"}
+
+To fully embrace the flexibility of our model, we make the noise offsets and the island center position adjustable. This allows users to create different-looking islands with the same properties and to move them around the terrain.
+
+##### Validation
+
+This flexible implementation allows for the creation of various kinds of island terrains. Here are a few possibilities offered by this approach:
+
+With a high flat proportion and a low transition factor, we can create compact islands with a harder transition to the ocean:
+
+![Compact island](images/generation/island/examples/flat.png){width="400px"}
+
+Conversely, setting a small radius with a high transition factor allows for the creation of an island archipelago with a main island in the center and smaller islands spreading around it:
+
+![Small islands archipelago](images/generation/island/examples/small_islands.png){width="400px"}
+
+Finally, we can adjust the noise amplitude to create a spikier-looking island:
+
+![Spiky island](images/generation/island/examples/spiky.png){width="400px"}
+
+
+#### Volcano
+
+##### Implementation
 
 TODO
 
-#### Validation
+##### Validation
 
 TODO
-
 
 ### Feature 2
 

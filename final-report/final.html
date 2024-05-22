@@ -38,15 +38,16 @@
             <li class="active"><a href="#">Overview <span class="sr-only">(current)</span></a></li>
           </ul>-->
           <ul>
-          <li><a href="#project-title" id="toc-project-title">Project
-          Title</a>
+          <li><a href="#volcano" id="toc-volcano">Volcano</a>
           <ul>
           <li><a href="#abstract" id="toc-abstract">Abstract</a></li>
           <li><a href="#overview" id="toc-overview">Overview</a></li>
           <li><a href="#feature-validation"
           id="toc-feature-validation">Feature validation</a>
           <ul>
-          <li><a href="#feature-1" id="toc-feature-1">Feature 1</a></li>
+          <li><a href="#procedural-volcano-terrain-generation"
+          id="toc-procedural-volcano-terrain-generation">Procedural
+          Volcano Terrain Generation</a></li>
           <li><a href="#feature-2" id="toc-feature-2">Feature 2</a></li>
           <li><a href="#feature-3" id="toc-feature-3">Feature 3</a></li>
           </ul></li>
@@ -61,7 +62,7 @@
         </div>
         <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
         
-<h1 id="project-title">Project Title</h1>
+<h1 id="volcano">Volcano</h1>
 <figure>
 <img src="images/demo.jpg" width="300"
 alt="An image showing the final result" />
@@ -69,24 +70,155 @@ alt="An image showing the final result" />
 result</figcaption>
 </figure>
 <h2 id="abstract">Abstract</h2>
-<p>TODO</p>
+<p>Volcanic eruptions are among the most awe-inspiring and powerful
+natural phenomena on Earth. This project aims to faithfully reproduce
+these phenomena through advanced simulation techniques. Our objective is
+to create realistic volcanic scenes and develop a flexible framework
+that facilitates the easy creation of diverse terrains and the design of
+various types of eruptions. To achieve this adaptability, the project
+embraces a procedural approach for both terrain generation and visual
+effects. We aim to provide users with an intuitive and interactive
+experience, allowing them to explore and manipulate volcanic
+eruptions.</p>
 <h2 id="overview">Overview</h2>
-<p>TODO</p>
+<p>In this project, we tackle the challenge of rendering realistic
+volcanic eruptions through physically based simulations. Our framework
+is designed to be flexible, allowing for the creation of various types
+of eruptions with ease.</p>
+<p>To achieve this goal, we begin by implementing a procedurally
+generated heightmap terrain system with parameters that can be adjusted
+through an intuitive UI menu. This procedural approach is chosen for its
+efficiency in rapidly creating diverse terrains. The procedural
+generation focuses on creating a volcanic island in the middle of the
+sea.</p>
+<p>The next step is to add textures to achieve a more realistic render
+of the terrain. We once again choose a procedural approach for its
+flexibility. Specifically, we have three kinds of procedurally generated
+textures composing the terrain: the water around the island, the base
+terrain of the island, and the top of the volcano.</p>
+<p>To enhance the realism of the water, we implement normal mapping on
+the water texture, giving the sensation of volumetric waves. Similarly,
+to emphasize the “rocky” aspect of the volcano, we add normal mapping to
+the volcanic terrain.</p>
+<p>Then, to represent the eruption, we chose to take a particle-based
+approach following the physical properties of lava flows. Thus, we
+implemented a fluid simulation with added constraints on temperature and
+viscosity to achieve a realistic lava flow. In particular, the
+simulation is heavily based on the process described in <a
+href="http://www-evasion.imag.fr/Publications/1999/SACNG99/gi99.pdf">Animating
+Lava Flows</a>. We once again adopt a flexible approach that allows easy
+modification of the simulation parameters, enabling users to experiment
+with various eruption scenarios.</p>
+<p>To add to the immersion of the scene, we chose to include a key
+component of eruptions: smoke. To achieve this, we implemented a
+particle system that emits “smoke” particles above the crater of the
+volcano.</p>
+<p>Finally, to enhance realism, we added a temperature-based rendering
+of the lava particles. While the particle meshes remain independent of
+each other, this approach contributes to the overall realistic
+appearance of the lava.</p>
+<p>With all these effects implemented, the user is now able to generate
+various kinds of eruption scenarios based on realistic simulations of
+flowing lava, enhanced with immersive effects to contribute to the
+overall experience.</p>
 <h2 id="feature-validation">Feature validation</h2>
-<h3 id="feature-1">Feature 1</h3>
-<h4 id="implementation">Implementation</h4>
+<h3 id="procedural-volcano-terrain-generation">Procedural Volcano
+Terrain Generation</h3>
+<p>The volcanic island heightmap is composed of two procedurally
+generated components: the island and the volcano.</p>
+<h4 id="island">Island</h4>
+<h5 id="implementation">Implementation</h5>
+<p>The base of the island is created from a conic shape of radius <span
+class="math inline"><em>r</em></span> with an inner flat area at a
+determined height <span class="math inline"><em>h</em></span>. Beyond
+the flat area, the height is linearly interpolated from the height <span
+class="math inline"><em>h</em></span> at the edge of the flat part to
+<span class="math inline">0</span> at the distance <span
+class="math inline"><em>r</em></span>.</p>
+<p>This gives the following foundation for the island:</p>
+<figure>
+<img src="images/generation/island/process/island_base.png" width="400"
+alt="Base foundation of the island terrain" />
+<figcaption aria-hidden="true">Base foundation of the island
+terrain</figcaption>
+</figure>
+<p>To create an interesting relief, we add a combination of Fractional
+Brownian Motion (FBM) noises of various frequencies. A frequency factor
+is made adjustable to allow the user to create terrains with varying
+degrees of relief.</p>
+<p>Following this implementation, we get the following result:</p>
+<figure>
+<img src="images/generation/island/process/island_noise.png" width="400"
+alt="Simple terrain island with FBM noise" />
+<figcaption aria-hidden="true">Simple terrain island with FBM
+noise</figcaption>
+</figure>
+<p>The current result starts to resemble an island terrain but still
+contains a major flaw on the sides with visible transitions that reveal
+the circular shape of the island.</p>
+<p>To solve this issue, we introduce a new parameter, denoted by the
+transition factor <span
+class="math inline"><em>t</em><em>r</em><em>a</em><em>n</em><em>s</em></span>.
+This factor determines the distance over which the smooth transition is
+performed after the island radius. In this area, higher frequency FBM
+noise is added to the original noise, with their amplitudes gradually
+decreasing until the distance <span
+class="math inline"><em>r</em> ⋅ <em>t</em><em>r</em><em>a</em><em>n</em><em>s</em></span>,
+where it becomes zero.</p>
+<p>The addition of higher frequency noise creates small “rocks” on the
+edge of the island, giving it a more realistic look and breaking the
+circular shape. After these adjustments, we achieve the following smooth
+transition from the island to the water:</p>
+<figure>
+<img src="images/generation/island/process/island_noise_transition.png"
+width="400" alt="Island terrain with transition" />
+<figcaption aria-hidden="true">Island terrain with
+transition</figcaption>
+</figure>
+<p>To fully embrace the flexibility of our model, we make the noise
+offsets and the island center position adjustable. This allows users to
+create different-looking islands with the same properties and to move
+them around the terrain.</p>
+<h5 id="validation">Validation</h5>
+<p>This flexible implementation allows for the creation of various kinds
+of island terrains. Here are a few possibilities offered by this
+approach:</p>
+<p>With a high flat proportion and a low transition factor, we can
+create compact islands with a harder transition to the ocean:</p>
+<figure>
+<img src="images/generation/island/examples/flat.png" width="400"
+alt="Compact island" />
+<figcaption aria-hidden="true">Compact island</figcaption>
+</figure>
+<p>Conversely, setting a small radius with a high transition factor
+allows for the creation of an island archipelago with a main island in
+the center and smaller islands spreading around it:</p>
+<figure>
+<img src="images/generation/island/examples/small_islands.png"
+width="400" alt="Small islands archipelago" />
+<figcaption aria-hidden="true">Small islands archipelago</figcaption>
+</figure>
+<p>Finally, we can adjust the noise amplitude to create a
+spikier-looking island:</p>
+<figure>
+<img src="images/generation/island/examples/spiky.png" width="400"
+alt="Spiky island" />
+<figcaption aria-hidden="true">Spiky island</figcaption>
+</figure>
+<h4 id="volcano-1">Volcano</h4>
+<h5 id="implementation-1">Implementation</h5>
 <p>TODO</p>
-<h4 id="validation">Validation</h4>
+<h5 id="validation-1">Validation</h5>
 <p>TODO</p>
 <h3 id="feature-2">Feature 2</h3>
-<h4 id="implementation-1">Implementation</h4>
-<p>TODO</p>
-<h4 id="validation-1">Validation</h4>
-<p>TODO</p>
-<h3 id="feature-3">Feature 3</h3>
 <h4 id="implementation-2">Implementation</h4>
 <p>TODO</p>
 <h4 id="validation-2">Validation</h4>
+<p>TODO</p>
+<h3 id="feature-3">Feature 3</h3>
+<h4 id="implementation-3">Implementation</h4>
+<p>TODO</p>
+<h4 id="validation-3">Validation</h4>
 <p>TODO</p>
 <h2 id="discussion">Discussion</h2>
 <p>TODO</p>
