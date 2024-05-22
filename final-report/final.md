@@ -127,7 +127,7 @@ Or we can adjust the noise proportion to create a spikier-looking volcano:
 ![Spiky volcano](images/generation/volcano/examples/spiky.png){width="400px"}
 
 
-### Combined
+#### Combined
 
 ##### Implementation 
 
@@ -194,12 +194,7 @@ In particular, one can set various kinds of resolution depending on the performa
 
 
 
-
-
-
-
-
-### Feature 2
+### Lava flow fluid simulation
 
 #### Implementation
 
