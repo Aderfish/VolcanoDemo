@@ -168,6 +168,34 @@ Using the same parameters with various noise offsets, we can generate diverse vo
 ![Noise offset 2](images/generation/combined/noise/3.png){width="400px"}
 
 
+#### Menu
+
+To improve the user experience when designing a volcanic island, we have incorporated a menu that allows users to adjust all the generation parameters easily. There are a total of 17 different generation parameters that can be tweaked.
+
+The menu can be closed or opened to avoid wasting view space:
+
+![Menu closed](images/generation/menu/closed.png){width="400px"}
+
+![Menu open](images/generation/menu/opened.png){width="400px"}
+
+Fully opened, the menu consists of the following sections to adjust the parameters:
+
+![Apply buttons](images/generation/menu/details/buttons.png){width="200px"}
+
+![Terrain parameters](images/generation/menu/details/terrain.png){width="200px"}
+
+![Volcano parameters](images/generation/menu/details/volcano.png){width="200px"}
+
+![Island parameters](images/generation/menu/details/island.png){width="200px"}
+
+In particular, one can set various kinds of resolution depending on the performance/quality desired:
+
+![Side resolutions: 64 to 2048](images/generation/resolution/resolutions.gif){width="400px"}
+
+
+
+
+
 
 
 
