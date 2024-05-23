@@ -105,7 +105,10 @@ export function init_smoke_actor(
                 dstAlpha: 'one minus src alpha',
             },
         },
-        depth: { enable: false },
+        depth: {
+            enable: true,
+            mask: false,
+        },
 
         vert: resources["particles/shaders/smoke.vert.glsl"],
         frag: resources["particles/shaders/smoke.frag.glsl"],
