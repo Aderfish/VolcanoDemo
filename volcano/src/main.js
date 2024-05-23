@@ -322,7 +322,7 @@ async function main() {
     simulation_parameters
   );
 
-  const smoke_actor = init_smoke_actor(regl, resources, new SmokeParameters());
+  let smoke_actor;
 
   /*---------------------------------------------------------------
 		Frame render
@@ -358,6 +358,24 @@ async function main() {
         volcano_heightmap.get_buffer(),
         generation_parameters,
         simulation_parameters
+      );
+
+      const smoke_parameters = new SmokeParameters();
+      const smoke_height =
+        generation_parameters.volcano.m_crater_height +
+        generation_parameters.island.m_island_height;
+
+      smoke_parameters.spawn_center = [
+        generation_parameters.volcano.m_volcano_center[0],
+        generation_parameters.volcano.m_volcano_center[1],
+        smoke_height,
+      ];
+
+      smoke_actor = init_smoke_actor(
+        regl,
+        resources,
+        smoke_parameters,
+        generation_parameters.volcano
       );
     }
 
