@@ -11,6 +11,11 @@ import { LavaRenderingActor } from "./lava/lava_actor.js";
 import { LavaSimulation } from "./lava/simulation/sim.js";
 import { SimulationManager } from "./lava/simulation/sim_manager.js";
 import { SimulationParameters } from "./lava/simulation/sim_parameters.js";
+import {
+  generation_parameters_1,
+  simulation_parameters_1,
+} from "./examples/example_1.js";
+
 import { init_smoke_actor } from "./particles/smoke_actor.js";
 import { SmokeParameters } from "./particles/smoke_parameters.js";
 
@@ -76,6 +81,7 @@ async function main() {
 	---------------------------------------------------------------*/
   const mat_turntable = mat4.create();
   const cam_distance_base = 0.75;
+  const mat_pov = mat4.create();
 
   let cam_angle_z = -0.5; // in radians!
   let cam_angle_y = -0.42; // in radians!
@@ -96,14 +102,55 @@ async function main() {
     );
     // Store the combined transform in mat_turntable
     // mat_turntable = A * B * ...
-    mat4_matmul_many(mat_turntable, look_at, M_yrot, M_zrot); // edit this
+    mat4_matmul_many(mat_pov, look_at, M_yrot, M_zrot); // edit this
   }
-
   update_cam_transform();
+
+  let delta_cam_pos = [0, 0, 0];
+  let delta_cam_angle = [0, 0, 0];
+
+  function update_cam_transform_bis() {
+    // Create rotation matrices for delta angles
+    const yaw = mat4.create();
+    mat4.rotateY(yaw, yaw, delta_cam_angle[1]);
+
+    const pitch = mat4.create();
+    mat4.rotateX(pitch, pitch, delta_cam_angle[0]);
+
+    const roll = mat4.create();
+    mat4.rotateZ(roll, roll, delta_cam_angle[2]);
+
+    // Combine rotations: yaw * pitch * roll
+    const delta_rotation = mat4.create();
+    mat4.multiply(delta_rotation, yaw, pitch); // yaw * pitch
+    mat4.multiply(delta_rotation, delta_rotation, roll); // (yaw * pitch) * roll
+
+    // Apply delta rotation to the existing view matrix
+    mat4.multiply(mat_pov, delta_rotation, mat_pov);
+
+    // Apply the translation based on the current orientation
+    const translation = mat4.create();
+    mat4.translate(translation, translation, delta_cam_pos);
+
+    // Apply the translation to the view matrix
+    mat4.multiply(mat_pov, translation, mat_pov);
+
+    // Reset deltas
+    delta_cam_pos = [0, 0, 0];
+    delta_cam_angle = [0, 0, 0];
+  }
 
   // Prevent clicking and dragging from selecting the GUI text.
   canvas_elem.addEventListener("mousedown", (event) => {
     event.preventDefault();
+  });
+
+  let gimbal_mode = true;
+  window.addEventListener("keydown", (event) => {
+    if (event.key === "g") {
+      // Code to execute when the "g" key is pressed
+      gimbal_mode = !gimbal_mode;
+    }
   });
 
   // Rotate camera position by dragging with the mouse
@@ -111,20 +158,25 @@ async function main() {
     // if left or middle button is pressed
     if (event.buttons & 1 || event.buttons & 4) {
       if (event.shiftKey) {
-        const r = mat2.fromRotation(mat2.create(), -cam_angle_z);
-        const offset = vec2.transformMat2(
-          [0, 0],
-          [event.movementY, event.movementX],
-          r
-        );
-        vec2.scale(offset, offset, -0.01);
-        cam_target[0] += offset[0];
-        cam_target[1] += offset[1];
-      } else {
+        // const r = mat2.fromRotation(mat2.create(), -cam_angle_z);
+        // const offset = vec2.transformMat2(
+        //   [0, 0],
+        //   [event.movementY, event.movementX],
+        //   r
+        // );
+        // vec2.scale(offset, offset, -0.01);
+        // cam_target[0] += offset[0];
+        // cam_target[1] += offset[1];
+      } else if (gimbal_mode) {
         cam_angle_z += event.movementX * 0.005;
         cam_angle_y += -event.movementY * 0.005;
+        update_cam_transform();
+      } else {
+        delta_cam_angle[1] += event.movementX * 0.005;
+        delta_cam_angle[0] += event.movementY * 0.005;
+        update_cam_transform_bis();
       }
-      update_cam_transform();
+
       update_needed = true;
     }
   });
@@ -141,12 +193,87 @@ async function main() {
     update_needed = true;
   });
 
+  let speed = 128.0;
+  let move_forward = false;
+  let move_backward = false;
+  let move_left = false;
+  let move_right = false;
+  let move_up = false;
+  let move_down = false;
+
+  let roll_left = false;
+  let roll_right = false;
+
+  window.addEventListener("keydown", (event) => {
+    if (event.key === "o") {
+      speed *= 2;
+    }
+    if (event.key === "l") {
+      speed /= 2;
+    }
+
+    if (event.key === "z") {
+      move_forward = true;
+    }
+    if (event.key === "s") {
+      move_backward = true;
+    }
+    if (event.key === "q") {
+      move_left = true;
+    }
+    if (event.key === "d") {
+      move_right = true;
+    }
+    if (event.key === " ") {
+      move_up = true;
+    }
+    if (event.key === "Shift") {
+      move_down = true;
+    }
+    if (event.key === "a") {
+      roll_left = true;
+    }
+    if (event.key === "e") {
+      roll_right = true;
+    }
+
+    update_needed = true;
+  });
+
+  window.addEventListener("keyup", (event) => {
+    if (event.key === "z") {
+      move_forward = false;
+    }
+    if (event.key === "s") {
+      move_backward = false;
+    }
+    if (event.key === "q") {
+      move_left = false;
+    }
+    if (event.key === "d") {
+      move_right = false;
+    }
+    if (event.key === " ") {
+      move_up = false;
+    }
+    if (event.key === "Shift") {
+      move_down = false;
+    }
+    if (event.key === "a") {
+      roll_left = false;
+    }
+    if (event.key === "e") {
+      roll_right = false;
+    }
+
+    update_needed = true;
+  });
+
   let sim_running = false;
   window.addEventListener("keydown", (event) => {
-    if (event.key === "s") {
+    if (event.key === "p") {
       // Code to execute when the "s" key is pressed
       sim_running = !sim_running;
-      // Add your code here
     }
   });
 
@@ -167,7 +294,7 @@ async function main() {
   });
 
   let regenerate_terrain_needed = true;
-  let generation_parameters = new GenerationParameters();
+  let generation_parameters = generation_parameters_1;
 
   link_generation_parameters_menu(
     generation_parameters,
@@ -178,7 +305,7 @@ async function main() {
     }
   );
 
-  let simulation_parameters = new SimulationParameters();
+  let simulation_parameters = simulation_parameters_1;
 
   /*---------------------------------------------------------------
 		Actors
@@ -195,7 +322,7 @@ async function main() {
     simulation_parameters
   );
 
-  const smoke_actor = init_smoke_actor(regl, resources, new SmokeParameters());
+  let smoke_actor;
 
   /*---------------------------------------------------------------
 		Frame render
@@ -232,6 +359,24 @@ async function main() {
         generation_parameters,
         simulation_parameters
       );
+
+      const smoke_parameters = new SmokeParameters();
+      const smoke_height =
+        generation_parameters.volcano.m_crater_height +
+        generation_parameters.island.m_island_height;
+
+      smoke_parameters.spawn_center = [
+        generation_parameters.volcano.m_volcano_center[0],
+        generation_parameters.volcano.m_volcano_center[1],
+        smoke_height,
+      ];
+
+      smoke_actor = init_smoke_actor(
+        regl,
+        resources,
+        smoke_parameters,
+        generation_parameters.volcano
+      );
     }
 
     if (bake_sim) {
@@ -266,8 +411,48 @@ async function main() {
         0.01, // near
         4000 // far
       );
+      const delta_time = frame.time - prev_regl_time;
 
-      mat4.copy(mat_view, mat_turntable);
+      if (move_forward) {
+        delta_cam_pos[2] += speed * delta_time;
+      }
+      if (move_backward) {
+        delta_cam_pos[2] -= speed * delta_time;
+      }
+      if (move_left) {
+        delta_cam_pos[0] += speed * delta_time;
+      }
+      if (move_right) {
+        delta_cam_pos[0] -= speed * delta_time;
+      }
+      if (move_up) {
+        delta_cam_pos[1] -= speed * delta_time;
+      }
+      if (move_down) {
+        delta_cam_pos[1] += speed * delta_time;
+      }
+      if (roll_left) {
+        delta_cam_angle[2] -= 1 * delta_time;
+      }
+      if (roll_right) {
+        delta_cam_angle[2] += 1 * delta_time;
+      }
+
+      if (
+        move_forward ||
+        move_backward ||
+        move_left ||
+        move_right ||
+        move_up ||
+        move_down ||
+        roll_left ||
+        roll_right
+      ) {
+        update_cam_transform_bis();
+        update_needed = true;
+      }
+
+      mat4.copy(mat_view, mat_pov);
 
       // Calculate light position in camera frame
       vec4.transformMat4(light_position_cam, light_position_world, mat_view);
