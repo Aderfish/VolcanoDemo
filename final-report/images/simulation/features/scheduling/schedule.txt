@@ -1,0 +1,10 @@
+ 
+simulation_parameters.new_particles_schedule = [
+  { start_time: 0, duration: 2, particles_per_second: 3000 },
+  { start_time: 2, duration: 10, particles_per_second: 200 },
+  { start_time: 15, duration: 1, particles_per_second: 3000 },
+];
+
+
+
+simulation_parameters.simulation_duration = 30;
