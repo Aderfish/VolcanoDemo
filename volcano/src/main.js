@@ -12,6 +12,7 @@ import { LavaSimulation } from "./lava/simulation/sim.js";
 import { SimulationManager } from "./lava/simulation/sim_manager.js";
 import { SimulationParameters } from "./lava/simulation/sim_parameters.js";
 import { init_smoke_actor } from "./particles/smoke_actor.js";
+import { SmokeParameters } from "./particles/smoke_parameters.js";
 
 async function main() {
   // Create the regl canvas
@@ -194,7 +195,7 @@ async function main() {
     simulation_parameters
   );
 
-  const smoke_actor = init_smoke_actor(regl, resources);
+  const smoke_actor = init_smoke_actor(regl, resources, new SmokeParameters());
 
   /*---------------------------------------------------------------
 		Frame render
