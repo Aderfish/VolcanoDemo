@@ -1,0 +1,647 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+    <meta name="generator" content="pandoc">
+    <meta name="description" content="">
+
+    <title>Final Project Report CS-341 2024</title>
+
+    <!-- Bootstrap core CSS -->
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+
+    <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
+    <link href="ie10-viewport-bug-workaround.css" rel="stylesheet">
+
+    <!-- Custom styles for this template -->
+    <link href="css/dashboard.css" rel="stylesheet">
+
+    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+    <style type="text/css">code{white-space: pre;}</style>
+    <style type="text/css">.sidebar ul{padding-left: 10px;}</style>
+    <link rel="stylesheet" href="icg_report.css" />
+  </head>
+
+  <body>
+
+    <div class="container-fluid">
+      <div class="row">
+        <div id="sidebar" class="col-sm-3 col-md-2 sidebar">
+          <!--<ul class="nav nav-sidebar">
+            <li class="active"><a href="#">Overview <span class="sr-only">(current)</span></a></li>
+          </ul>-->
+          <ul>
+          <li><a href="#volcano" id="toc-volcano">Volcano</a>
+          <ul>
+          <li><a href="#abstract" id="toc-abstract">Abstract</a></li>
+          <li><a href="#overview" id="toc-overview">Overview</a></li>
+          <li><a href="#feature-validation"
+          id="toc-feature-validation">Feature validation</a>
+          <ul>
+          <li><a href="#procedural-volcano-terrain-generation"
+          id="toc-procedural-volcano-terrain-generation">Procedural
+          Volcano Terrain Generation</a></li>
+          <li><a href="#lava-flow-fluid-simulation"
+          id="toc-lava-flow-fluid-simulation">Lava Flow Fluid
+          Simulation</a></li>
+          <li><a href="#feature-3" id="toc-feature-3">Feature 3</a></li>
+          </ul></li>
+          <li><a href="#discussion"
+          id="toc-discussion">Discussion</a></li>
+          <li><a href="#contributions"
+          id="toc-contributions">Contributions</a></li>
+          <li><a href="#references"
+          id="toc-references">References</a></li>
+          </ul></li>
+          </ul>
+        </div>
+        <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+        
+<h1 id="volcano">Volcano</h1>
+<figure>
+<img src="images/demo.jpg" width="300"
+alt="An image showing the final result" />
+<figcaption aria-hidden="true">An image showing the final
+result</figcaption>
+</figure>
+<h2 id="abstract">Abstract</h2>
+<p>Volcanic eruptions are among the most awe-inspiring and powerful
+natural phenomena on Earth. This project aims to faithfully reproduce
+these phenomena through advanced simulation techniques. Our objective is
+to create realistic volcanic scenes and develop a flexible framework
+that facilitates the easy creation of diverse terrains and the design of
+various types of eruptions. To achieve this adaptability, the project
+embraces a procedural approach for both terrain generation and visual
+effects. We aim to provide users with an intuitive and interactive
+experience, allowing them to explore and manipulate volcanic
+eruptions.</p>
+<h2 id="overview">Overview</h2>
+<p>In this project, we tackle the challenge of rendering realistic
+volcanic eruptions through physically based simulations. Our framework
+is designed to be flexible, allowing for the creation of various types
+of eruptions with ease.</p>
+<p>To achieve this goal, we begin by implementing a procedurally
+generated heightmap terrain system with parameters that can be adjusted
+through an intuitive UI menu. This procedural approach is chosen for its
+efficiency in rapidly creating diverse terrains. The procedural
+generation focuses on creating a volcanic island in the middle of the
+sea.</p>
+<p>The next step is to add textures to achieve a more realistic render
+of the terrain. We once again choose a procedural approach for its
+flexibility. Specifically, we have three kinds of procedurally generated
+textures composing the terrain: the water around the island, the base
+terrain of the island, and the top of the volcano.</p>
+<p>To enhance the realism of the water, we implement normal mapping on
+the water texture, giving the sensation of volumetric waves. Similarly,
+to emphasize the “rocky” aspect of the volcano, we add normal mapping to
+the volcanic terrain.</p>
+<p>Then, to represent the eruption, we chose to take a particle-based
+approach following the physical properties of lava flows. Thus, we
+implemented a fluid simulation with added constraints on temperature and
+viscosity to achieve a realistic lava flow. In particular, the
+simulation is heavily based on the process described in <a
+href="http://www-evasion.imag.fr/Publications/1999/SACNG99/gi99.pdf">Animating
+Lava Flows</a>. We once again adopt a flexible approach that allows easy
+modification of the simulation parameters, enabling users to experiment
+with various eruption scenarios.</p>
+<p>To add to the immersion of the scene, we chose to include a key
+component of eruptions: smoke. To achieve this, we implemented a
+particle system that emits “smoke” particles above the crater of the
+volcano.</p>
+<p>Finally, to enhance realism, we added a temperature-based rendering
+of the lava particles. While the particle meshes remain independent of
+each other, this approach contributes to the overall realistic
+appearance of the lava.</p>
+<p>With all these effects implemented, the user is now able to generate
+various kinds of eruption scenarios based on realistic simulations of
+flowing lava, enhanced with immersive effects to contribute to the
+overall experience.</p>
+<h2 id="feature-validation">Feature validation</h2>
+<h3 id="procedural-volcano-terrain-generation">Procedural Volcano
+Terrain Generation</h3>
+<p>The volcanic island heightmap is composed of two procedurally
+generated components: the island and the volcano.</p>
+<h4 id="island">Island</h4>
+<h5 id="implementation">Implementation</h5>
+<p>The base of the island is created from a conic shape of radius
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>r</mi><annotation encoding="application/x-tex">r</annotation></semantics></math>
+with an inner flat area at a determined height
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>h</mi><annotation encoding="application/x-tex">h</annotation></semantics></math>.
+Beyond the flat area, the height is linearly interpolated from the
+height
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>h</mi><annotation encoding="application/x-tex">h</annotation></semantics></math>
+at the edge of the flat part to
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mn>0</mn><annotation encoding="application/x-tex">0</annotation></semantics></math>
+at the distance
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>r</mi><annotation encoding="application/x-tex">r</annotation></semantics></math>.</p>
+<p>This gives the following foundation for the island:</p>
+<figure>
+<img src="images/generation/island/process/island_base.png" width="400"
+alt="Base foundation of the island terrain" />
+<figcaption aria-hidden="true">Base foundation of the island
+terrain</figcaption>
+</figure>
+<p>To create an interesting relief, we add a combination of Fractional
+Brownian Motion (FBM) noises of various frequencies. A frequency factor
+is made adjustable to allow the user to create terrains with varying
+degrees of relief.</p>
+<p>Following this implementation, we get the following result:</p>
+<figure>
+<img src="images/generation/island/process/island_noise.png" width="400"
+alt="Simple terrain island with FBM noise" />
+<figcaption aria-hidden="true">Simple terrain island with FBM
+noise</figcaption>
+</figure>
+<p>The current result starts to resemble an island terrain but still
+contains a major flaw on the sides with visible transitions that reveal
+the circular shape of the island.</p>
+<p>To solve this issue, we introduce a new parameter, denoted by the
+transition factor
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>t</mi><mi>r</mi><mi>a</mi><mi>n</mi><mi>s</mi></mrow><annotation encoding="application/x-tex">trans</annotation></semantics></math>.
+This factor determines the distance over which the smooth transition is
+performed after the island radius. In this area, higher frequency FBM
+noise is added to the original noise, with their amplitudes gradually
+decreasing until the distance
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>r</mi><mo>⋅</mo><mi>t</mi><mi>r</mi><mi>a</mi><mi>n</mi><mi>s</mi></mrow><annotation encoding="application/x-tex">r \cdot trans</annotation></semantics></math>,
+where it becomes zero.</p>
+<p>The addition of higher frequency noise creates small “rocks” on the
+edge of the island, giving it a more realistic look and breaking the
+circular shape. After these adjustments, we achieve the following smooth
+transition from the island to the water:</p>
+<figure>
+<img src="images/generation/island/process/island_noise_transition.png"
+width="400" alt="Island terrain with transition" />
+<figcaption aria-hidden="true">Island terrain with
+transition</figcaption>
+</figure>
+<p>To fully embrace the flexibility of our model, we make the noise
+offsets and the island center position adjustable. This allows users to
+create different-looking islands with the same properties and to move
+them around the terrain.</p>
+<h5 id="validation">Validation</h5>
+<p>This flexible implementation allows for the creation of various kinds
+of island terrains. Here are a few possibilities offered by this
+approach:</p>
+<p>With a high flat proportion and a low transition factor, we can
+create compact islands with a harder transition to the ocean:</p>
+<figure>
+<img src="images/generation/island/examples/flat.png" width="400"
+alt="Compact island" />
+<figcaption aria-hidden="true">Compact island</figcaption>
+</figure>
+<p>Conversely, setting a small radius with a high transition factor
+allows for the creation of an island archipelago with a main island in
+the center and smaller islands spreading around it:</p>
+<figure>
+<img src="images/generation/island/examples/small_islands.png"
+width="400" alt="Small islands archipelago" />
+<figcaption aria-hidden="true">Small islands archipelago</figcaption>
+</figure>
+<p>Finally, we can adjust the noise amplitude to create a
+spikier-looking island:</p>
+<figure>
+<img src="images/generation/island/examples/spiky.png" width="400"
+alt="Spiky island" />
+<figcaption aria-hidden="true">Spiky island</figcaption>
+</figure>
+<h4 id="volcano-1">Volcano</h4>
+<p>The second step to creating the volcanic island is the volcano
+itself. We follow a similar approach to the island generation by
+defining a base structure and adding noise on top of it.</p>
+<h5 id="implementation-1">Implementation</h5>
+<p>The first step is to create the global shape of the volcano. We
+define a volcano using four parameters: the volcano height and radius
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>h</mi><mi>v</mi></msub><mo>,</mo><msub><mi>r</mi><mi>v</mi></msub></mrow><annotation encoding="application/x-tex">h_v, r_v</annotation></semantics></math>,
+and the crater height and radius
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>h</mi><mi>c</mi></msub><mo>,</mo><msub><mi>r</mi><mi>c</mi></msub></mrow><annotation encoding="application/x-tex">h_c, r_c</annotation></semantics></math>.
+For similar reasons to the island generation, we also include a
+transition factor parameter, denoted
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>t</mi><mi>r</mi><mi>a</mi><mi>n</mi><mi>s</mi></mrow><annotation encoding="application/x-tex">trans</annotation></semantics></math>.</p>
+<p>We then use two functions to determine the height based on the
+distance to the volcano center
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>x</mi><annotation encoding="application/x-tex">x</annotation></semantics></math>:</p>
+<ul>
+<li>If
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>x</mi><mo>&lt;</mo><msub><mi>r</mi><mi>c</mi></msub></mrow><annotation encoding="application/x-tex">x &lt; r_c</annotation></semantics></math>,
+we use a smoothstep interpolation between
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>h</mi><mi>c</mi></msub><annotation encoding="application/x-tex">h_c</annotation></semantics></math>
+at
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mn>0</mn><annotation encoding="application/x-tex">0</annotation></semantics></math>
+and
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>h</mi><mi>v</mi></msub><annotation encoding="application/x-tex">h_v</annotation></semantics></math>
+at
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>r</mi><mi>c</mi></msub><annotation encoding="application/x-tex">r_c</annotation></semantics></math>.</li>
+<li>If
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>x</mi><mo>&gt;</mo><msub><mi>r</mi><mi>c</mi></msub></mrow><annotation encoding="application/x-tex">x &gt; r_c</annotation></semantics></math>,
+we use a smoothstep interpolation between
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>h</mi><mi>v</mi></msub><annotation encoding="application/x-tex">h_v</annotation></semantics></math>
+at
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>r</mi><mi>c</mi></msub><annotation encoding="application/x-tex">r_c</annotation></semantics></math>
+and
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mn>0</mn><annotation encoding="application/x-tex">0</annotation></semantics></math>
+at
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>r</mi><mi>v</mi></msub><mo>⋅</mo><mi>t</mi><mi>r</mi><mi>a</mi><mi>n</mi><mi>s</mi></mrow><annotation encoding="application/x-tex">r_v \cdot trans</annotation></semantics></math>.</li>
+</ul>
+<p>This creates the following basic shape of a volcano:</p>
+<figure>
+<img src="images/generation/volcano/process/base.png" width="400"
+alt="Basic volcano shape" />
+<figcaption aria-hidden="true">Basic volcano shape</figcaption>
+</figure>
+<p>Next, we add a combination of FBM and turbulence noise within the
+volcano radius. The result is:</p>
+<figure>
+<img src="images/generation/volcano/process/noise.png" width="400"
+alt="Volcano shape with noise" />
+<figcaption aria-hidden="true">Volcano shape with noise</figcaption>
+</figure>
+<p>Then, we gradually remove the noise over the distance
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>r</mi><mi>v</mi></msub><annotation encoding="application/x-tex">r_v</annotation></semantics></math>
+to
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>r</mi><mi>v</mi></msub><mo>⋅</mo><mi>t</mi><mi>r</mi><mi>a</mi><mi>n</mi><mi>s</mi></mrow><annotation encoding="application/x-tex">r_v \cdot trans</annotation></semantics></math>,
+allowing for a smooth transition. The result is shown below:</p>
+<figure>
+<img src="images/generation/volcano/process/noise_transition.png"
+width="400" alt="Volcano shape with noise transition" />
+<figcaption aria-hidden="true">Volcano shape with noise
+transition</figcaption>
+</figure>
+<p>We also made the noise offsets and center position adjustable to
+enable the creation of diverse volcanoes. Here is an example with an
+offset center:</p>
+<figure>
+<img src="images/generation/volcano/process/move.png" width="400"
+alt="Center offset volcano" />
+<figcaption aria-hidden="true">Center offset volcano</figcaption>
+</figure>
+<h5 id="validation-1">Validation</h5>
+<p>Using this framework, we can create various kinds of volcanoes. Here
+are a few possibilities:</p>
+<p>We can create a “small” volcano with a large crater, resulting in
+steeper sides:</p>
+<figure>
+<img src="images/generation/volcano/examples/big_crater.png" width="400"
+alt="Big crater volcano" />
+<figcaption aria-hidden="true">Big crater volcano</figcaption>
+</figure>
+<p>We can also generate larger volcanoes:</p>
+<figure>
+<img src="images/generation/volcano/examples/large.png" width="400"
+alt="Large volcano" />
+<figcaption aria-hidden="true">Large volcano</figcaption>
+</figure>
+<p>Or we can adjust the noise proportion to create a spikier-looking
+volcano:</p>
+<figure>
+<img src="images/generation/volcano/examples/spiky.png" width="400"
+alt="Spiky volcano" />
+<figcaption aria-hidden="true">Spiky volcano</figcaption>
+</figure>
+<h4 id="combined">Combined</h4>
+<h5 id="implementation-2">Implementation</h5>
+<p>We then simply combine both heightmaps by adding them.</p>
+<h5 id="validation-2">Validation</h5>
+<p>These implementations of the island and volcano heightmaps allow for
+the creation of various types of volcanic islands. Here are a few
+variations:</p>
+<p>Here is a normal, pretty small volcanic island:</p>
+<figure>
+<img src="images/generation/combined/normal/normal.png" width="400"
+alt="Normal volcanic island" />
+<figcaption aria-hidden="true">Normal volcanic island</figcaption>
+</figure>
+<p>And here are some top views where we vary the island transition
+parameter to highlight its influence:</p>
+<figure>
+<img src="images/generation/combined/normal/normal_top.png" width="400"
+alt="Top view, small transition factor" />
+<figcaption aria-hidden="true">Top view, small transition
+factor</figcaption>
+</figure>
+<figure>
+<img src="images/generation/combined/normal/normal_transition.png"
+width="400" alt="Top view, high transition factor" />
+<figcaption aria-hidden="true">Top view, high transition
+factor</figcaption>
+</figure>
+<p>We can create large volcanoes:</p>
+<figure>
+<img src="images/generation/combined/big_volcano/big_volcano.png"
+width="400" alt="Large volcano" />
+<figcaption aria-hidden="true">Large volcano</figcaption>
+</figure>
+<p>We can reduce the terrain size to get a close-up view of a
+volcano:</p>
+<figure>
+<img src="images/generation/combined/close_up/close.png" width="400"
+alt="Close up view of volcano" />
+<figcaption aria-hidden="true">Close up view of volcano</figcaption>
+</figure>
+<p>Setting a large island radius, we can create a terrain with no
+water:</p>
+<figure>
+<img src="images/generation/combined/no_water/no_water.png" width="400"
+alt="No water volcano" />
+<figcaption aria-hidden="true">No water volcano</figcaption>
+</figure>
+<p>Using the same parameters with various noise offsets, we can generate
+diverse volcanic islands:</p>
+<figure>
+<img src="images/generation/combined/noise/1.png" width="400"
+alt="Noise offset 0" />
+<figcaption aria-hidden="true">Noise offset 0</figcaption>
+</figure>
+<figure>
+<img src="images/generation/combined/noise/2.png" width="400"
+alt="Noise offset 1" />
+<figcaption aria-hidden="true">Noise offset 1</figcaption>
+</figure>
+<figure>
+<img src="images/generation/combined/noise/3.png" width="400"
+alt="Noise offset 2" />
+<figcaption aria-hidden="true">Noise offset 2</figcaption>
+</figure>
+<h4 id="menu">Menu</h4>
+<p>To improve the user experience when designing a volcanic island, we
+have incorporated a menu that allows users to adjust all the generation
+parameters easily. There are a total of 17 different generation
+parameters that can be tweaked.</p>
+<p>The menu can be closed or opened to avoid wasting view space:</p>
+<figure>
+<img src="images/generation/menu/closed.png" width="400"
+alt="Menu closed" />
+<figcaption aria-hidden="true">Menu closed</figcaption>
+</figure>
+<figure>
+<img src="images/generation/menu/opened.png" width="400"
+alt="Menu open" />
+<figcaption aria-hidden="true">Menu open</figcaption>
+</figure>
+<p>Fully opened, the menu consists of the following sections to adjust
+the parameters:</p>
+<figure>
+<img src="images/generation/menu/details/buttons.png" width="200"
+alt="Apply buttons" />
+<figcaption aria-hidden="true">Apply buttons</figcaption>
+</figure>
+<figure>
+<img src="images/generation/menu/details/terrain.png" width="200"
+alt="Terrain parameters" />
+<figcaption aria-hidden="true">Terrain parameters</figcaption>
+</figure>
+<figure>
+<img src="images/generation/menu/details/volcano.png" width="200"
+alt="Volcano parameters" />
+<figcaption aria-hidden="true">Volcano parameters</figcaption>
+</figure>
+<figure>
+<img src="images/generation/menu/details/island.png" width="200"
+alt="Island parameters" />
+<figcaption aria-hidden="true">Island parameters</figcaption>
+</figure>
+<p>In particular, one can set various kinds of resolution depending on
+the performance/quality desired:</p>
+<figure>
+<img src="images/generation/resolution/resolutions.gif" width="400"
+alt="Side resolutions: 64 to 2048" />
+<figcaption aria-hidden="true">Side resolutions: 64 to 2048</figcaption>
+</figure>
+<h3 id="lava-flow-fluid-simulation">Lava Flow Fluid Simulation</h3>
+<p>This feature aims to provide a convincing flow of lava. To achieve
+this goal, we’ll perform a particle-based simulation with additional
+constraints. Our work is highly inspired by the implementation proposed
+in <a
+href="http://www-evasion.imag.fr/Publications/1999/SACNG99/gi99.pdf">Animating
+Lava Flows</a>.</p>
+<h4 id="global-concepts">Global Concepts</h4>
+<p>Firstly, each particle will have a radius of
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>r</mi><mi>p</mi></msub><annotation encoding="application/x-tex">r_p</annotation></semantics></math>
+and an initial density
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>ρ</mi><mn>0</mn></msub><mo>=</mo><mn>2500</mn><mspace width="0.278em"></mspace><msup><mtext mathvariant="normal">kg/m</mtext><mn>3</mn></msup></mrow><annotation encoding="application/x-tex">\rho_0 = 2500 \; \text{kg/m}^3</annotation></semantics></math>.
+We then have a kernel that describes the particle mass distribution in
+space. We use the kernel function proposed by <a
+href="http://www.geometry.caltech.edu/pubs/DC_EW96.pdf">Smoother
+Particles: A new paradigm for highly deformable bodies</a>:</p>
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>W</mi><mi>h</mi></msub><mrow><mo stretchy="true" form="prefix">(</mo><mtext mathvariant="bold">𝐫</mtext><mo stretchy="true" form="postfix">)</mo></mrow><mo>=</mo><mfrac displaystyle="true"><mn>15</mn><mrow><mi>π</mi><msup><mrow><mo stretchy="true" form="prefix">(</mo><mn>4</mn><mi>h</mi><mo stretchy="true" form="postfix">)</mo></mrow><mn>3</mn></msup></mrow></mfrac><mrow><mo stretchy="true" form="prefix">{</mo><mtable><mtr><mtd columnalign="left" style="text-align: left"><msup><mrow><mo stretchy="true" form="prefix">(</mo><mn>2</mn><mo>−</mo><mfrac><mi>r</mi><mi>h</mi></mfrac><mo stretchy="true" form="postfix">)</mo></mrow><mn>3</mn></msup><mspace width="1.0em"></mspace><mrow><mtext mathvariant="normal">if </mtext><mspace width="0.333em"></mspace></mrow><mn>0</mn><mo>≤</mo><mi>r</mi><mo>≤</mo><mn>2</mn><mi>h</mi></mtd></mtr><mtr><mtd columnalign="left" style="text-align: left"><mn>0</mn><mspace width="1.0em"></mspace><mrow><mtext mathvariant="normal">if </mtext><mspace width="0.333em"></mspace></mrow><mi>r</mi><mo>&gt;</mo><mn>2</mn><mi>h</mi></mtd></mtr></mtable></mrow></mrow><annotation encoding="application/x-tex">
+W_h(\textbf{r}) = \dfrac{15}{\pi(4h)^3} \begin{cases}
+    (2 - \frac{r}{h})^3 \quad \text{if } 0 \leq r \leq 2h \\
+    0 \quad \text{if } r &gt; 2h
+\end{cases}
+</annotation></semantics></math></p>
+<p>Note that the particle mass
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>m</mi><mi>p</mi></msub><annotation encoding="application/x-tex">m_p</annotation></semantics></math>
+and the kernel parameter
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>h</mi><annotation encoding="application/x-tex">h</annotation></semantics></math>
+are constrained by the particle radius.</p>
+<p>Then, we say that two particles are neighbors if they are at a
+distance lower than
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>2</mn><mi>h</mi></mrow><annotation encoding="application/x-tex">2h</annotation></semantics></math>
+from one another.</p>
+<p>A high-level view of the simulation is as follows: For each timestep,
+we first compute all the forces that apply to each particle. Then, we
+integrate the ODE using the integration method of our choice. Finally,
+we update the particle characteristics for the next iteration.</p>
+<h4 id="implementation-3">Implementation</h4>
+<p>TODO</p>
+<h4 id="validation-3">Validation</h4>
+<p>TODO</p>
+<h3 id="feature-3">Feature 3</h3>
+<h4 id="implementation-4">Implementation</h4>
+<p>TODO</p>
+<h4 id="validation-4">Validation</h4>
+<p>TODO</p>
+<h2 id="discussion">Discussion</h2>
+<p>TODO</p>
+<h2 id="contributions">Contributions</h2>
+<table>
+<caption>
+Worked hours
+</caption>
+<thead>
+<tr>
+<th>
+Name
+</th>
+<th>
+Week 1
+</th>
+<th>
+Week 2
+</th>
+<th>
+Week 3
+</th>
+<th>
+Week 4
+</th>
+<th>
+Week 5
+</th>
+<th>
+Week 6
+</th>
+<th>
+Total
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+Name 1
+</td>
+<td>
+TODO
+</td>
+<td>
+TODO
+</td>
+<td>
+TODO
+</td>
+<td>
+TODO
+</td>
+<td>
+TODO
+</td>
+<td>
+TODO
+</td>
+<td>
+TODO
+</td>
+</tr>
+<tr>
+<td>
+Name 2
+</td>
+<td>
+TODO
+</td>
+<td>
+TODO
+</td>
+<td>
+TODO
+</td>
+<td>
+TODO
+</td>
+<td>
+TODO
+</td>
+<td>
+TODO
+</td>
+<td>
+TODO
+</td>
+</tr>
+<tr>
+<td>
+Name 3
+</td>
+<td>
+TODO
+</td>
+<td>
+TODO
+</td>
+<td>
+TODO
+</td>
+<td>
+TODO
+</td>
+<td>
+TODO
+</td>
+<td>
+TODO
+</td>
+<td>
+TODO
+</td>
+</tr>
+</tbody>
+</table>
+<table>
+<caption>
+Individual contributions
+</caption>
+<thead>
+<tr>
+<th>
+Name
+</th>
+<th>
+Contribution
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+Name 1
+</td>
+<td>
+1/3
+</td>
+</tr>
+<tr>
+<td>
+Name 2
+</td>
+<td>
+1/3
+</td>
+</tr>
+<tr>
+<td>
+Name 3
+</td>
+<td>
+1/3
+</td>
+</tr>
+</tbody>
+</table>
+<h4 id="comments">Comments</h4>
+<p>TODO</p>
+<h2 id="references">References</h2>
+<p>TODO</p>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Bootstrap core JavaScript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    <script src="js/jquery.min.js"></script>
+		<script src="js/bootstrap.min.js"></script>
+    <script>
+        //document.getElementById('sidebar').getElementsByTagName('ul')[0].className += "nav nav-sidebar";
+        
+        /* ajust the height when click the toc
+           the code is from https://github.com/twbs/bootstrap/issues/1768
+        */
+        var shiftWindow = function() { scrollBy(0, -50) };
+        window.addEventListener("hashchange", shiftWindow);
+        function load() { if (window.location.hash) shiftWindow(); }
+        
+        /*add Bootstrap styles to tables*/
+        var tables = document.getElementsByTagName("table");
+        for(var i = 0; i < tables.length; ++i){
+            tables[i].className += "table table-bordered table-hover";
+        }
+    </script>
+  </body>
+</html>

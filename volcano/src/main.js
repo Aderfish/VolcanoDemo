@@ -16,6 +16,9 @@ import {
   simulation_parameters_1,
 } from "./examples/example_1.js";
 
+import { init_smoke_actor } from "./particles/smoke_actor.js";
+import { SmokeParameters } from "./particles/smoke_parameters.js";
+
 async function main() {
   // Create the regl canvas
   const regl = createREGL({
@@ -61,6 +64,9 @@ async function main() {
 
     "lava/shaders/lava_particle.vert.glsl",
     "lava/shaders/lava_particle.frag.glsl",
+
+    "particles/shaders/smoke.vert.glsl",
+    "particles/shaders/smoke.frag.glsl",
   ].forEach((shader_filename) => {
     resources[`${shader_filename}`] = load_text(`./src/${shader_filename}`);
   });
@@ -79,7 +85,7 @@ async function main() {
 
   let cam_angle_z = -0.5; // in radians!
   let cam_angle_y = -0.42; // in radians!
-  let cam_distance_factor = 2048;
+  let cam_distance_factor = 300;
 
   let cam_target = [0, 0, 0];
 
@@ -316,6 +322,8 @@ async function main() {
     simulation_parameters
   );
 
+  const smoke_actor = init_smoke_actor(regl, resources, new SmokeParameters());
+
   /*---------------------------------------------------------------
 		Frame render
 	---------------------------------------------------------------*/
@@ -436,6 +444,7 @@ async function main() {
         mat_view: mat_view,
         mat_projection: mat_projection,
         light_position_cam: light_position_cam,
+        time: frame.time,
       };
 
       // Set the whole image to black
@@ -443,6 +452,13 @@ async function main() {
 
       terrain_actor.draw(scene_info);
       lava_actor.draw(scene_info);
+
+      smoke_actor.draw({
+        mat_view: mat_view,
+        mat_projection: mat_projection,
+        time: frame.time,
+      });
+      update_needed = true;
     }
 
     prev_regl_time = frame.time;

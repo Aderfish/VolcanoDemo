@@ -13,6 +13,7 @@ export class LavaRenderingActor {
       attributes: {
         position: mesh_uvsphere.vertex_positions,
         normal: mesh_uvsphere.vertex_normals,
+        tex_coords: mesh_uvsphere.vertex_tex_coords,
       },
       // Faces, as triplets of vertex indices
       elements: mesh_uvsphere.faces,

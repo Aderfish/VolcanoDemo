@@ -21,12 +21,15 @@ varying vec3 v2f_water_col_light;
 varying float v2f_water_f_m;
 varying float v2f_water_a_m;
 
-const vec3  light_color = vec3(1.0, 0.941, 0.898) * 0.5;
+varying float v2f_water_noise_offset;
+
+const vec3  light_color = vec3(1.0, 0.941, 0.898) * 1.0;
 // Small perturbation to prevent "z-fighting" on the water on some machines...
 const float terrain_water_level    = 0.01 + 1e-6;
 const vec3  terrain_color_water    = vec3(0.29, 0.51, 0.62);
 const vec3  terrain_color_mountain = vec3(0.8, 0.5, 0.4);
 const vec3  terrain_color_grass    = vec3(0.36);
+
 
 
 // ==============================================================
@@ -427,7 +430,7 @@ void main()
 
 	vec3 normal = normalize(v2f_normal);
   if(height <= terrain_water_level){
-    normal = compute_normal_from_height(v2f_uv);
+    normal = compute_normal_from_height(v2f_uv + v2f_water_noise_offset*2.0);
   }
   else {
     normal = compute_volcano_normal_from_height(v2f_uv);
@@ -446,7 +449,7 @@ void main()
     float ratio = smoothstep(0., v2f_volcano_h + v2f_island_h - terrain_water_level, height);
     material_color *= (rock_tex * (1. - ratio)  + mont_tex * ratio) * 3.; 
 	}else{
-		material_color = tex_water(v2f_uv * v2f_water_tex_scale / 60. );
+		material_color = tex_water((v2f_uv + v2f_water_noise_offset*2.0) * v2f_water_tex_scale / 60.);
 		vec3 regional_color = vec3(clamp(voronoi2(v2f_uv * 30. / v2f_terrain_width), 0.1, 1.));
 	  material_color *= regional_color * 2.; 
 	}

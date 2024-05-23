@@ -22,6 +22,8 @@ varying vec3 v2f_water_col_light;
 varying float v2f_water_f_m;
 varying float v2f_water_a_m;
 
+varying float v2f_water_noise_offset;
+
 uniform mat4 mat_mvp;
 uniform mat4 mat_model_view;
 uniform mat3 mat_normals; // mat3 not 4, because normals are only rotated and not translated
@@ -38,6 +40,9 @@ uniform vec3 water_col_light;
 
 uniform float water_f_m;
 uniform float water_a_m;
+
+uniform float water_noise_offset;
+
 
 uniform vec4 light_position; // in camera space coordinates already
 void main()
@@ -56,6 +61,8 @@ void main()
 
 	v2f_water_f_m = water_f_m;
 	v2f_water_a_m = water_a_m;
+
+  v2f_water_noise_offset = water_noise_offset;
 
     vec4 position_v4 = vec4(position, 1);
 

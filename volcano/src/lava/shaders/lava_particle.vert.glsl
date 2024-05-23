@@ -1,5 +1,6 @@
 attribute vec3 position;
 attribute vec3 normal;
+attribute vec2 tex_coords;
 
 uniform vec3 particle_position;
 uniform float particle_radius;
@@ -10,6 +11,8 @@ varying vec3 v2f_spherical_pos;
 varying vec3 v2f_dir_from_view;
 varying vec3 v2f_dir_to_light;
 varying vec3 v2f_normal;
+
+varying vec2 v2f_tex_coords;
 
 
 uniform mat4 mat_mvp;
@@ -26,10 +29,12 @@ float turbulence(vec2 point);
 void main() {
   vec3 shad_pos = position;
 
+  v2f_tex_coords = tex_coords;
+
   // Just a quick attempt to add randomness to the geometry
   // Feel to modify
   // ---
-
+		/*
   // Go to spherical coordinates
   float theta = atan(shad_pos.y, shad_pos.x);
   float phi = acos(shad_pos.z / length(shad_pos));
@@ -47,7 +52,7 @@ void main() {
       sin(spherical_pos.y) * sin(spherical_pos.x),
       cos(spherical_pos.y)
   );
-
+	*/
   // ---
 
 
