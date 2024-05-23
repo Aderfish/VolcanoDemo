@@ -229,11 +229,11 @@ TODO
 TODO
 
 
-### Feature 3
+### Smoke Particles
 
 #### Implementation
 
-TODO
+The smoke effect is a combination of multiple small particles. Every particle is a partially transparent ellipse. It has a position in the world and always faces the camera. Every particle rises up for a random amount of time, becoming dimmer and then disappearing. 
 
 #### Validation
 
