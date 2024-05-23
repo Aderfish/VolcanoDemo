@@ -9,15 +9,50 @@ varying vec3 v2f_dir_to_light;
 varying vec3 v2f_normal;
 varying vec2 v2f_uv;
 
+varying float v2f_terrain_width;
+varying float v2f_water_tex_scale;
+varying float v2f_grass_tex_scale;
+varying float v2f_mont_tex_scale;
+
+varying float v2f_volcano_h;
+varying vec3 v2f_water_col_dark;
+varying vec3 v2f_water_col_light;
+
+varying float v2f_water_f_m;
+varying float v2f_water_a_m;
+
 uniform mat4 mat_mvp;
 uniform mat4 mat_model_view;
 uniform mat3 mat_normals; // mat3 not 4, because normals are only rotated and not translated
+uniform float terrain_width;
+
+uniform float water_tex_scale;
+uniform float grass_tex_scale;
+uniform float mont_tex_scale;
+uniform float volcano_h;
+uniform vec3 water_col_dark;
+uniform vec3 water_col_light;
+
+uniform float water_f_m;
+uniform float water_a_m;
 
 uniform vec4 light_position; // in camera space coordinates already
 void main()
 {
     v2f_height = position.z;
 	v2f_uv = position.xy;
+	v2f_water_tex_scale = water_tex_scale;
+	v2f_grass_tex_scale = grass_tex_scale;
+	v2f_mont_tex_scale = mont_tex_scale;
+	v2f_terrain_width = terrain_width;
+
+	v2f_volcano_h = volcano_h;
+	v2f_water_col_dark = water_col_dark;
+	v2f_water_col_light = water_col_light;
+
+	v2f_water_f_m = water_f_m;
+	v2f_water_a_m = water_a_m;
+
     vec4 position_v4 = vec4(position, 1);
 
   /** 
