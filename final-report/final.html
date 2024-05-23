@@ -448,17 +448,64 @@ from one another.</p>
 we first compute all the forces that apply to each particle. Then, we
 integrate the ODE using the integration method of our choice. Finally,
 we update the particle characteristics for the next iteration.</p>
-<h4 id="implementation-3">Implementation</h4>
+<h4 id="pressure-force">Pressure Force</h4>
+<h5 id="implementation-3">Implementation</h5>
+<p>The pressure of a particle is determined by the formula:</p>
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>P</mi><mo>=</mo><mi>k</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>ρ</mi><mo>−</mo><msub><mi>ρ</mi><mn>0</mn></msub><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">
+P = k (\rho - \rho_0)
+</annotation></semantics></math></p>
+<p>where
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>k</mi><annotation encoding="application/x-tex">k</annotation></semantics></math>
+is the incompressibility factor and
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>ρ</mi><annotation encoding="application/x-tex">\rho</annotation></semantics></math>
+is the current density of the particle computed as follows for particle
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>i</mi><annotation encoding="application/x-tex">i</annotation></semantics></math>:
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>ρ</mi><mi>i</mi></msub><mo>=</mo><msub><mo>∑</mo><mi>j</mi></msub><mrow><mo stretchy="true" form="prefix">(</mo><msubsup><mi>W</mi><mi>h</mi><mrow><mi>i</mi><mi>j</mi></mrow></msubsup><msub><mi>m</mi><mi>j</mi></msub><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">\rho_i = \sum_{j} (W_h^{ij} m_j)</annotation></semantics></math>.
+More details can be found in <a
+href="http://www-evasion.imag.fr/Publications/1999/SACNG99/gi99.pdf">Animating
+Lava Flows</a>.</p>
+<p>From the pressure, we can compute the resulting force exerted on the
+particle. Note that because the kernel
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msubsup><mi>W</mi><mi>h</mi><mrow><mi>i</mi><mi>j</mi></mrow></msubsup><annotation encoding="application/x-tex">W_h^{ij}</annotation></semantics></math>
+is
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mn>0</mn><annotation encoding="application/x-tex">0</annotation></semantics></math>
+if the particles
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>i</mi><annotation encoding="application/x-tex">i</annotation></semantics></math>
+and
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>j</mi><annotation encoding="application/x-tex">j</annotation></semantics></math>
+are at a distance greater than
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>2</mn><mi>h</mi></mrow><annotation encoding="application/x-tex">2h</annotation></semantics></math>
+(i.e., not neighbors), the summation can be performed only on the
+particle’s neighbors.</p>
+<figure>
+<img src="images/simulation/features/pressure/pressure_force.png"
+width="300" alt="Pressure force" />
+<figcaption aria-hidden="true">Pressure force</figcaption>
+</figure>
+<h5 id="validation-3">Validation</h5>
+<p>We can test this feature by only applying the pressure forces on the
+particles. Because we spawn the particles on a 2-dimensional plane and
+no other forces are taken into account, the particles will stay in this
+plane.</p>
+<p>The following video presents the action of pressure force:</p>
+<figure>
+<video src="images/simulation/features/pressure/pressure_demo_200.mp4"
+width="300" controls=""><a
+href="images/simulation/features/pressure/pressure_demo_200.mp4">Pressure
+force</a></video>
+<figcaption aria-hidden="true">Pressure force</figcaption>
+</figure>
+<h4 id="implementation-4">Implementation</h4>
 <p>TODO</p>
-<h4 id="validation-3">Validation</h4>
+<h4 id="validation-4">Validation</h4>
 <p>TODO</p>
 <h3 id="smoke-particles">Smoke Particles</h3>
-<h4 id="implementation-4">Implementation</h4>
+<h4 id="implementation-5">Implementation</h4>
 <p>The smoke effect is a combination of multiple small particles. Every
 particle is a partially transparent ellipse. It has a position in the
 world and always faces the camera. Every particle rises up for a random
 amount of time, becoming dimmer and then disappearing.</p>
-<h4 id="validation-4">Validation</h4>
+<h4 id="validation-5">Validation</h4>
 <p>TODO</p>
 <h2 id="discussion">Discussion</h2>
 <p>TODO</p>

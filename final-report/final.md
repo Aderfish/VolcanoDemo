@@ -216,7 +216,29 @@ Then, we say that two particles are neighbors if they are at a distance lower th
 A high-level view of the simulation is as follows: For each timestep, we first compute all the forces that apply to each particle. Then, we integrate the ODE using the integration method of our choice. Finally, we update the particle characteristics for the next iteration.
 
 
+#### Pressure Force
 
+##### Implementation
+
+The pressure of a particle is determined by the formula:
+
+$$
+P = k (\rho - \rho_0)
+$$
+
+where $k$ is the incompressibility factor and $\rho$ is the current density of the particle computed as follows for particle $i$: $\rho_i = \sum_{j} (W_h^{ij} m_j)$. More details can be found in [Animating Lava Flows](http://www-evasion.imag.fr/Publications/1999/SACNG99/gi99.pdf).
+
+From the pressure, we can compute the resulting force exerted on the particle. Note that because the kernel $W_h^{ij}$ is $0$ if the particles $i$ and $j$ are at a distance greater than $2h$ (i.e., not neighbors), the summation can be performed only on the particle's neighbors.
+
+![Pressure force](images/simulation/features/pressure/pressure_force.png){width="300px"}
+
+##### Validation
+
+We can test this feature by only applying the pressure forces on the particles. Because we spawn the particles on a 2-dimensional plane and no other forces are taken into account, the particles will stay in this plane.
+
+The following video presents the action of pressure force:
+
+![Pressure force](images/simulation/features/pressure/pressure_demo_200.mp4){width="300px"}
 
 
 
