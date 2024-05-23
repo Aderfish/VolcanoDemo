@@ -4,7 +4,7 @@ title: Final Project Report CS-341 2024
 
 # Volcano
 
-![An image showing the final result](images/demo.jpg){width="300px"}
+![Volcanic island eruption](videos/full_7.mp4){width="600px"}
 
 
 ## Abstract
