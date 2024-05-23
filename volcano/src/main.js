@@ -152,15 +152,15 @@ async function main() {
     // if left or middle button is pressed
     if (event.buttons & 1 || event.buttons & 4) {
       if (event.shiftKey) {
-        const r = mat2.fromRotation(mat2.create(), -cam_angle_z);
-        const offset = vec2.transformMat2(
-          [0, 0],
-          [event.movementY, event.movementX],
-          r
-        );
-        vec2.scale(offset, offset, -0.01);
-        cam_target[0] += offset[0];
-        cam_target[1] += offset[1];
+        // const r = mat2.fromRotation(mat2.create(), -cam_angle_z);
+        // const offset = vec2.transformMat2(
+        //   [0, 0],
+        //   [event.movementY, event.movementX],
+        //   r
+        // );
+        // vec2.scale(offset, offset, -0.01);
+        // cam_target[0] += offset[0];
+        // cam_target[1] += offset[1];
       } else if (gimbal_mode) {
         cam_angle_z += event.movementX * 0.005;
         cam_angle_y += -event.movementY * 0.005;
@@ -199,10 +199,10 @@ async function main() {
   let roll_right = false;
 
   window.addEventListener("keydown", (event) => {
-    if (event.key === "p") {
+    if (event.key === "o") {
       speed *= 2;
     }
-    if (event.key === "m") {
+    if (event.key === "l") {
       speed /= 2;
     }
 
