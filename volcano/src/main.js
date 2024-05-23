@@ -277,6 +277,7 @@ async function main() {
         mat_view: mat_view,
         mat_projection: mat_projection,
         light_position_cam: light_position_cam,
+        time: frame.time,
       };
 
       // Set the whole image to black
@@ -284,13 +285,13 @@ async function main() {
 
       terrain_actor.draw(scene_info);
       lava_actor.draw(scene_info);
-      
+
       smoke_actor.draw({
         mat_view: mat_view,
         mat_projection: mat_projection,
         time: frame.time,
       });
-      update_needed = true; 
+      update_needed = true;
     }
 
     prev_regl_time = frame.time;

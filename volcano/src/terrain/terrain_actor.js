@@ -169,6 +169,7 @@ export function init_terrain_actor(
       mat_normals: regl.prop("mat_normals"),
 
       light_position: regl.prop("light_position"),
+      water_noise_offset: regl.prop("water_noise_offset"),
       terrain_width: terrain_parameters.terrain.m_terrain_width,
       water_tex_scale: terrain_parameters.terrain.water_tex_scale,
       grass_tex_scale: terrain_parameters.terrain.grass_tex_scale,
@@ -194,7 +195,7 @@ export function init_terrain_actor(
       this.mat_model_to_world = mat4.create();
     }
 
-    draw({ mat_projection, mat_view, light_position_cam }) {
+    draw({ mat_projection, mat_view, light_position_cam, time }) {
       mat4_matmul_many(this.mat_model_view, mat_view, this.mat_model_to_world);
       mat4_matmul_many(this.mat_mvp, mat_projection, this.mat_model_view);
 
@@ -208,6 +209,7 @@ export function init_terrain_actor(
         mat_normals: this.mat_normals,
 
         light_position: light_position_cam,
+        water_noise_offset: time,
       });
     }
   }
