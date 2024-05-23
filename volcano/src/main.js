@@ -7,6 +7,10 @@ import { init_terrain_actor } from "./terrain/terrain_actor.js";
 import { init_volcano_heightmap } from "./noise/volcano_heightmap.js";
 import { GenerationParameters } from "./noise/generation_parameters.js";
 import { link_generation_parameters_menu } from "./ui/generation_parameters_menu.js";
+import { LavaRenderingActor } from "./lava/lava_actor.js";
+import { LavaSimulation } from "./lava/simulation/sim.js";
+import { SimulationManager } from "./lava/simulation/sim_manager.js";
+import { SimulationParameters } from "./lava/simulation/sim_parameters.js";
 import { init_smoke_actor } from "./particles/smoke_actor.js";
 
 async function main() {
@@ -51,6 +55,9 @@ async function main() {
 
     "noise/shaders/volcano_heightmap.vert.glsl",
     "noise/shaders/volcano_heightmap.frag.glsl",
+
+    "lava/shaders/lava_particle.vert.glsl",
+    "lava/shaders/lava_particle.frag.glsl",
 
     "particles/shaders/smoke.vert.glsl",
     "particles/shaders/smoke.frag.glsl",
@@ -133,6 +140,31 @@ async function main() {
     update_needed = true;
   });
 
+  let sim_running = false;
+  window.addEventListener("keydown", (event) => {
+    if (event.key === "s") {
+      // Code to execute when the "s" key is pressed
+      sim_running = !sim_running;
+      // Add your code here
+    }
+  });
+
+  let reset_sim = false;
+  window.addEventListener("keydown", (event) => {
+    if (event.key === "r") {
+      // Code to execute when the "r" key is pressed
+      reset_sim = true;
+    }
+  });
+
+  let bake_sim = false;
+  window.addEventListener("keydown", (event) => {
+    if (event.key === "b") {
+      // Code to execute when the "b" key is pressed
+      bake_sim = true;
+    }
+  });
+
   let regenerate_terrain_needed = true;
   let generation_parameters = new GenerationParameters();
 
@@ -145,12 +177,22 @@ async function main() {
     }
   );
 
+  let simulation_parameters = new SimulationParameters();
+
   /*---------------------------------------------------------------
 		Actors
 	---------------------------------------------------------------*/
 
   const volcano_heightmap = init_volcano_heightmap(regl, resources);
   let terrain_actor;
+  let lava_simulation;
+  let particles_data = [];
+
+  const lava_actor = new LavaRenderingActor(
+    regl,
+    resources,
+    simulation_parameters
+  );
 
   const smoke_actor = init_smoke_actor(regl, resources);
 
@@ -163,6 +205,10 @@ async function main() {
   let light_position_world = [-800, -800, 800, 1.0];
 
   const light_position_cam = [0, 0, 0, 0];
+  const simulation_manager = new SimulationManager(regl);
+
+  let sim_time = 0;
+  let prev_regl_time = 0;
 
   regl.frame((frame) => {
     if (regenerate_terrain_needed) {
@@ -175,9 +221,38 @@ async function main() {
         regl,
         resources,
         volcano_heightmap.get_buffer(),
-        generation_parameters.terrain
+        generation_parameters
       );
       console.log("Terrain regenerated");
+
+      sim_time = 0;
+      simulation_manager.set_simulation(
+        volcano_heightmap.get_buffer(),
+        generation_parameters,
+        simulation_parameters
+      );
+    }
+
+    if (bake_sim) {
+      bake_sim = false;
+      sim_time = 0;
+      particles_data = [];
+      simulation_manager.bake_sim();
+    }
+
+    if (sim_running) {
+      particles_data = simulation_manager.get_particles_at(sim_time);
+      let dt = frame.time - prev_regl_time;
+      sim_time += dt;
+      update_needed = true;
+    }
+
+    // To restart the simulation
+    if (reset_sim) {
+      reset_sim = false;
+      sim_time = 0;
+      particles_data = [];
+      update_needed = true;
     }
 
     if (update_needed) {
@@ -197,6 +272,7 @@ async function main() {
       vec4.transformMat4(light_position_cam, light_position_world, mat_view);
 
       const scene_info = {
+        particles_data: particles_data,
         mat_view: mat_view,
         mat_projection: mat_projection,
         light_position_cam: light_position_cam,
@@ -206,6 +282,7 @@ async function main() {
       regl.clear({ color: [0.9, 0.9, 1, 1] });
 
       terrain_actor.draw(scene_info);
+      lava_actor.draw(scene_info);
       
       smoke_actor.draw({
         mat_view: mat_view,
@@ -214,6 +291,8 @@ async function main() {
       });
       update_needed = true; 
     }
+
+    prev_regl_time = frame.time;
   });
 }
 
