@@ -7,7 +7,7 @@ import { init_terrain_actor } from "./terrain/terrain_actor.js";
 import { init_volcano_heightmap } from "./noise/volcano_heightmap.js";
 import { GenerationParameters } from "./noise/generation_parameters.js";
 import { link_generation_parameters_menu } from "./ui/generation_parameters_menu.js";
-import { init_billboard_actor } from "./particles/billboard_actor.js";
+import { init_smoke_actor } from "./particles/smoke_actor.js";
 
 async function main() {
   // Create the regl canvas
@@ -52,8 +52,8 @@ async function main() {
     "noise/shaders/volcano_heightmap.vert.glsl",
     "noise/shaders/volcano_heightmap.frag.glsl",
 
-    "particles/shaders/billboard.vert.glsl",
-    "particles/shaders/billboard.frag.glsl",
+    "particles/shaders/smoke.vert.glsl",
+    "particles/shaders/smoke.frag.glsl",
   ].forEach((shader_filename) => {
     resources[`${shader_filename}`] = load_text(`./src/${shader_filename}`);
   });
@@ -152,7 +152,7 @@ async function main() {
   const volcano_heightmap = init_volcano_heightmap(regl, resources);
   let terrain_actor;
 
-  const billboard_actor = init_billboard_actor(regl, resources);
+  const smoke_actor = init_smoke_actor(regl, resources);
 
   /*---------------------------------------------------------------
 		Frame render
@@ -207,7 +207,7 @@ async function main() {
 
       terrain_actor.draw(scene_info);
       
-      billboard_actor.draw({
+      smoke_actor.draw({
         mat_view: mat_view,
         mat_projection: mat_projection,
         time: frame.time,

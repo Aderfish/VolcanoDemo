@@ -29,7 +29,7 @@ function random_smoke_particle(){
  * @param {*} resources
  * @returns
  */
-export function init_billboard_actor(
+export function init_smoke_actor(
     regl,
     resources,
 ) {
@@ -61,7 +61,7 @@ export function init_billboard_actor(
         faces.push([4*i+2, 4*i+3, 4*i+1]);
     }
 
-    const pipeline_draw_billboard = regl({
+    const pipeline_draw_smoke = regl({
         attributes: {
             square_position : {
                 buffer: regl.buffer(positions),
@@ -92,11 +92,11 @@ export function init_billboard_actor(
         },
         depth: { enable: false },
         
-        vert: resources["particles/shaders/billboard.vert.glsl"],
-        frag: resources["particles/shaders/billboard.frag.glsl"],
+        vert: resources["particles/shaders/smoke.vert.glsl"],
+        frag: resources["particles/shaders/smoke.frag.glsl"],
     });
 
-    class BillboardActor {
+    class SmokeActor {
         constructor() {
             this.mat_mvp = mat4.create();
             this.mat_model_view = mat4.create();
@@ -145,7 +145,7 @@ export function init_billboard_actor(
             } 
 
 
-            pipeline_draw_billboard({
+            pipeline_draw_smoke({
                 mat_mvp: this.mat_mvp,
                 
                 camera_right_world: this.camera_right_world,
@@ -164,5 +164,5 @@ export function init_billboard_actor(
         }
     }
 
-    return new BillboardActor();
+    return new SmokeActor();
 }
