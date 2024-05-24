@@ -241,6 +241,25 @@ The following video presents the action of pressure force:
 ![Pressure force](images/simulation/features/pressure/pressure_demo_200.mp4){width="300px"}
 
 
+#### Viscosity Force
+
+##### Implementation
+
+We compute the force from viscosity applied to a particle using the formula:
+
+![Viscosity force](images/simulation/features/viscosity/viscosity_force.png){width="300px"}
+
+where $v_{ij}$ is the relative speed difference between particles $i$ and $j$. This formula implies that a particle will be "attracted" by the flowing particles around it, which is the behavior we are looking for to simulate viscosity. Also, $\alpha_v$ is a parameter dependent on the particle temperature, but we consider it constant for now. We'll detail it further when considering temperature exchanges.
+
+##### Validation
+
+We can add viscosity forces on top of the previous simulation to get the following result:
+
+![Viscosity force](images/simulation/features/viscosity/viscosity_demo.mp4){width="300px"}
+
+As we can see, the particles are now moving in *blocks*, which is the expected behavior with viscosity.
+
+
 
 #### Implementation
 

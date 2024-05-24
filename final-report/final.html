@@ -495,17 +495,51 @@ href="images/simulation/features/pressure/pressure_demo_200.mp4">Pressure
 force</a></video>
 <figcaption aria-hidden="true">Pressure force</figcaption>
 </figure>
-<h4 id="implementation-4">Implementation</h4>
+<h4 id="viscosity-force">Viscosity Force</h4>
+<h5 id="implementation-4">Implementation</h5>
+<p>We compute the force from viscosity applied to a particle using the
+formula:</p>
+<figure>
+<img src="images/simulation/features/viscosity/viscosity_force.png"
+width="300" alt="Viscosity force" />
+<figcaption aria-hidden="true">Viscosity force</figcaption>
+</figure>
+<p>where
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>v</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub><annotation encoding="application/x-tex">v_{ij}</annotation></semantics></math>
+is the relative speed difference between particles
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>i</mi><annotation encoding="application/x-tex">i</annotation></semantics></math>
+and
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>j</mi><annotation encoding="application/x-tex">j</annotation></semantics></math>.
+This formula implies that a particle will be “attracted” by the flowing
+particles around it, which is the behavior we are looking for to
+simulate viscosity. Also,
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>α</mi><mi>v</mi></msub><annotation encoding="application/x-tex">\alpha_v</annotation></semantics></math>
+is a parameter dependent on the particle temperature, but we consider it
+constant for now. We’ll detail it further when considering temperature
+exchanges.</p>
+<h5 id="validation-4">Validation</h5>
+<p>We can add viscosity forces on top of the previous simulation to get
+the following result:</p>
+<figure>
+<video src="images/simulation/features/viscosity/viscosity_demo.mp4"
+width="300" controls=""><a
+href="images/simulation/features/viscosity/viscosity_demo.mp4">Viscosity
+force</a></video>
+<figcaption aria-hidden="true">Viscosity force</figcaption>
+</figure>
+<p>As we can see, the particles are now moving in <em>blocks</em>, which
+is the expected behavior with viscosity.</p>
+<h4 id="implementation-5">Implementation</h4>
 <p>TODO</p>
-<h4 id="validation-4">Validation</h4>
+<h4 id="validation-5">Validation</h4>
 <p>TODO</p>
 <h3 id="smoke-particles">Smoke Particles</h3>
-<h4 id="implementation-5">Implementation</h4>
+<h4 id="implementation-6">Implementation</h4>
 <p>The smoke effect is a combination of multiple small particles. Every
 particle is a partially transparent ellipse. It has a position in the
 world and always faces the camera. Every particle rises up for a random
 amount of time, becoming dimmer and then disappearing.</p>
-<h4 id="validation-5">Validation</h4>
+<h4 id="validation-6">Validation</h4>
 <p>TODO</p>
 <h2 id="discussion">Discussion</h2>
 <p>TODO</p>
