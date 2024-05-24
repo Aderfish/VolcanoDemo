@@ -260,6 +260,22 @@ We can add viscosity forces on top of the previous simulation to get the followi
 As we can see, the particles are now moving in *blocks*, which is the expected behavior with viscosity.
 
 
+#### Gravity
+
+##### Implementation
+
+The next step for our simulation is to add the gravity force.
+
+This force can be easily computed by $\vec{F_g} = (0,0,-mg)$, with $g=9.81 \; \text{m/s}^2$.
+
+##### Validation
+
+We now add the gravity force to the simulation to get the following result:
+
+![Gravity force](images/simulation/features/gravity/gravity_demo_better.mp4){width="300px"}
+
+As expected, the particles are now falling, passing through the floor because collisions are not yet implemented.
+
 
 #### Implementation
 
