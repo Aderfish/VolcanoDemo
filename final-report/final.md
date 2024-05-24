@@ -277,6 +277,29 @@ We now add the gravity force to the simulation to get the following result:
 As expected, the particles are now falling, passing through the floor because collisions are not yet implemented.
 
 
+#### Ground Collision
+
+##### Implementation
+
+To simulate flows, we need to account for collisions with the ground. After experimenting with various methods, we chose a simple implementation of ground collisions.
+
+At each iteration, we check if any particles are below the ground. If so, we force their position to be on the ground. Moreover, to simulate the effect of lava adhering to the ground, we set the particle velocity to 0. This approach allows us to achieve convincing flows with a very simple implementation and ensures that no particles pass through the ground, which could happen with a force-based approach due to instabilities in the simulation. For these reasons, we chose this method.
+
+##### Validation
+
+To test the collision, we can simply emit particles above a plane as shown below:
+
+![Ground collision](images/simulation/features/ground_collision/ground_collision_demo.mp4){width="300px"}
+
+Moreover, we now have the necessary basis to create a first, very basic flow:
+
+![Basic flow](images/simulation/features/ground_collision/simple_flow_demo.mp4){width="300px"}
+
+As we can see, we get a viscous fluid, which is what we are looking for to animate lava.
+
+
+
+
 #### Implementation
 
 TODO
