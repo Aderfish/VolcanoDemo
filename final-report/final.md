@@ -551,7 +551,6 @@ TODO
 ![Lava Texture (Ramdomized Geometry)](images/texture/lava_texture_ramdom_geo.png){width="400px"}
 
 
-
 ### Smoke Particles (15 points)
 
 #### Implementation
@@ -562,8 +561,6 @@ The smoke effect is a combination of multiple small particles. Every particle is
 
 ![Single smoke particle](videos/smoke/single.mp4){width="600px"}
 ![Full smoke effect](videos/smoke/full.mp4){width="600px"}
-
-
 
 ## Discussion
 
