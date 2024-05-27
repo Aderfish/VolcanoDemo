@@ -387,6 +387,30 @@ To demonstrate the effect of this feature, we present the flow of particles at d
 It is evident that the cold lava flow does not expand as much as the hot flow. This behavior aligns with the expectation that the cold flow is more viscous.
 
 
+#### Integration Method
+
+##### Implementation
+
+After computing all the derivatives of each parameter at a given timestep, it is necessary to integrate the ordinary differential equations (ODEs) to determine the parameters for the next step.
+
+Initially, we employed the Euler Explicit method due to its simplicity. However, despite its ease of implementation, this method lacks stability and only converges for the first order. Consequently, a very small timestep is required to maintain stable simulations, which significantly increases computation time.
+
+To address this issue, we transitioned to the Runge-Kutta order 2 method. Although the implementation of this method is more complex, it offers superior stability for our simulations (at order 2), allowing us to use a larger timestep.
+
+Both methods have been retained in the implementation, enabling users to select the appropriate method based on their needs. For our simulations, we predominantly use the Runge-Kutta 2 method.
+
+##### Validation
+
+To illustrate the advantages provided by the Runge-Kutta 2 method, we conducted two simulations with identical parameters: one using the Euler Explicit method and the other using the Runge-Kutta 2 method.
+
+![Euler Explicit method](images/simulation/features/stability/euler_explicit.mp4){width="300px"}
+
+![Runge-Kutta order 2](images/simulation/features/stability/runge_kutta.mp4){width="300px"}
+
+The simulation using the Euler Explicit method rapidly becomes unstable and unusable. In contrast, the simulation using the Runge-Kutta 2 method remains stable and produces convincing results. This comparison underscores the importance of the integration method in our simulation.
+
+
+
 #### Implementation
 
 TODO
