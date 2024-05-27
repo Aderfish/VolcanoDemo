@@ -39,7 +39,7 @@ div.sourceCode { overflow: auto; }
 }
 @media print {
 pre > code.sourceCode { white-space: pre-wrap; }
-pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
 }
 pre.numberSource code
   { counter-reset: source-line 0; }
@@ -116,6 +116,9 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
           <li><a href="#lava-flow-fluid-simulation-20-points"
           id="toc-lava-flow-fluid-simulation-20-points">Lava Flow Fluid
           Simulation (20 points)</a></li>
+          <li><a href="#procedural-texture-generation"
+          id="toc-procedural-texture-generation">Procedural Texture
+          Generation</a></li>
           <li><a href="#smoke-particles-15-points"
           id="toc-smoke-particles-15-points">Smoke Particles (15
           points)</a></li>
@@ -600,7 +603,7 @@ is the expected behavior with viscosity.</p>
 <h5 id="implementation-5">Implementation</h5>
 <p>The next step for our simulation is to add the gravity force.</p>
 <p>This force can be easily computed by
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mover><msub><mi>F</mi><mi>g</mi></msub><mo accent="true">→</mo></mover><mo>=</mo><mrow><mo stretchy="true" form="prefix">(</mo><mn>0</mn><mo>,</mo><mn>0</mn><mo>,</mo><mo>−</mo><mi>m</mi><mi>g</mi><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">\vec{F_g} = (0,0,-mg)</annotation></semantics></math>,
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mover><msub><mi>F</mi><mi>g</mi></msub><mo accent="true">→</mo></mover><mo>=</mo><mrow><mo stretchy="true" form="prefix">(</mo><mn>0</mn><mo>,</mo><mn>0</mn><mo>,</mo><mi>−</mi><mi>m</mi><mi>g</mi><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">\vec{F_g} = (0,0,-mg)</annotation></semantics></math>,
 with
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>g</mi><mo>=</mo><mn>9.81</mn><mspace width="0.278em"></mspace><msup><mtext mathvariant="normal">m/s</mtext><mn>2</mn></msup></mrow><annotation encoding="application/x-tex">g=9.81 \; \text{m/s}^2</annotation></semantics></math>.</p>
 <h5 id="validation-5">Validation</h5>
@@ -785,7 +788,7 @@ temperature decreases. This relationship is captured by the factor
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>α</mi><mi>v</mi></msub><annotation encoding="application/x-tex">\alpha_v</annotation></semantics></math>,
 used previously to compute viscosity. The factor is computed as
 follows:</p>
-<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>α</mi><mi>v</mi></msub><mo>=</mo><mi>b</mi><mo>exp</mo><mrow><mo stretchy="true" form="prefix">(</mo><mo>−</mo><mi>a</mi><mfrac><mi>T</mi><msub><mi>T</mi><mrow><mi>i</mi><mi>n</mi><mi>i</mi><mi>t</mi><mi>i</mi><mi>a</mi><mi>l</mi></mrow></msub></mfrac><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>α</mi><mi>v</mi></msub><mo>=</mo><mi>b</mi><mo>exp</mo><mrow><mo stretchy="true" form="prefix">(</mo><mi>−</mi><mi>a</mi><mfrac><mi>T</mi><msub><mi>T</mi><mrow><mi>i</mi><mi>n</mi><mi>i</mi><mi>t</mi><mi>i</mi><mi>a</mi><mi>l</mi></mrow></msub></mfrac><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">
 \alpha_v = b \exp \left( -a \frac{T}{T_{initial}} \right)
 </annotation></semantics></math></p>
 <p>where
@@ -961,17 +964,81 @@ href="images/simulation/features/scheduling/eruption.mp4">Eruption</a></video>
 </figure>
 <p>We observe that the simulation creates an eruption-like effect, which
 aligns with our project goals.</p>
-<h4 id="implementation-14">Implementation</h4>
-<p>TODO</p>
+<h3 id="procedural-texture-generation">Procedural Texture
+Generation</h3>
+<p>In order to make the terrain more realistic and give it vivid-looking
+appearance, different textures are tried out to provide this visual
+effect. This includes the concepts of perlin noise, fractal Brownian
+motion, noise-based displacement，cell noise, cellullar pattern, normal
+mapping, blending and etc.</p>
+<h4 id="implementation-normal-mapping">Implementation (Normal
+mapping)</h4>
 <h4 id="validation-14">Validation</h4>
+<figure>
+<img src="images/texture/normal_mapping.gif" width="400"
+alt="Normal Mapping" />
+<figcaption aria-hidden="true">Normal Mapping</figcaption>
+</figure>
+<h4 id="implementation-volcano">Implementation (Volcano)</h4>
+<h4 id="validation-15">Validation</h4>
+<figure>
+<img src="images/texture/mountain_texture.gif" width="400"
+alt="Mountain Texture" />
+<figcaption aria-hidden="true">Mountain Texture</figcaption>
+</figure>
+<figure>
+<img src="images/texture/mountain_rock_blend.gif" width="400"
+alt="Mountain/Rock Blend Texture" />
+<figcaption aria-hidden="true">Mountain/Rock Blend Texture</figcaption>
+</figure>
+<h4 id="implementation-water">Implementation (Water)</h4>
 <p>TODO</p>
+<h4 id="validation-16">Validation</h4>
+<figure>
+<img src="images/texture/water_texture_rim.png" width="400"
+alt="Water Texture (highlighted rims)" />
+<figcaption aria-hidden="true">Water Texture (highlighted
+rims)</figcaption>
+</figure>
+<figure>
+<img src="images/texture/water_texture_cell.png" width="400"
+alt="Water Texture (highlighted regions)" />
+<figcaption aria-hidden="true">Water Texture (highlighted
+regions)</figcaption>
+</figure>
+<figure>
+<img src="images/texture/water_texture_moving.gif" width="400"
+alt="Water Texture (combined with normals and sampled with time)" />
+<figcaption aria-hidden="true">Water Texture (combined with normals and
+sampled with time)</figcaption>
+</figure>
+<h4 id="implementation-lava-particles">Implementation (Lava
+Particles)</h4>
+<p>TODO</p>
+<h4 id="validation-17">Validation</h4>
+<figure>
+<img src="images/texture/lava_texture_overview.png" width="400"
+alt="Lava Texture" />
+<figcaption aria-hidden="true">Lava Texture</figcaption>
+</figure>
+<figure>
+<img src="images/texture/lava_texture.png" width="400"
+alt="Lava Texture (Zoom-in)" />
+<figcaption aria-hidden="true">Lava Texture (Zoom-in)</figcaption>
+</figure>
+<figure>
+<img src="images/texture/lava_texture_ramdom_geo.png" width="400"
+alt="Lava Texture (Ramdomized Geometry)" />
+<figcaption aria-hidden="true">Lava Texture (Ramdomized
+Geometry)</figcaption>
+</figure>
 <h3 id="smoke-particles-15-points">Smoke Particles (15 points)</h3>
-<h4 id="implementation-15">Implementation</h4>
+<h4 id="implementation-14">Implementation</h4>
 <p>The smoke effect is a combination of multiple small particles. Every
 particle is a partially transparent ellipse. It has a position in the
 world and always faces the camera. Every particle rises up for a random
 amount of time, becoming dimmer and then disappearing.</p>
-<h4 id="validation-15">Validation</h4>
+<h4 id="validation-18">Validation</h4>
 <p><video src="videos/smoke/single.mp4" width="600" controls=""><a
 href="videos/smoke/single.mp4">Single smoke particle</a></video> <video
 src="videos/smoke/full.mp4" width="600" controls=""><a

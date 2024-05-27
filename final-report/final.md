@@ -486,13 +486,50 @@ This schedule produces the following simulation:
 We observe that the simulation creates an eruption-like effect, which aligns with our project goals.
 
 
-#### Implementation
+### Procedural Texture Generation
+
+In order to make the terrain more realistic and give it vivid-looking appearance, different textures are tried out to provide this visual effect. This includes the concepts of perlin noise, fractal Brownian motion, noise-based displacement，cell noise, cellullar pattern, normal mapping, blending and etc.
+
+#### Implementation (Normal mapping)
+
+
+#### Validation
+
+![Normal Mapping](images/texture/normal_mapping.gif){width="400px"}
+
+#### Implementation (Volcano)
+
+
+#### Validation
+
+![Mountain Texture](images/texture/mountain_texture.gif){width="400px"}
+
+![Mountain/Rock Blend Texture](images/texture/mountain_rock_blend.gif){width="400px"}
+
+#### Implementation (Water)
 
 TODO
 
 #### Validation
 
+![Water Texture (highlighted rims)](images/texture/water_texture_rim.png){width="400px"}
+
+![Water Texture (highlighted regions)](images/texture/water_texture_cell.png){width="400px"}
+
+![Water Texture (combined with normals and sampled with time)](images/texture/water_texture_moving.gif){width="400px"}
+
+#### Implementation (Lava Particles)
+
 TODO
+
+#### Validation
+
+![Lava Texture](images/texture/lava_texture_overview.png){width="400px"}
+
+![Lava Texture (Zoom-in)](images/texture/lava_texture.png){width="400px"}
+
+![Lava Texture (Ramdomized Geometry)](images/texture/lava_texture_ramdom_geo.png){width="400px"}
+
 
 
 ### Smoke Particles (15 points)
