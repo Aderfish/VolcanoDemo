@@ -578,12 +578,57 @@ flow</a></video>
 </figure>
 <p>As we can see, we get a viscous fluid, which is what we are looking
 for to animate lava.</p>
-<h4 id="implementation-7">Implementation</h4>
+<h4 id="ground-temperature-transfer">Ground Temperature Transfer</h4>
+<h5 id="implementation-7">Implementation</h5>
+<p>To implement temperature transfers with the ground, we apply the
+following temperature variation to all particles that are in ground
+collision:</p>
+<figure>
+<img
+src="images/simulation/features/ground_transfer/ground_transfer.png"
+width="300" alt="Ground temperature transfer formula" />
+<figcaption aria-hidden="true">Ground temperature transfer
+formula</figcaption>
+</figure>
+<p>where
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>r</mi><mi>i</mi></msub><annotation encoding="application/x-tex">r_i</annotation></semantics></math>
+is the particle radius,
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>T</mi><mrow><mi>e</mi><mi>x</mi><mi>t</mi></mrow></msub><annotation encoding="application/x-tex">T_{ext}</annotation></semantics></math>
+is the temperature of the ground, and
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>k</mi><mrow><mi>e</mi><mi>x</mi><mi>t</mi></mrow></msub><annotation encoding="application/x-tex">k_{ext}</annotation></semantics></math>
+is the heat transfer coefficient between the ground and our lava
+particles. From this formula, we can determine the variation in
+temperature of particles on the ground at each timestep.</p>
+<h5 id="validation-7">Validation</h5>
+<p>We can test this by letting a flow on the ground. To visualize the
+temperature, we link it to the particle color, transitioning from hotter
+to colder as follows:</p>
+<p>Yellow -&gt; Red -&gt; Black</p>
+<p>We can visualize the temperature transfer below:</p>
+<figure>
+<video
+src="images/simulation/features/ground_transfer/ground_trans_top.mp4"
+width="300" controls=""><a
+href="images/simulation/features/ground_transfer/ground_trans_top.mp4">Ground
+temperature transfer (Top view)</a></video>
+<figcaption aria-hidden="true">Ground temperature transfer (Top
+view)</figcaption>
+</figure>
+<figure>
+<video
+src="images/simulation/features/ground_transfer/ground_trans_bottom.mp4"
+width="300" controls=""><a
+href="images/simulation/features/ground_transfer/ground_trans_bottom.mp4">Ground
+temperature transfer (Bottom view)</a></video>
+<figcaption aria-hidden="true">Ground temperature transfer (Bottom
+view)</figcaption>
+</figure>
+<h4 id="implementation-8">Implementation</h4>
 <p>TODO</p>
-<h4 id="validation-7">Validation</h4>
+<h4 id="validation-8">Validation</h4>
 <p>TODO</p>
 <h3 id="smoke-particles">Smoke Particles</h3>
-<h4 id="implementation-8">Implementation</h4>
+<h4 id="implementation-9">Implementation</h4>
 <p>The smoke effect is a combination of multiple small particles. Every
 particle is a partially transparent ellipse. It has a position in the
 world and always faces the camera. Every particle rises up for a random

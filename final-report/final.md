@@ -297,6 +297,28 @@ Moreover, we now have the necessary basis to create a first, very basic flow:
 
 As we can see, we get a viscous fluid, which is what we are looking for to animate lava.
 
+#### Ground Temperature Transfer
+
+##### Implementation
+
+To implement temperature transfers with the ground, we apply the following temperature variation to all particles that are in ground collision:
+
+![Ground temperature transfer formula](images/simulation/features/ground_transfer/ground_transfer.png){width="300px"}
+
+where $r_i$ is the particle radius, $T_{ext}$ is the temperature of the ground, and $k_{ext}$ is the heat transfer coefficient between the ground and our lava particles. From this formula, we can determine the variation in temperature of particles on the ground at each timestep.
+
+##### Validation
+
+We can test this by letting a flow on the ground. To visualize the temperature, we link it to the particle color, transitioning from hotter to colder as follows:
+
+Yellow -> Red -> Black
+
+We can visualize the temperature transfer below:
+
+![Ground temperature transfer (Top view)](images/simulation/features/ground_transfer/ground_trans_top.mp4){width="300px"}
+
+![Ground temperature transfer (Bottom view)](images/simulation/features/ground_transfer/ground_trans_bottom.mp4){width="300px"}
+
 
 
 
