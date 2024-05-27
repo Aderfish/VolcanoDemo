@@ -964,6 +964,7 @@ href="images/simulation/features/scheduling/eruption.mp4">Eruption</a></video>
 </figure>
 <p>We observe that the simulation creates an eruption-like effect, which
 aligns with our project goals.</p>
+<<<<<<< HEAD
 <h3 id="procedural-texture-generation">Procedural Texture
 Generation</h3>
 <p>In order to make the terrain more realistic and give it vivid-looking
@@ -973,6 +974,58 @@ motion, noise-based displacement，cell noise, cellullar pattern, normal
 mapping, blending and etc.</p>
 <h4 id="implementation-normal-mapping">Implementation (Normal
 mapping)</h4>
+=======
+<h4 id="examples">Examples</h4>
+<p>Here, we present an example of integrating the simulation with the
+previously developed terrain features.</p>
+<figure>
+<video
+src="images/simulation/features/examples/example_1/good/demo_1.mp4"
+width="300" controls=""><a
+href="images/simulation/features/examples/example_1/good/demo_1.mp4">Full
+view</a></video>
+<figcaption aria-hidden="true">Full view</figcaption>
+</figure>
+<figure>
+<video
+src="images/simulation/features/examples/example_1/good/demo_2.mp4"
+width="300" controls=""><a
+href="images/simulation/features/examples/example_1/good/demo_2.mp4">Crater
+view</a></video>
+<figcaption aria-hidden="true">Crater view</figcaption>
+</figure>
+<figure>
+<video
+src="images/simulation/features/examples/example_1/good/demo_4.mp4"
+width="300" controls=""><a
+href="images/simulation/features/examples/example_1/good/demo_4.mp4">Flow
+view</a></video>
+<figcaption aria-hidden="true">Flow view</figcaption>
+</figure>
+<figure>
+<video
+src="images/simulation/features/examples/example_1/good/demo_3.mp4"
+width="300" controls=""><a
+href="images/simulation/features/examples/example_1/good/demo_3.mp4">Top
+view</a></video>
+<figcaption aria-hidden="true">Top view</figcaption>
+</figure>
+<p>To highlight the critical importance of selecting an appropriate
+timestep, we demonstrate the consequences of setting the timestep too
+large. Even with the Runge-Kutta 2 method, an improperly chosen timestep
+can lead to instability in the simulation. The following video
+illustrates the outcome when the timestep is excessively large:</p>
+<figure>
+<video
+src="images/simulation/features/examples/example_1/catastrophic_failure/catastrophic_failure.mp4"
+width="300" controls=""><a
+href="images/simulation/features/examples/example_1/catastrophic_failure/catastrophic_failure.mp4">Timestep
+too large</a></video>
+<figcaption aria-hidden="true">Timestep too large</figcaption>
+</figure>
+<h4 id="implementation-14">Implementation</h4>
+<p>TODO</p>
+>>>>>>> c5cb40d (feat(final): add simulation examples)
 <h4 id="validation-14">Validation</h4>
 <figure>
 <img src="images/texture/normal_mapping.gif" width="400"

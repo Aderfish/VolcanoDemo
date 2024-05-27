@@ -485,6 +485,22 @@ This schedule produces the following simulation:
 
 We observe that the simulation creates an eruption-like effect, which aligns with our project goals.
 
+#### Examples
+
+Here, we present an example of integrating the simulation with the previously developed terrain features.
+
+![Full view](images/simulation/features/examples/example_1/good/demo_1.mp4){width="300px"}
+
+![Crater view](images/simulation/features/examples/example_1/good/demo_2.mp4){width="300px"}
+
+![Flow view](images/simulation/features/examples/example_1/good/demo_4.mp4){width="300px"}
+
+![Top view](images/simulation/features/examples/example_1/good/demo_3.mp4){width="300px"}
+
+To highlight the critical importance of selecting an appropriate timestep, we demonstrate the consequences of setting the timestep too large. Even with the Runge-Kutta 2 method, an improperly chosen timestep can lead to instability in the simulation. The following video illustrates the outcome when the timestep is excessively large:
+
+![Timestep too large](images/simulation/features/examples/example_1/catastrophic_failure/catastrophic_failure.mp4){width="300px"}
+
 
 ### Procedural Texture Generation
 
@@ -507,6 +523,10 @@ In order to make the terrain more realistic and give it vivid-looking appearance
 ![Mountain/Rock Blend Texture](images/texture/mountain_rock_blend.gif){width="400px"}
 
 #### Implementation (Water)
+
+
+#### Implementation
+
 
 TODO
 
