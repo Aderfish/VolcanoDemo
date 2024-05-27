@@ -410,6 +410,49 @@ To illustrate the advantages provided by the Runge-Kutta 2 method, we conducted 
 The simulation using the Euler Explicit method rapidly becomes unstable and unusable. In contrast, the simulation using the Runge-Kutta 2 method remains stable and produces convincing results. This comparison underscores the importance of the integration method in our simulation.
 
 
+#### Optimization
+
+##### Implementation
+
+The current implementation yields convincing results, but a significant performance issue remains. At each timestep, we need to determine the neighbors of each particle (particles that are within a distance of $< 2h$).
+
+The straightforward approach is to loop over all particles for each particle to identify its neighbors. While simple, this method results in a quadratic time complexity with respect to the number of particles, making the simulation extremely slow as the number of particles increases.
+
+To overcome this problem, we perform the following optimization:
+We divide the simulated terrain into a grid where each cell is $2h$ by $2h$. Each particle is assigned to a cell based on its position. For the neighbor search, we only need to examine the current cell and the 8 surrounding cells. This approach allows for an almost constant time lookup for neighbors. After each timestep, the particles' positions in the grid are updated.
+
+As a result, the neighbor search becomes almost linear in complexity, making simulations with a high number of particles feasible.
+
+##### Validation
+
+To demonstrate the benefits of our optimization, we performed the simulation of the following scene with and without the optimization and recorded the time required to bake the simulation.
+
+![Basic simulation](images/simulation/features/grid/demo.mp4){width="300px"}
+
+<table>
+  <caption>Optimisation baking times</caption>
+  <thead>
+    <tr>
+      <th>Neighbor search method</th>
+      <th>Baking time</th>
+    </tr>
+  </thead>
+  <thead>
+    <tr>
+      <th>Loop</th>
+      <th>5m19s</th>
+    </tr>
+  </thead>
+  <thead>
+    <tr>
+      <th>Grid</th>
+      <th>44.5s</th>
+    </tr>
+  </thead>
+</table>
+
+The simulation using the grid method is more than seven times faster than the simple loop method. This highlights the significant impact of the neighbor search implementation on the simulation's performance.
+
 
 #### Implementation
 

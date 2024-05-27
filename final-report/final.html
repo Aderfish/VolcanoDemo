@@ -794,17 +794,89 @@ unstable and unusable. In contrast, the simulation using the Runge-Kutta
 2 method remains stable and produces convincing results. This comparison
 underscores the importance of the integration method in our
 simulation.</p>
-<h4 id="implementation-12">Implementation</h4>
+<h4 id="optimization">Optimization</h4>
+<h5 id="implementation-12">Implementation</h5>
+<p>The current implementation yields convincing results, but a
+significant performance issue remains. At each timestep, we need to
+determine the neighbors of each particle (particles that are within a
+distance of
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo>&lt;</mo><mn>2</mn><mi>h</mi></mrow><annotation encoding="application/x-tex">&lt; 2h</annotation></semantics></math>).</p>
+<p>The straightforward approach is to loop over all particles for each
+particle to identify its neighbors. While simple, this method results in
+a quadratic time complexity with respect to the number of particles,
+making the simulation extremely slow as the number of particles
+increases.</p>
+<p>To overcome this problem, we perform the following optimization: We
+divide the simulated terrain into a grid where each cell is
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>2</mn><mi>h</mi></mrow><annotation encoding="application/x-tex">2h</annotation></semantics></math>
+by
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>2</mn><mi>h</mi></mrow><annotation encoding="application/x-tex">2h</annotation></semantics></math>.
+Each particle is assigned to a cell based on its position. For the
+neighbor search, we only need to examine the current cell and the 8
+surrounding cells. This approach allows for an almost constant time
+lookup for neighbors. After each timestep, the particles’ positions in
+the grid are updated.</p>
+<p>As a result, the neighbor search becomes almost linear in complexity,
+making simulations with a high number of particles feasible.</p>
+<h5 id="validation-12">Validation</h5>
+<p>To demonstrate the benefits of our optimization, we performed the
+simulation of the following scene with and without the optimization and
+recorded the time required to bake the simulation.</p>
+<figure>
+<video src="images/simulation/features/grid/demo.mp4" width="300"
+controls=""><a href="images/simulation/features/grid/demo.mp4">Basic
+simulation</a></video>
+<figcaption aria-hidden="true">Basic simulation</figcaption>
+</figure>
+<table>
+<caption>
+Optimisation baking times
+</caption>
+<thead>
+<tr>
+<th>
+Neighbor search method
+</th>
+<th>
+Baking time
+</th>
+</tr>
+</thead>
+<thead>
+<tr>
+<th>
+Loop
+</th>
+<th>
+5m19s
+</th>
+</tr>
+</thead>
+<thead>
+<tr>
+<th>
+Grid
+</th>
+<th>
+44.5s
+</th>
+</tr>
+</thead>
+</table>
+<p>The simulation using the grid method is more than seven times faster
+than the simple loop method. This highlights the significant impact of
+the neighbor search implementation on the simulation’s performance.</p>
+<h4 id="implementation-13">Implementation</h4>
 <p>TODO</p>
-<h4 id="validation-12">Validation</h4>
+<h4 id="validation-13">Validation</h4>
 <p>TODO</p>
 <h3 id="smoke-particles-15-points">Smoke Particles (15 points)</h3>
-<h4 id="implementation-13">Implementation</h4>
+<h4 id="implementation-14">Implementation</h4>
 <p>The smoke effect is a combination of multiple small particles. Every
 particle is a partially transparent ellipse. It has a position in the
 world and always faces the camera. Every particle rises up for a random
 amount of time, becoming dimmer and then disappearing.</p>
-<h4 id="validation-13">Validation</h4>
+<h4 id="validation-14">Validation</h4>
 <p><video src="videos/smoke/single.mp4" width="600" controls=""><a
 href="videos/smoke/single.mp4">Single smoke particle</a></video> <video
 src="videos/smoke/full.mp4" width="600" controls=""><a
