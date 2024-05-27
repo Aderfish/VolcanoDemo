@@ -712,17 +712,59 @@ transfer</figcaption>
 particles that are not in direct contact with the ground. This is the
 desired behavior, as it more accurately simulates the diffusion of heat
 within the lava flow.</p>
-<h4 id="implementation-10">Implementation</h4>
+<h4 id="temperature-based-viscosity">Temperature-Based Viscosity</h4>
+<h5 id="implementation-10">Implementation</h5>
+<p>To achieve a realistic simulation of lava flow, it is crucial to
+consider that the viscosity of the flow increases exponentially as the
+temperature decreases. This relationship is captured by the factor
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>α</mi><mi>v</mi></msub><annotation encoding="application/x-tex">\alpha_v</annotation></semantics></math>,
+used previously to compute viscosity. The factor is computed as
+follows:</p>
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>α</mi><mi>v</mi></msub><mo>=</mo><mi>b</mi><mo>exp</mo><mrow><mo stretchy="true" form="prefix">(</mo><mo>−</mo><mi>a</mi><mfrac><mi>T</mi><msub><mi>T</mi><mrow><mi>i</mi><mi>n</mi><mi>i</mi><mi>t</mi><mi>i</mi><mi>a</mi><mi>l</mi></mrow></msub></mfrac><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">
+\alpha_v = b \exp \left( -a \frac{T}{T_{initial}} \right)
+</annotation></semantics></math></p>
+<p>where
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>a</mi><annotation encoding="application/x-tex">a</annotation></semantics></math>
+and
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>b</mi><annotation encoding="application/x-tex">b</annotation></semantics></math>
+are parameters chosen to match the desired behavior. In our simulation,
+we use
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>a</mi><mo>=</mo><msup><mn>10</mn><mn>6</mn></msup></mrow><annotation encoding="application/x-tex">a = 10^6</annotation></semantics></math>
+and
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>b</mi><mo>=</mo><mn>1.5</mn></mrow><annotation encoding="application/x-tex">b = 1.5</annotation></semantics></math>.</p>
+<h5 id="validation-10">Validation</h5>
+<p>To demonstrate the effect of this feature, we present the flow of
+particles at different temperatures.</p>
+<figure>
+<video
+src="images/simulation/features/viscosity_temp/viscosity_temp_high.mp4"
+width="300" controls=""><a
+href="images/simulation/features/viscosity_temp/viscosity_temp_high.mp4">Hot
+lava flow (1200 °C)</a></video>
+<figcaption aria-hidden="true">Hot lava flow (1200 °C)</figcaption>
+</figure>
+<figure>
+<video
+src="images/simulation/features/viscosity_temp/viscosity_temp_low.mp4"
+width="300" controls=""><a
+href="images/simulation/features/viscosity_temp/viscosity_temp_low.mp4">Cold
+lava flow (600 °C)</a></video>
+<figcaption aria-hidden="true">Cold lava flow (600 °C)</figcaption>
+</figure>
+<p>It is evident that the cold lava flow does not expand as much as the
+hot flow. This behavior aligns with the expectation that the cold flow
+is more viscous.</p>
+<h4 id="implementation-11">Implementation</h4>
 <p>TODO</p>
-<h4 id="validation-10">Validation</h4>
+<h4 id="validation-11">Validation</h4>
 <p>TODO</p>
 <h3 id="smoke-particles-15-points">Smoke Particles (15 points)</h3>
-<h4 id="implementation-11">Implementation</h4>
+<h4 id="implementation-12">Implementation</h4>
 <p>The smoke effect is a combination of multiple small particles. Every
 particle is a partially transparent ellipse. It has a position in the
 world and always faces the camera. Every particle rises up for a random
 amount of time, becoming dimmer and then disappearing.</p>
-<h4 id="validation-11">Validation</h4>
+<h4 id="validation-12">Validation</h4>
 <p><video src="videos/smoke/single.mp4" width="600" controls=""><a
 href="videos/smoke/single.mp4">Single smoke particle</a></video> <video
 src="videos/smoke/full.mp4" width="600" controls=""><a

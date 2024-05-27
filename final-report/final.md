@@ -364,6 +364,28 @@ We highlight the internal transfer by comparing scenarios with and without consi
 As expected, with internal transfers, the heat loss is propagated to particles that are not in direct contact with the ground. This is the desired behavior, as it more accurately simulates the diffusion of heat within the lava flow.
 
 
+#### Temperature-Based Viscosity
+
+##### Implementation
+
+To achieve a realistic simulation of lava flow, it is crucial to consider that the viscosity of the flow increases exponentially as the temperature decreases. This relationship is captured by the factor $\alpha_v$, used previously to compute viscosity. The factor is computed as follows:
+
+$$
+\alpha_v = b \exp \left( -a \frac{T}{T_{initial}} \right)
+$$
+
+where $a$ and $b$ are parameters chosen to match the desired behavior. In our simulation, we use $a = 10^6$ and $b = 1.5$.
+
+##### Validation
+
+To demonstrate the effect of this feature, we present the flow of particles at different temperatures.
+
+![Hot lava flow (1200 °C)](images/simulation/features/viscosity_temp/viscosity_temp_high.mp4){width="300px"}
+
+![Cold lava flow (600 °C)](images/simulation/features/viscosity_temp/viscosity_temp_low.mp4){width="300px"}
+
+It is evident that the cold lava flow does not expand as much as the hot flow. This behavior aligns with the expectation that the cold flow is more viscous.
+
 
 #### Implementation
 
