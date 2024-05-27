@@ -652,12 +652,64 @@ temperature transfer</a></video>
 </figure>
 <p>We can see that the surface particles have their temperature
 decreasing, which is the expected behavior.</p>
-<h4 id="implementation-9">Implementation</h4>
+<h4 id="internal-temperature-transfer">Internal Temperature
+Transfer</h4>
+<h5 id="implementation-9">Implementation</h5>
+<p>The final step in temperature simulation is to consider the transfer
+between the particles themselves. To achieve this, we follow the formula
+proposed in <a
+href="http://www-evasion.imag.fr/Publications/1999/SACNG99/gi99.pdf">Animating
+Lava Flows</a>:</p>
+<figure>
+<img
+src="images/simulation/features/particle_transfers/internal_trans.png"
+width="150" alt="Internal temperature transfer" />
+<figcaption aria-hidden="true">Internal temperature
+transfer</figcaption>
+</figure>
+<p>The temperature Laplacian
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>Δ</mi><mi>T</mi></mrow><annotation encoding="application/x-tex">\Delta T</annotation></semantics></math>
+is computed from the gradient using the following formula:</p>
+<figure>
+<img src="images/simulation/features/particle_transfers/lap_grad.png"
+width="300" alt="Temperature Laplacian" />
+<figcaption aria-hidden="true">Temperature Laplacian</figcaption>
+</figure>
+<h5 id="validation-9">Validation</h5>
+<p>To demonstrate internal temperature transfer, we must also account
+for some form of external transfer. Without it, no heat loss occurs, and
+the particles remain at the same temperature. Therefore, in the
+following examples, we consider both ground and internal transfers.</p>
+<p>We highlight the internal transfer by comparing scenarios with and
+without considering it.</p>
+<figure>
+<video
+src="images/simulation/features/particle_transfers/with_internal_trans.mp4"
+width="300" controls=""><a
+href="images/simulation/features/particle_transfers/with_internal_trans.mp4">With
+internal temperature transfer</a></video>
+<figcaption aria-hidden="true">With internal temperature
+transfer</figcaption>
+</figure>
+<figure>
+<video
+src="images/simulation/features/particle_transfers/without_internal_trans.mp4"
+width="300" controls=""><a
+href="images/simulation/features/particle_transfers/without_internal_trans.mp4">Without
+internal temperature transfer</a></video>
+<figcaption aria-hidden="true">Without internal temperature
+transfer</figcaption>
+</figure>
+<p>As expected, with internal transfers, the heat loss is propagated to
+particles that are not in direct contact with the ground. This is the
+desired behavior, as it more accurately simulates the diffusion of heat
+within the lava flow.</p>
+<h4 id="implementation-10">Implementation</h4>
 <p>TODO</p>
-<h4 id="validation-9">Validation</h4>
+<h4 id="validation-10">Validation</h4>
 <p>TODO</p>
 <h3 id="smoke-particles">Smoke Particles</h3>
-<h4 id="implementation-10">Implementation</h4>
+<h4 id="implementation-11">Implementation</h4>
 <p>The smoke effect is a combination of multiple small particles. Every
 particle is a partially transparent ellipse. It has a position in the
 world and always faces the camera. Every particle rises up for a random
@@ -667,6 +719,7 @@ amount of time, becoming dimmer and then disappearing.</p>
 href="videos/smoke/single.mp4">Single smoke particle</a></video> <video
 src="videos/smoke/full.mp4" width="600" controls=""><a
 href="videos/smoke/full.mp4">Full smoke effect</a></video></p>
+d93c (feat(final): add internal temperature transfer feature)
 <h2 id="discussion">Discussion</h2>
 <p>TODO</p>
 <h2 id="contributions">Contributions</h2>

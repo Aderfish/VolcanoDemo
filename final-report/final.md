@@ -339,6 +339,32 @@ The following video displays temperature transfers involving only surface partic
 
 We can see that the surface particles have their temperature decreasing, which is the expected behavior.
 
+#### Internal Temperature Transfer
+
+##### Implementation
+
+The final step in temperature simulation is to consider the transfer between the particles themselves. To achieve this, we follow the formula proposed in [Animating Lava Flows](http://www-evasion.imag.fr/Publications/1999/SACNG99/gi99.pdf):
+
+![Internal temperature transfer](images/simulation/features/particle_transfers/internal_trans.png){width="150px"}
+
+The temperature Laplacian $\Delta T$ is computed from the gradient using the following formula:
+
+![Temperature Laplacian](images/simulation/features/particle_transfers/lap_grad.png){width="300px"}
+
+##### Validation
+
+To demonstrate internal temperature transfer, we must also account for some form of external transfer. Without it, no heat loss occurs, and the particles remain at the same temperature. Therefore, in the following examples, we consider both ground and internal transfers.
+
+We highlight the internal transfer by comparing scenarios with and without considering it.
+
+![With internal temperature transfer](images/simulation/features/particle_transfers/with_internal_trans.mp4){width="300px"}
+
+![Without internal temperature transfer](images/simulation/features/particle_transfers/without_internal_trans.mp4){width="300px"}
+
+As expected, with internal transfers, the heat loss is propagated to particles that are not in direct contact with the ground. This is the desired behavior, as it more accurately simulates the diffusion of heat within the lava flow.
+
+
+
 #### Implementation
 
 TODO
