@@ -489,17 +489,106 @@ href="images/simulation/features/pressure/pressure_demo_200.mp4">Pressure
 force</a></video>
 <figcaption aria-hidden="true">Pressure force</figcaption>
 </figure>
-<h4 id="implementation-4">Implementation</h4>
+<h4 id="viscosity-force">Viscosity Force</h4>
+<h5 id="implementation-4">Implementation</h5>
+<p>We compute the force from viscosity applied to a particle using the
+formula:</p>
+<figure>
+<img src="images/simulation/features/viscosity/viscosity_force.png"
+width="300" alt="Viscosity force" />
+<figcaption aria-hidden="true">Viscosity force</figcaption>
+</figure>
+<p>where
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>v</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub><annotation encoding="application/x-tex">v_{ij}</annotation></semantics></math>
+is the relative speed difference between particles
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>i</mi><annotation encoding="application/x-tex">i</annotation></semantics></math>
+and
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>j</mi><annotation encoding="application/x-tex">j</annotation></semantics></math>.
+This formula implies that a particle will be “attracted” by the flowing
+particles around it, which is the behavior we are looking for to
+simulate viscosity. Also,
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>α</mi><mi>v</mi></msub><annotation encoding="application/x-tex">\alpha_v</annotation></semantics></math>
+is a parameter dependent on the particle temperature, but we consider it
+constant for now. We’ll detail it further when considering temperature
+exchanges.</p>
+<h5 id="validation-4">Validation</h5>
+<p>We can add viscosity forces on top of the previous simulation to get
+the following result:</p>
+<figure>
+<video src="images/simulation/features/viscosity/viscosity_demo.mp4"
+width="300" controls=""><a
+href="images/simulation/features/viscosity/viscosity_demo.mp4">Viscosity
+force</a></video>
+<figcaption aria-hidden="true">Viscosity force</figcaption>
+</figure>
+<p>As we can see, the particles are now moving in <em>blocks</em>, which
+is the expected behavior with viscosity.</p>
+<h4 id="gravity">Gravity</h4>
+<h5 id="implementation-5">Implementation</h5>
+<p>The next step for our simulation is to add the gravity force.</p>
+<p>This force can be easily computed by
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mover><msub><mi>F</mi><mi>g</mi></msub><mo accent="true">→</mo></mover><mo>=</mo><mrow><mo stretchy="true" form="prefix">(</mo><mn>0</mn><mo>,</mo><mn>0</mn><mo>,</mo><mo>−</mo><mi>m</mi><mi>g</mi><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">\vec{F_g} = (0,0,-mg)</annotation></semantics></math>,
+with
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>g</mi><mo>=</mo><mn>9.81</mn><mspace width="0.278em"></mspace><msup><mtext mathvariant="normal">m/s</mtext><mn>2</mn></msup></mrow><annotation encoding="application/x-tex">g=9.81 \; \text{m/s}^2</annotation></semantics></math>.</p>
+<h5 id="validation-5">Validation</h5>
+<p>We now add the gravity force to the simulation to get the following
+result:</p>
+<figure>
+<video src="images/simulation/features/gravity/gravity_demo_better.mp4"
+width="300" controls=""><a
+href="images/simulation/features/gravity/gravity_demo_better.mp4">Gravity
+force</a></video>
+<figcaption aria-hidden="true">Gravity force</figcaption>
+</figure>
+<p>As expected, the particles are now falling, passing through the floor
+because collisions are not yet implemented.</p>
+<h4 id="ground-collision">Ground Collision</h4>
+<h5 id="implementation-6">Implementation</h5>
+<p>To simulate flows, we need to account for collisions with the ground.
+After experimenting with various methods, we chose a simple
+implementation of ground collisions.</p>
+<p>At each iteration, we check if any particles are below the ground. If
+so, we force their position to be on the ground. Moreover, to simulate
+the effect of lava adhering to the ground, we set the particle velocity
+to 0. This approach allows us to achieve convincing flows with a very
+simple implementation and ensures that no particles pass through the
+ground, which could happen with a force-based approach due to
+instabilities in the simulation. For these reasons, we chose this
+method.</p>
+<h5 id="validation-6">Validation</h5>
+<p>To test the collision, we can simply emit particles above a plane as
+shown below:</p>
+<figure>
+<video
+src="images/simulation/features/ground_collision/ground_collision_demo.mp4"
+width="300" controls=""><a
+href="images/simulation/features/ground_collision/ground_collision_demo.mp4">Ground
+collision</a></video>
+<figcaption aria-hidden="true">Ground collision</figcaption>
+</figure>
+<p>Moreover, we now have the necessary basis to create a first, very
+basic flow:</p>
+<figure>
+<video
+src="images/simulation/features/ground_collision/simple_flow_demo.mp4"
+width="300" controls=""><a
+href="images/simulation/features/ground_collision/simple_flow_demo.mp4">Basic
+flow</a></video>
+<figcaption aria-hidden="true">Basic flow</figcaption>
+</figure>
+<p>As we can see, we get a viscous fluid, which is what we are looking
+for to animate lava.</p>
+<h4 id="implementation-7">Implementation</h4>
 <p>TODO</p>
-<h4 id="validation-4">Validation</h4>
+<h4 id="validation-7">Validation</h4>
 <p>TODO</p>
 <h3 id="smoke-particles">Smoke Particles</h3>
-<h4 id="implementation-5">Implementation</h4>
+<h4 id="implementation-8">Implementation</h4>
 <p>The smoke effect is a combination of multiple small particles. Every
 particle is a partially transparent ellipse. It has a position in the
 world and always faces the camera. Every particle rises up for a random
 amount of time, becoming dimmer and then disappearing.</p>
-<h4 id="validation-5">Validation</h4>
+<h4 id="validation-8">Validation</h4>
 <p><video src="videos/smoke/single.mp4" width="600" controls=""><a
 href="videos/smoke/single.mp4">Single smoke particle</a></video> <video
 src="videos/smoke/full.mp4" width="600" controls=""><a
