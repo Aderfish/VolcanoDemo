@@ -34,7 +34,7 @@ With all these effects implemented, the user is now able to generate various kin
 ## Feature validation
 
 
-### Procedural Volcano Terrain Generation
+### Procedural Volcano Terrain Generation (5 points)
 
 The volcanic island heightmap is composed of two procedurally generated components: the island and the volcano.
 
@@ -194,7 +194,7 @@ In particular, one can set various kinds of resolution depending on the performa
 
 
 
-### Lava Flow Fluid Simulation
+### Lava Flow Fluid Simulation (20 points)
 
 This feature aims to provide a convincing flow of lava. To achieve this goal, we'll perform a particle-based simulation with additional constraints. Our work is highly inspired by the implementation proposed in [Animating Lava Flows](http://www-evasion.imag.fr/Publications/1999/SACNG99/gi99.pdf).
 
@@ -374,7 +374,7 @@ TODO
 TODO
 
 
-### Smoke Particles
+### Smoke Particles (15 points)
 
 #### Implementation
 
