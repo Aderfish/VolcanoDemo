@@ -39,7 +39,7 @@ div.sourceCode { overflow: auto; }
 }
 @media print {
 pre > code.sourceCode { white-space: pre-wrap; }
-pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
 }
 pre.numberSource code
   { counter-reset: source-line 0; }
@@ -603,7 +603,7 @@ is the expected behavior with viscosity.</p>
 <h5 id="implementation-5">Implementation</h5>
 <p>The next step for our simulation is to add the gravity force.</p>
 <p>This force can be easily computed by
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mover><msub><mi>F</mi><mi>g</mi></msub><mo accent="true">→</mo></mover><mo>=</mo><mrow><mo stretchy="true" form="prefix">(</mo><mn>0</mn><mo>,</mo><mn>0</mn><mo>,</mo><mi>−</mi><mi>m</mi><mi>g</mi><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">\vec{F_g} = (0,0,-mg)</annotation></semantics></math>,
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mover><msub><mi>F</mi><mi>g</mi></msub><mo accent="true">→</mo></mover><mo>=</mo><mrow><mo stretchy="true" form="prefix">(</mo><mn>0</mn><mo>,</mo><mn>0</mn><mo>,</mo><mo>−</mo><mi>m</mi><mi>g</mi><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">\vec{F_g} = (0,0,-mg)</annotation></semantics></math>,
 with
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>g</mi><mo>=</mo><mn>9.81</mn><mspace width="0.278em"></mspace><msup><mtext mathvariant="normal">m/s</mtext><mn>2</mn></msup></mrow><annotation encoding="application/x-tex">g=9.81 \; \text{m/s}^2</annotation></semantics></math>.</p>
 <h5 id="validation-5">Validation</h5>
@@ -788,7 +788,7 @@ temperature decreases. This relationship is captured by the factor
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>α</mi><mi>v</mi></msub><annotation encoding="application/x-tex">\alpha_v</annotation></semantics></math>,
 used previously to compute viscosity. The factor is computed as
 follows:</p>
-<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>α</mi><mi>v</mi></msub><mo>=</mo><mi>b</mi><mo>exp</mo><mrow><mo stretchy="true" form="prefix">(</mo><mi>−</mi><mi>a</mi><mfrac><mi>T</mi><msub><mi>T</mi><mrow><mi>i</mi><mi>n</mi><mi>i</mi><mi>t</mi><mi>i</mi><mi>a</mi><mi>l</mi></mrow></msub></mfrac><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>α</mi><mi>v</mi></msub><mo>=</mo><mi>b</mi><mo>exp</mo><mrow><mo stretchy="true" form="prefix">(</mo><mo>−</mo><mi>a</mi><mfrac><mi>T</mi><msub><mi>T</mi><mrow><mi>i</mi><mi>n</mi><mi>i</mi><mi>t</mi><mi>i</mi><mi>a</mi><mi>l</mi></mrow></msub></mfrac><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">
 \alpha_v = b \exp \left( -a \frac{T}{T_{initial}} \right)
 </annotation></semantics></math></p>
 <p>where
@@ -964,17 +964,6 @@ href="images/simulation/features/scheduling/eruption.mp4">Eruption</a></video>
 </figure>
 <p>We observe that the simulation creates an eruption-like effect, which
 aligns with our project goals.</p>
-<<<<<<< HEAD
-<h3 id="procedural-texture-generation">Procedural Texture
-Generation</h3>
-<p>In order to make the terrain more realistic and give it vivid-looking
-appearance, different textures are tried out to provide this visual
-effect. This includes the concepts of perlin noise, fractal Brownian
-motion, noise-based displacement，cell noise, cellullar pattern, normal
-mapping, blending and etc.</p>
-<h4 id="implementation-normal-mapping">Implementation (Normal
-mapping)</h4>
-=======
 <h4 id="examples">Examples</h4>
 <p>Here, we present an example of integrating the simulation with the
 previously developed terrain features.</p>
@@ -1023,10 +1012,15 @@ href="images/simulation/features/examples/example_1/catastrophic_failure/catastr
 too large</a></video>
 <figcaption aria-hidden="true">Timestep too large</figcaption>
 </figure>
-<<<<<<< HEAD
-<h4 id="implementation-14">Implementation</h4>
-<p>TODO</p>
->>>>>>> c5cb40d (feat(final): add simulation examples)
+<h3 id="procedural-texture-generation">Procedural Texture
+Generation</h3>
+<p>In order to make the terrain more realistic and give it vivid-looking
+appearance, different textures are tried out to provide this visual
+effect. This includes the concepts of perlin noise, fractal Brownian
+motion, noise-based displacement，cell noise, cellullar pattern, normal
+mapping, blending and etc.</p>
+<h4 id="implementation-normal-mapping">Implementation (Normal
+mapping)</h4>
 <h4 id="validation-14">Validation</h4>
 <figure>
 <img src="images/texture/normal_mapping.gif" width="400"
@@ -1046,6 +1040,7 @@ alt="Mountain/Rock Blend Texture" />
 <figcaption aria-hidden="true">Mountain/Rock Blend Texture</figcaption>
 </figure>
 <h4 id="implementation-water">Implementation (Water)</h4>
+<h4 id="implementation-14">Implementation</h4>
 <p>TODO</p>
 <h4 id="validation-16">Validation</h4>
 <figure>
@@ -1086,25 +1081,43 @@ alt="Lava Texture (Ramdomized Geometry)" />
 <figcaption aria-hidden="true">Lava Texture (Ramdomized
 Geometry)</figcaption>
 </figure>
-=======
->>>>>>> e8b7498 (feat(final): remove placeholders)
 <h3 id="smoke-particles-15-points">Smoke Particles (15 points)</h3>
-<h4 id="implementation-14">Implementation</h4>
+<h4 id="implementation-15">Implementation</h4>
 <p>The smoke effect is a combination of multiple small particles. Every
 particle is a partially transparent ellipse. It has a position in the
 world and always faces the camera. Every particle rises up for a random
 amount of time, becoming dimmer and then disappearing.</p>
-<<<<<<< HEAD
 <h4 id="validation-18">Validation</h4>
-=======
-<h4 id="validation-14">Validation</h4>
->>>>>>> e8b7498 (feat(final): remove placeholders)
 <p><video src="videos/smoke/single.mp4" width="600" controls=""><a
 href="videos/smoke/single.mp4">Single smoke particle</a></video> <video
 src="videos/smoke/full.mp4" width="600" controls=""><a
 href="videos/smoke/full.mp4">Full smoke effect</a></video></p>
 <h2 id="discussion">Discussion</h2>
-<p>TODO</p>
+<p>We initially planned to perform a Voronoi tessellation of the
+particle system to generate a smooth mesh of the lava flow. However,
+after further research, we realized that there were limited resources
+available for our specific case, which involves three dimensions.
+Additionally, incorporating temporal coherence into the tessellation to
+avoid erratic changes in the mesh structure at each timestep posed a
+significant challenge. Given that the fluid simulation itself was
+already complex, implementing this feature within our timeframe was not
+feasible. Consequently, we decided against pursuing the Voronoi
+tessellation.</p>
+<p>Instead, we opted for normal mapping of the terrain to achieve a
+rocky appearance and of the water to give volume to the waves. This
+decision enabled us to deliver relevant features while adhering to the
+project deadlines.</p>
+<p>Another challenge was the display of the simulation. Initially, we
+aimed to perform a real-time simulation. However, we quickly realized
+that this approach would not yield satisfactory results, likely
+resulting in the simulation running at a fraction of real-time speed.
+Therefore, we adopted a pre-computation approach. The simulation is
+fully executed, and the particle positions and temperatures are sampled
+at a predefined rate and stored in memory. Once the baking process is
+complete, the simulation can be played back in real-time. This method
+also offers the added benefit of allowing the simulation to be replayed
+quickly without the need for re-computation, as the data is stored in
+memory.</p>
 <h2 id="contributions">Contributions</h2>
 <table>
 <caption>

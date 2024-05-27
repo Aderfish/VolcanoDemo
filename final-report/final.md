@@ -564,8 +564,11 @@ The smoke effect is a combination of multiple small particles. Every particle is
 
 ## Discussion
 
-TODO
+We initially planned to perform a Voronoi tessellation of the particle system to generate a smooth mesh of the lava flow. However, after further research, we realized that there were limited resources available for our specific case, which involves three dimensions. Additionally, incorporating temporal coherence into the tessellation to avoid erratic changes in the mesh structure at each timestep posed a significant challenge. Given that the fluid simulation itself was already complex, implementing this feature within our timeframe was not feasible. Consequently, we decided against pursuing the Voronoi tessellation.
 
+Instead, we opted for normal mapping of the terrain to achieve a rocky appearance and of the water to give volume to the waves. This decision enabled us to deliver relevant features while adhering to the project deadlines.
+
+Another challenge was the display of the simulation. Initially, we aimed to perform a real-time simulation. However, we quickly realized that this approach would not yield satisfactory results, likely resulting in the simulation running at a fraction of real-time speed. Therefore, we adopted a pre-computation approach. The simulation is fully executed, and the particle positions and temperatures are sampled at a predefined rate and stored in memory. Once the baking process is complete, the simulation can be played back in real-time. This method also offers the added benefit of allowing the simulation to be replayed quickly without the need for re-computation, as the data is stored in memory.
 
 ## Contributions
 
