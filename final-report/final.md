@@ -453,6 +453,38 @@ To demonstrate the benefits of our optimization, we performed the simulation of 
 
 The simulation using the grid method is more than seven times faster than the simple loop method. This highlights the significant impact of the neighbor search implementation on the simulation's performance.
 
+#### Scheduling Mechanism
+
+##### Implementation
+
+An important aspect of our project is to provide a simple way to create eruptions. This requires a straightforward interface for generating various flows. We chose to expose an interface that allows the user to specify the emission schedule with key points.
+
+The format for each key is as follows:
+
+```json
+{ "start_time": "", "duration": "", "particles_per_second": "" }
+```
+
+Each key is placed in a list, and the emission follows this schedule.
+
+##### Validation
+
+This approach allows us to simulate eruptions by emitting a large number of particles over a short period. For instance, we use the following schedule:
+
+```json
+[
+  { "start_time": 0, "duration": 2, "particles_per_second": 3000 },
+  { "start_time": 2, "duration": 10, "particles_per_second": 200 },
+  { "start_time": 15, "duration": 1, "particles_per_second": 3000 }
+]
+```
+
+This schedule produces the following simulation:
+
+![Eruption](images/simulation/features/scheduling/eruption.mp4){width="300px"}
+
+We observe that the simulation creates an eruption-like effect, which aligns with our project goals.
+
 
 #### Implementation
 
