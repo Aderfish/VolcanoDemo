@@ -623,12 +623,41 @@ temperature transfer (Bottom view)</a></video>
 <figcaption aria-hidden="true">Ground temperature transfer (Bottom
 view)</figcaption>
 </figure>
-<h4 id="implementation-8">Implementation</h4>
+<p>We can see that the particles on the ground have their temperature
+decrease, which is the expected behavior.</p>
+<h4 id="surface-temperature-transfer">Surface Temperature Transfer</h4>
+<h5 id="implementation-8">Implementation</h5>
+<p>To detect if a particle is at the surface, we check if among its
+neighbors there is a particle above its center. This simple
+implementation allows us to efficiently categorize whether a particle is
+at the surface of the flow.</p>
+<p>Then, the same formula as for ground transfers is used:</p>
+<figure>
+<img
+src="images/simulation/features/ground_transfer/ground_transfer.png"
+width="300" alt="Surface temperature transfer formula" />
+<figcaption aria-hidden="true">Surface temperature transfer
+formula</figcaption>
+</figure>
+<h5 id="validation-8">Validation</h5>
+<p>The following video displays temperature transfers involving only
+surface particles:</p>
+<figure>
+<video
+src="images/simulation/features/surface_transfer/surface_trans_demo.mp4"
+width="300" controls=""><a
+href="images/simulation/features/surface_transfer/surface_trans_demo.mp4">Surface
+temperature transfer</a></video>
+<figcaption aria-hidden="true">Surface temperature transfer</figcaption>
+</figure>
+<p>We can see that the surface particles have their temperature
+decreasing, which is the expected behavior.</p>
+<h4 id="implementation-9">Implementation</h4>
 <p>TODO</p>
-<h4 id="validation-8">Validation</h4>
+<h4 id="validation-9">Validation</h4>
 <p>TODO</p>
 <h3 id="smoke-particles">Smoke Particles</h3>
-<h4 id="implementation-9">Implementation</h4>
+<h4 id="implementation-10">Implementation</h4>
 <p>The smoke effect is a combination of multiple small particles. Every
 particle is a partially transparent ellipse. It has a position in the
 world and always faces the camera. Every particle rises up for a random

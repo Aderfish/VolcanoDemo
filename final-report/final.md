@@ -319,8 +319,25 @@ We can visualize the temperature transfer below:
 
 ![Ground temperature transfer (Bottom view)](images/simulation/features/ground_transfer/ground_trans_bottom.mp4){width="300px"}
 
+We can see that the particles on the ground have their temperature decrease, which is the expected behavior.
 
+#### Surface Temperature Transfer
 
+##### Implementation
+
+To detect if a particle is at the surface, we check if among its neighbors there is a particle above its center. This simple implementation allows us to efficiently categorize whether a particle is at the surface of the flow.
+
+Then, the same formula as for ground transfers is used:
+
+![Surface temperature transfer formula](images/simulation/features/ground_transfer/ground_transfer.png){width="300px"}
+
+##### Validation
+
+The following video displays temperature transfers involving only surface particles:
+
+![Surface temperature transfer](images/simulation/features/surface_transfer/surface_trans_demo.mp4){width="300px"}
+
+We can see that the surface particles have their temperature decreasing, which is the expected behavior.
 
 #### Implementation
 
