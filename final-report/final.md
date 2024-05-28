@@ -588,14 +588,14 @@ Another challenge was the display of the simulation. Initially, we aimed to perf
 	</thead>
 	<tbody>
 		<tr>
-			<td>Name 1</td>
-			<td>TODO</td>
-			<td>TODO</td>
-			<td>TODO</td>
-			<td>TODO</td>
-			<td>TODO</td>
-			<td>TODO</td>
-			<td>TODO</td>
+			<td>Yoann Lafore</td>
+			<td>8</td>
+			<td>10</td>
+			<td>10</td>
+			<td>19</td>
+			<td>6</td>
+			<td>7</td>
+			<td>60</td>
 		</tr>
 		<tr>
 			<td>Name 2</td>
@@ -630,7 +630,7 @@ Another challenge was the display of the simulation. Initially, we aimed to perf
 	</thead>
 	<tbody>
 		<tr>
-			<td>Name 1</td>
+			<td>Yoann Lafore</td>
 			<td>1/3</td>
 		</tr>
 		<tr>
