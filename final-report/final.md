@@ -652,4 +652,24 @@ TODO
 
 ## References
 
-TODO
+### Terrain generation
+[Volcanic Map Generation Step by Step](https://timetocode.tumblr.com/post/93970694121/volcanic-map-generation-step-by-step) \
+[Making maps with noise functions](https://www.redblobgames.com/maps/terrain-from-noise/) \
+[Using Perlin Noise to Create a Terrain Mesh](https://www.scratchapixel.com/lessons/procedural-generation-virtual-worlds/perlin-noise-part-2/perlin-noise-terrain-mesh.html)
+
+
+### Lava Flow simulation
+[Animating Lava Flows Paper](http://www-evasion.imag.fr/Publications/1999/SACNG99/gi99.pdf) \
+[Animating Lava Flows Showcase website](http://www-evasion.imag.fr/Membres/Fabrice.Neyret/Lave/index-eng.html#Rendering)  \
+[Smoother Particles: A new paradigm for highly deformable bodies](http://www.geometry.caltech.edu/pubs/DC_EW96.pdf) 
+
+
+### Particles
+[Visual Simulation of Smoke](https://web.stanford.edu/class/cs237d/smoke.pdf) \
+[OpenGL-tutorial - Particles / Instancing](https://www.opengl-tutorial.org/intermediate-tutorials/billboards-particles/particles-instancing/) \
+[Learn OpenGL - Particles](https://learnopengl.com/In-Practice/2D-Game/Particles)
+
+### Procedural textures
+[Perlin noise](https://en.wikipedia.org/wiki/Perlin_noise#:~:text=Perlin%20noise%20is%20a%20procedural,details%20are%20the%20same%20size.) \
+[Rock texture example](https://www.shadertoy.com/view/td2GWt) \
+[Cellular Noise](https://thebookofshaders.com/12/)
