@@ -39,7 +39,7 @@ div.sourceCode { overflow: auto; }
 }
 @media print {
 pre > code.sourceCode { white-space: pre-wrap; }
-pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
 }
 pre.numberSource code
   { counter-reset: source-line 0; }
@@ -116,9 +116,15 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
           <li><a href="#lava-flow-fluid-simulation-20-points"
           id="toc-lava-flow-fluid-simulation-20-points">Lava Flow Fluid
           Simulation (20 points)</a></li>
-          <li><a href="#procedural-texture-generation"
-          id="toc-procedural-texture-generation">Procedural Texture
-          Generation</a></li>
+          <li><a
+          href="#semi-physically-based-rendering-for-lava-particles-10-points"
+          id="toc-semi-physically-based-rendering-for-lava-particles-10-points">Semi-physically-based
+          Rendering for Lava Particles (10 points)</a></li>
+          <li><a
+          href="#normal-mapping-10-points-with-procedural-texture-generation-for-volcanowaterlava-particles-10-points"
+          id="toc-normal-mapping-10-points-with-procedural-texture-generation-for-volcanowaterlava-particles-10-points">Normal
+          Mapping (10 points) with Procedural Texture Generation for
+          Volcano/Water/Lava Particles (10 points)</a></li>
           <li><a href="#smoke-particles-15-points"
           id="toc-smoke-particles-15-points">Smoke Particles (15
           points)</a></li>
@@ -611,7 +617,7 @@ is the expected behavior with viscosity.</p>
 <h5 id="implementation-5">Implementation</h5>
 <p>The next step for our simulation is to add the gravity force.</p>
 <p>This force can be easily computed by
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mover><msub><mi>F</mi><mi>g</mi></msub><mo accent="true">→</mo></mover><mo>=</mo><mrow><mo stretchy="true" form="prefix">(</mo><mn>0</mn><mo>,</mo><mn>0</mn><mo>,</mo><mo>−</mo><mi>m</mi><mi>g</mi><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">\vec{F_g} = (0,0,-mg)</annotation></semantics></math>,
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mover><msub><mi>F</mi><mi>g</mi></msub><mo accent="true">→</mo></mover><mo>=</mo><mrow><mo stretchy="true" form="prefix">(</mo><mn>0</mn><mo>,</mo><mn>0</mn><mo>,</mo><mi>−</mi><mi>m</mi><mi>g</mi><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">\vec{F_g} = (0,0,-mg)</annotation></semantics></math>,
 with
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>g</mi><mo>=</mo><mn>9.81</mn><mspace width="0.278em"></mspace><msup><mtext mathvariant="normal">m/s</mtext><mn>2</mn></msup></mrow><annotation encoding="application/x-tex">g=9.81 \; \text{m/s}^2</annotation></semantics></math>.</p>
 <h5 id="validation-5">Validation</h5>
@@ -796,7 +802,7 @@ temperature decreases. This relationship is captured by the factor
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>α</mi><mi>v</mi></msub><annotation encoding="application/x-tex">\alpha_v</annotation></semantics></math>,
 used previously to compute viscosity. The factor is computed as
 follows:</p>
-<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>α</mi><mi>v</mi></msub><mo>=</mo><mi>b</mi><mo>exp</mo><mrow><mo stretchy="true" form="prefix">(</mo><mo>−</mo><mi>a</mi><mfrac><mi>T</mi><msub><mi>T</mi><mrow><mi>i</mi><mi>n</mi><mi>i</mi><mi>t</mi><mi>i</mi><mi>a</mi><mi>l</mi></mrow></msub></mfrac><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>α</mi><mi>v</mi></msub><mo>=</mo><mi>b</mi><mo>exp</mo><mrow><mo stretchy="true" form="prefix">(</mo><mi>−</mi><mi>a</mi><mfrac><mi>T</mi><msub><mi>T</mi><mrow><mi>i</mi><mi>n</mi><mi>i</mi><mi>t</mi><mi>i</mi><mi>a</mi><mi>l</mi></mrow></msub></mfrac><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">
 \alpha_v = b \exp \left( -a \frac{T}{T_{initial}} \right)
 </annotation></semantics></math></p>
 <p>where
@@ -1020,49 +1026,153 @@ href="images/simulation/features/examples/example_1/catastrophic_failure/catastr
 too large</a></video>
 <figcaption aria-hidden="true">Timestep too large</figcaption>
 </figure>
-<h3 id="procedural-texture-generation">Procedural Texture
-Generation</h3>
-<p>In order to make the terrain more realistic and give it vivid-looking
-appearance, different textures are tried out to provide this visual
-effect. This includes the concepts of perlin noise, fractal Brownian
-motion, noise-based displacement，cell noise, cellullar pattern, normal
-mapping, blending and etc.</p>
-<h4 id="implementation-normal-mapping">Implementation (Normal
-mapping)</h4>
+<h3
+id="semi-physically-based-rendering-for-lava-particles-10-points">Semi-physically-based
+Rendering for Lava Particles (10 points)</h3>
+<p>In the previous section on lava simulation, the mechanisms of
+temperature transfer are discussed to model the transition of lava
+temperature as it flows down the volcano. Modeling the temperature
+change serves two main purposes. First, it helps determine the viscosity
+change, allowing the system to automatically adjust the flow behavior.
+Second, it enables rendering the lava based on its temperature.</p>
+<h4 id="implementation-14">Implementation</h4>
+<p>The temperature is passed into the shader as a “uniform” variable.
+First, we have to define the relationship between the color of the
+particle with corresponding temperature. This is done by defining the
+color for “hot”, “median” and “cold” temperature particles respectively.
+Then by using the “mix” function, we create the color transition for all
+ranges of temperature:</p>
+<div class="sourceCode" id="cb3"><pre
+class="sourceCode glsl"><code class="sourceCode glsl"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="kw">if</span><span class="op">(</span>particle_temperature <span class="op">&lt;</span> middle_lava_temp<span class="op">)</span> <span class="op">{</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>    material_color <span class="op">=</span> <span class="bu">mix</span><span class="op">(</span>lava_cold_color<span class="op">,</span> lava_middle_color<span class="op">,</span> </span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>    <span class="bu">clamp</span><span class="op">((</span>particle_temperature <span class="op">-</span> cold_lava_temp<span class="op">)</span> </span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>    <span class="op">/</span> <span class="op">(</span>middle_lava_temp <span class="op">-</span> cold_lava_temp<span class="op">),</span> <span class="fl">0.0</span><span class="op">,</span> <span class="fl">1.0</span><span class="op">));</span> <span class="op">}</span></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a><span class="kw">else</span> <span class="op">{</span></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>    material_color <span class="op">=</span> <span class="bu">mix</span><span class="op">(</span>lava_middle_color<span class="op">,</span> lava_hot_color<span class="op">,</span> </span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>    <span class="bu">clamp</span><span class="op">((</span>particle_temperature <span class="op">-</span> middle_lava_temp<span class="op">)</span> </span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>    <span class="op">/</span> <span class="op">(</span>hot_lava_temp <span class="op">-</span> middle_lava_temp<span class="op">),</span> <span class="fl">0.0</span><span class="op">,</span> <span class="fl">1.0</span><span class="op">));</span> <span class="op">}</span></span></code></pre></div>
 <h4 id="validation-14">Validation</h4>
-<figure>
-<img src="images/texture/normal_mapping.gif" width="400"
-alt="Normal Mapping" />
-<figcaption aria-hidden="true">Normal Mapping</figcaption>
-</figure>
-<h4 id="implementation-volcano">Implementation (Volcano)</h4>
-<h4 id="validation-15">Validation</h4>
+<p>Please refer to the videos in the temperature transfer section to
+observe the color changes of individual particles in each frame as the
+simulation progresses. This color transition is crucial as it forms the
+foundation for applying procedurally-generated textures later on. The
+dynamic color changes not only enhance visual realism but also provide
+valuable insights into the underlying thermal processes, contributing to
+the overall accuracy and aesthetic quality of the simulation.</p>
+<h3
+id="normal-mapping-10-points-with-procedural-texture-generation-for-volcanowaterlava-particles-10-points">Normal
+Mapping (10 points) with Procedural Texture Generation for
+Volcano/Water/Lava Particles (10 points)</h3>
+<p>Normal mapping is a vital technique that increases the visual
+complexity of a surface without adding more polygons. It improves how
+light interacts with a surface, resulting in more realistic shading and
+lighting effects.</p>
+<p>To create the normal map, we use a procedural generation method. This
+technique employs mathematical functions and algorithms to produce
+intricate patterns, surfaces, and textures. Our goal is to use this
+method to enhance the details of volcanoes, water, and lava
+particles.</p>
+<h4 id="implementation-terrain">Implementation (Terrain)</h4>
+<p>The terrain in our scene consists of two distinct elements: the
+volcano and the island. To replicate their natural appearance as
+accurately as possible, we combine multiple textures. At higher
+altitudes, we aim to create realistic mountain ridges that gradually
+transition into a rocky texture as the elevation decreases. This
+approach ensures a more lifelike and visually appealing representation
+of the terrain, enhancing the overall realism and immersion of the
+scene.</p>
+<h4 id="validation-terrain">Validation (Terrain)</h4>
+<p>Since procedually-generated textures are difficult to manipulate and
+tune in terms of their artistic facade, we referred to SHADERTOY
+demonstrations as basis to get more feeling on the textures. The
+resources are listed in the last section of the report.</p>
+<p>The normal map for mountain ridges is realized by leveraging fractal
+brownian motion on value noise. Then, a fixed direction light source is
+implemented to generate the texture map for mountain ridges.</p>
 <figure>
 <img src="images/texture/mountain_texture.gif" width="400"
 alt="Mountain Texture" />
 <figcaption aria-hidden="true">Mountain Texture</figcaption>
 </figure>
+<p>In the same manner, the rock on the lower altitude is implemented
+with fBm on Perlin noise. The overall result is an affine combination of
+the two textures according to the altitude (z) coordinate.</p>
 <figure>
 <img src="images/texture/mountain_rock_blend.gif" width="400"
 alt="Mountain/Rock Blend Texture" />
 <figcaption aria-hidden="true">Mountain/Rock Blend Texture</figcaption>
 </figure>
 <h4 id="implementation-water">Implementation (Water)</h4>
-<h4 id="implementation-14">Implementation</h4>
-<p>TODO</p>
-<h4 id="validation-16">Validation</h4>
+<p>In order to create realistic water, we combine three different
+approaches: normal mapping, texture with highlighted edges (similar idea
+as in toon shading) and cellular noise.</p>
+<h4 id="validation-water">Validation (Water)</h4>
+<p>The normal map for the water surface follows a similar generation
+process as that used for the mountain ridges. However, it employs
+different octaves of fractal Brownian motion applied to value noise.
+This resulting normal map is subsequently integrated into the lighting
+model, serving as foundational detail for the water’s appearance.</p>
+<figure>
+<img src="images/texture/water_texture_normal.png" width="400"
+alt="Water Normal Mapping" />
+<figcaption aria-hidden="true">Water Normal Mapping</figcaption>
+</figure>
+<p>To enhance the realism of the water waves, we aim to incorporate
+highlights along their rims. To achieve this effect, we adopt a
+straightforward approach of blending between the colors of the water’s
+dark regions and the bright edges of the waves. Unlike traditional toon
+shading techniques that rely on threshold values for this purpose, we
+employ a higher-order polynomial interpolation method. This approach
+ensures a smoother transition between colors, preventing overly sharp
+contrasts while still maintaining sufficient visual contrast.</p>
 <figure>
 <img src="images/texture/water_texture_rim.png" width="400"
 alt="Water Texture (highlighted rims)" />
 <figcaption aria-hidden="true">Water Texture (highlighted
 rims)</figcaption>
 </figure>
+<p>The coefficient of the polynomial is calculated as below. This value
+is used for interpolation for other colors.</p>
+<div class="sourceCode" id="cb4"><pre
+class="sourceCode glsl"><code class="sourceCode glsl"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="dt">float</span> <span class="fu">find_k</span><span class="op">(</span><span class="dt">vec2</span> point<span class="op">,</span> <span class="dt">vec2</span> col<span class="op">){</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>    <span class="dt">float</span> k <span class="op">=</span> <span class="op">(</span>col<span class="op">.</span><span class="fu">y</span> <span class="op">-</span> col<span class="op">.</span><span class="fu">x</span><span class="op">)/</span><span class="bu">pow</span><span class="op">(</span>point<span class="op">.</span><span class="fu">y</span> <span class="op">-</span> point<span class="op">.</span><span class="fu">x</span><span class="op">,</span> <span class="fl">3.</span><span class="op">);</span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>    <span class="kw">return</span> k<span class="op">;</span> <span class="op">}</span></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="op">...</span></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a><span class="dt">float</span> coef_r <span class="op">=</span> <span class="fu">find_k</span><span class="op">(</span>wa_tex_range<span class="op">,</span> <span class="dt">vec2</span><span class="op">(</span>wa_col_dark<span class="op">.</span><span class="fu">x</span><span class="op">,</span> wa_col_light<span class="op">.</span><span class="fu">x</span><span class="op">));</span></span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a><span class="dt">float</span> coef_g <span class="op">=</span> <span class="fu">find_k</span><span class="op">(</span>wa_tex_range<span class="op">,</span> <span class="dt">vec2</span><span class="op">(</span>wa_col_dark<span class="op">.</span><span class="fu">y</span><span class="op">,</span> wa_col_light<span class="op">.</span><span class="fu">y</span><span class="op">));</span></span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a><span class="dt">float</span> coef_b <span class="op">=</span> <span class="fu">find_k</span><span class="op">(</span>wa_tex_range<span class="op">,</span> <span class="dt">vec2</span><span class="op">(</span>wa_col_dark<span class="op">.</span><span class="fu">z</span><span class="op">,</span> wa_col_light<span class="op">.</span><span class="fu">z</span><span class="op">));</span></span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a><span class="dt">vec3</span> water_color <span class="op">=</span> <span class="dt">vec3</span><span class="op">(</span>coef_r <span class="op">*</span> <span class="bu">pow</span><span class="op">(</span>water_tex<span class="op">.</span><span class="fu">x</span> <span class="op">-</span> wa_tex_range<span class="op">.</span><span class="fu">x</span><span class="op">,</span> <span class="fl">3.</span><span class="op">)</span> </span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>    <span class="op">+</span> wa_col_dark<span class="op">.</span><span class="fu">x</span><span class="op">,</span> coef_g <span class="op">*</span> <span class="bu">pow</span><span class="op">(</span>water_tex<span class="op">.</span><span class="fu">x</span> <span class="op">-</span> wa_tex_range<span class="op">.</span><span class="fu">x</span><span class="op">,</span> <span class="fl">3.</span><span class="op">)</span> </span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>    <span class="op">+</span> wa_col_dark<span class="op">.</span><span class="fu">y</span><span class="op">,</span> coef_b <span class="op">*</span> <span class="bu">pow</span><span class="op">(</span>water_tex<span class="op">.</span><span class="fu">x</span> <span class="op">-</span> wa_tex_range<span class="op">.</span><span class="fu">x</span><span class="op">,</span> <span class="fl">3.</span><span class="op">)</span> </span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a>    <span class="op">+</span> wa_col_dark<span class="op">.</span><span class="fu">z</span><span class="op">);</span></span></code></pre></div>
+<p>In the menu bar, users have the flexibility to manually adjust the
+bright and dark colors, as well as the scale and number of octaves used
+in the implementation of fBm (fractal Brownian motion). This
+customization allows users to tailor the visual effect of the water
+texture according to their personal preferences. The water texture menu
+comprises these components:</p>
+<figure>
+<img src="images/texture/water_texture_menu.png" width="200"
+alt="Water Texture (menu bar)" />
+<figcaption aria-hidden="true">Water Texture (menu bar)</figcaption>
+</figure>
+<p>Furthermore, during our resource search, we came across water
+implementation using cellular noise. We believe that incorporating this
+technique could add another layer of detail to the appearance of our
+water. Since different regions of the sea may have varying depths, they
+may exhibit slight color differences.</p>
 <figure>
 <img src="images/texture/water_texture_cell.png" width="400"
 alt="Water Texture (highlighted regions)" />
 <figcaption aria-hidden="true">Water Texture (highlighted
 regions)</figcaption>
 </figure>
+<p>Additionally, we include the frame time as a uniform variable in the
+shader and use it to sample the texture over time. This simple addition
+introduces another dynamic effect to the overall appearance of the
+water.</p>
 <figure>
 <img src="images/texture/water_texture_moving.gif" width="400"
 alt="Water Texture (combined with normals and sampled with time)" />
@@ -1071,18 +1181,46 @@ sampled with time)</figcaption>
 </figure>
 <h4 id="implementation-lava-particles">Implementation (Lava
 Particles)</h4>
-<p>TODO</p>
-<h4 id="validation-17">Validation</h4>
+<p>On top of the temperature-based color transition of lava particles
+mentioned earlier, we have chosen to incorporate another texture to
+represent the flowing characteristics of the lava. It’s worth noting
+that due to our decision to abandon the Voronoi tessellation of the
+particle system, implementing the true lava texture has become
+challenging.</p>
+<h4 id="validation-lava-particles">Validation (Lava Particles)</h4>
+<p>In our lava rendering approach, we deliberately excluded the lighting
+model for lava particles with higher temperatures. This decision was
+made to ensure visual continuity in the lava flow. The lighting model
+tended to emphasize the outline of individual particles, which was not
+aligned with our desired visual effect.</p>
+<p>Comparing the image of the lava texture overview below with the
+videos in the simulation section, it’s evident that by omitting the
+lighting model, the lava appears more seamless. However, it’s important
+to note that this choice resulted in a loss of depth and volume in the
+visual representation.</p>
 <figure>
 <img src="images/texture/lava_texture_overview.png" width="400"
 alt="Lava Texture" />
 <figcaption aria-hidden="true">Lava Texture</figcaption>
 </figure>
+<p>The texture of the lava is based on the flow function which
+implements a form of fractal Brownian motion to generate complex flow
+patterns. It iteratively displaces a point p based on a combination of
+primary and secondary flow speeds, displacement field, noise octaves,
+and blending factors. This process adds detail and randomness to the
+flow.</p>
 <figure>
 <img src="images/texture/lava_texture.png" width="400"
 alt="Lava Texture (Zoom-in)" />
 <figcaption aria-hidden="true">Lava Texture (Zoom-in)</figcaption>
 </figure>
+<p>To add a little more twist, in the vertex shader, the geometry of the
+lava particles is deformed. To do that, we transforms a position vector
+from Cartesian coordinates to spherical coordinates, modifies its radius
+based on Perlin noise functions, and then converts it back to Cartesian
+coordinates. However, when viewed from a distance, this effect doesn’t
+contribute significantly to the overall visual appearance. In fact, the
+texture itself may also become difficult to discern.</p>
 <figure>
 <img src="images/texture/lava_texture_ramdom_geo.png" width="400"
 alt="Lava Texture (Ramdomized Geometry)" />
@@ -1095,7 +1233,7 @@ Geometry)</figcaption>
 particle is a partially transparent ellipse. It has a position in the
 world and always faces the camera. Every particle rises up for a random
 amount of time, becoming dimmer and then disappearing.</p>
-<h4 id="validation-18">Validation</h4>
+<h4 id="validation-15">Validation</h4>
 <p><video src="videos/smoke/single.mp4" width="600" controls=""><a
 href="videos/smoke/single.mp4">Single smoke particle</a></video> <video
 src="videos/smoke/full.mp4" width="600" controls=""><a
@@ -1315,6 +1453,10 @@ OpenGL - Particles</a></p>
 href="https://en.wikipedia.org/wiki/Perlin_noise#:~:text=Perlin%20noise%20is%20a%20procedural,details%20are%20the%20same%20size.">Perlin
 noise</a><br />
 <a href="https://www.shadertoy.com/view/td2GWt">Rock texture
+example</a><br />
+<a href="https://www.shadertoy.com/view/ltl3W2">Mountain texture
+example</a><br />
+<a href="https://www.shadertoy.com/view/lslXRS">Lava texture
 example</a><br />
 <a href="https://thebookofshaders.com/12/">Cellular Noise</a></p>
         </div>

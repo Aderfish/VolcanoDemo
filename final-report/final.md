@@ -501,52 +501,113 @@ To highlight the critical importance of selecting an appropriate timestep, we de
 
 ![Timestep too large](images/simulation/features/examples/example_1/catastrophic_failure/catastrophic_failure.mp4){width="300px"}
 
+### Semi-physically-based Rendering for Lava Particles (10 points)
 
-### Procedural Texture Generation
+In the previous section on lava simulation, the mechanisms of temperature transfer are discussed to model the transition of lava temperature as it flows down the volcano. Modeling the temperature change serves two main purposes. First, it helps determine the viscosity change, allowing the system to automatically adjust the flow behavior. Second, it enables rendering the lava based on its temperature.
 
-In order to make the terrain more realistic and give it vivid-looking appearance, different textures are tried out to provide this visual effect. This includes the concepts of perlin noise, fractal Brownian motion, noise-based displacement，cell noise, cellullar pattern, normal mapping, blending and etc.
+#### Implementation
 
-#### Implementation (Normal mapping)
+The temperature is passed into the shader as a "uniform" variable. First, we have to define the relationship between the color of the particle with corresponding temperature. This is done by defining the color for "hot", "median" and "cold" temperature particles respectively. Then by using the "mix" function, we create the color transition for all ranges of temperature:
 
+```glsl
+if(particle_temperature < middle_lava_temp) {
+    material_color = mix(lava_cold_color, lava_middle_color, 
+	clamp((particle_temperature - cold_lava_temp) 
+	/ (middle_lava_temp - cold_lava_temp), 0.0, 1.0)); }
+else {
+    material_color = mix(lava_middle_color, lava_hot_color, 
+	clamp((particle_temperature - middle_lava_temp) 
+	/ (hot_lava_temp - middle_lava_temp), 0.0, 1.0)); }
+```
 
 #### Validation
 
-![Normal Mapping](images/texture/normal_mapping.gif){width="400px"}
-
-#### Implementation (Volcano)
+Please refer to the videos in the temperature transfer section to observe the color changes of individual particles in each frame as the simulation progresses. This color transition is crucial as it forms the foundation for applying procedurally-generated textures later on. The dynamic color changes not only enhance visual realism but also provide valuable insights into the underlying thermal processes, contributing to the overall accuracy and aesthetic quality of the simulation.
 
 
-#### Validation
+### Normal Mapping (10 points) with Procedural Texture Generation for Volcano/Water/Lava Particles (10 points)
+
+Normal mapping is a vital technique that increases the visual complexity of a surface without adding more polygons. It improves how light interacts with a surface, resulting in more realistic shading and lighting effects.
+
+To create the normal map, we use a procedural generation method. This technique employs mathematical functions and algorithms to produce intricate patterns, surfaces, and textures. Our goal is to use this method to enhance the details of volcanoes, water, and lava particles.
+
+#### Implementation (Terrain)
+
+The terrain in our scene consists of two distinct elements: the volcano and the island. To replicate their natural appearance as accurately as possible, we combine multiple textures. At higher altitudes, we aim to create realistic mountain ridges that gradually transition into a rocky texture as the elevation decreases. This approach ensures a more lifelike and visually appealing representation of the terrain, enhancing the overall realism and immersion of the scene.
+
+#### Validation (Terrain)
+
+Since procedually-generated textures are difficult to manipulate and tune in terms of their artistic facade, we referred to SHADERTOY demonstrations as basis to get more feeling on the textures. The resources are listed in the last section of the report. 
+
+The normal map for mountain ridges is realized by leveraging fractal brownian motion on value noise. Then, a fixed direction light source is implemented to generate the texture map for mountain ridges. 
 
 ![Mountain Texture](images/texture/mountain_texture.gif){width="400px"}
+
+In the same manner, the rock on the lower altitude is implemented with fBm on Perlin noise. The overall result is an affine combination of the two textures according to the altitude (z) coordinate.
 
 ![Mountain/Rock Blend Texture](images/texture/mountain_rock_blend.gif){width="400px"}
 
 #### Implementation (Water)
 
+In order to create realistic water, we combine three different approaches: normal mapping, texture with highlighted edges (similar idea as in toon shading) and cellular noise. 
 
-#### Implementation
+#### Validation (Water)
 
+The normal map for the water surface follows a similar generation process as that used for the mountain ridges. However, it employs different octaves of fractal Brownian motion applied to value noise. This resulting normal map is subsequently integrated into the lighting model, serving as foundational detail for the water's appearance.
 
-TODO
+![Water Normal Mapping](images/texture/water_texture_normal.png){width="400px"}
 
-#### Validation
+To enhance the realism of the water waves, we aim to incorporate highlights along their rims. To achieve this effect, we adopt a straightforward approach of blending between the colors of the water's dark regions and the bright edges of the waves. Unlike traditional toon shading techniques that rely on threshold values for this purpose, we employ a higher-order polynomial interpolation method. This approach ensures a smoother transition between colors, preventing overly sharp contrasts while still maintaining sufficient visual contrast.
 
 ![Water Texture (highlighted rims)](images/texture/water_texture_rim.png){width="400px"}
 
+The coefficient of the polynomial is calculated as below. This value is used for interpolation for other colors.
+
+```glsl
+float find_k(vec2 point, vec2 col){
+	float k = (col.y - col.x)/pow(point.y - point.x, 3.);
+	return k; }
+...
+
+float coef_r = find_k(wa_tex_range, vec2(wa_col_dark.x, wa_col_light.x));
+float coef_g = find_k(wa_tex_range, vec2(wa_col_dark.y, wa_col_light.y));
+float coef_b = find_k(wa_tex_range, vec2(wa_col_dark.z, wa_col_light.z));
+
+vec3 water_color = vec3(coef_r * pow(water_tex.x - wa_tex_range.x, 3.) 
+	+ wa_col_dark.x, coef_g * pow(water_tex.x - wa_tex_range.x, 3.) 
+	+ wa_col_dark.y, coef_b * pow(water_tex.x - wa_tex_range.x, 3.) 
+	+ wa_col_dark.z);
+```
+
+In the menu bar, users have the flexibility to manually adjust the bright and dark colors, as well as the scale and number of octaves used in the implementation of fBm (fractal Brownian motion). This customization allows users to tailor the visual effect of the water texture according to their personal preferences. The water texture menu comprises these components:
+
+![Water Texture (menu bar)](images/texture/water_texture_menu.png){width="200px"}
+
+Furthermore, during our resource search, we came across water implementation using cellular noise. We believe that incorporating this technique could add another layer of detail to the appearance of our water. Since different regions of the sea may have varying depths, they may exhibit slight color differences.
+
 ![Water Texture (highlighted regions)](images/texture/water_texture_cell.png){width="400px"}
+
+Additionally, we include the frame time as a uniform variable in the shader and use it to sample the texture over time. This simple addition introduces another dynamic effect to the overall appearance of the water.
 
 ![Water Texture (combined with normals and sampled with time)](images/texture/water_texture_moving.gif){width="400px"}
 
 #### Implementation (Lava Particles)
 
-TODO
+On top of the temperature-based color transition of lava particles mentioned earlier, we have chosen to incorporate another texture to represent the flowing characteristics of the lava. It's worth noting that due to our decision to abandon the Voronoi tessellation of the particle system, implementing the true lava texture has become challenging.
 
-#### Validation
+#### Validation (Lava Particles)
+
+In our lava rendering approach, we deliberately excluded the lighting model for lava particles with higher temperatures. This decision was made to ensure visual continuity in the lava flow. The lighting model tended to emphasize the outline of individual particles, which was not aligned with our desired visual effect.
+
+Comparing the image of the lava texture overview below with the videos in the simulation section, it's evident that by omitting the lighting model, the lava appears more seamless. However, it's important to note that this choice resulted in a loss of depth and volume in the visual representation.
 
 ![Lava Texture](images/texture/lava_texture_overview.png){width="400px"}
 
+The texture of the lava is based on the flow function which implements a form of fractal Brownian motion to generate complex flow patterns. It iteratively displaces a point p based on a combination of primary and secondary flow speeds, displacement field, noise octaves, and blending factors. This process adds detail and randomness to the flow.
+
 ![Lava Texture (Zoom-in)](images/texture/lava_texture.png){width="400px"}
+
+To add a little more twist, in the vertex shader, the geometry of the lava particles is deformed. To do that, we transforms a position vector from Cartesian coordinates to spherical coordinates, modifies its radius based on Perlin noise functions, and then converts it back to Cartesian coordinates. However, when viewed from a distance, this effect doesn't contribute significantly to the overall visual appearance. In fact, the texture itself may also become difficult to discern.
 
 ![Lava Texture (Ramdomized Geometry)](images/texture/lava_texture_ramdom_geo.png){width="400px"}
 
@@ -672,4 +733,6 @@ TODO
 ### Procedural textures
 [Perlin noise](https://en.wikipedia.org/wiki/Perlin_noise#:~:text=Perlin%20noise%20is%20a%20procedural,details%20are%20the%20same%20size.) \
 [Rock texture example](https://www.shadertoy.com/view/td2GWt) \
+[Mountain texture example](https://www.shadertoy.com/view/ltl3W2)\
+[Lava texture example](https://www.shadertoy.com/view/lslXRS)\
 [Cellular Noise](https://thebookofshaders.com/12/)
