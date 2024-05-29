@@ -39,7 +39,7 @@ div.sourceCode { overflow: auto; }
 }
 @media print {
 pre > code.sourceCode { white-space: pre-wrap; }
-pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
 }
 pre.numberSource code
   { counter-reset: source-line 0; }
@@ -617,7 +617,7 @@ is the expected behavior with viscosity.</p>
 <h5 id="implementation-5">Implementation</h5>
 <p>The next step for our simulation is to add the gravity force.</p>
 <p>This force can be easily computed by
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mover><msub><mi>F</mi><mi>g</mi></msub><mo accent="true">→</mo></mover><mo>=</mo><mrow><mo stretchy="true" form="prefix">(</mo><mn>0</mn><mo>,</mo><mn>0</mn><mo>,</mo><mi>−</mi><mi>m</mi><mi>g</mi><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">\vec{F_g} = (0,0,-mg)</annotation></semantics></math>,
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mover><msub><mi>F</mi><mi>g</mi></msub><mo accent="true">→</mo></mover><mo>=</mo><mrow><mo stretchy="true" form="prefix">(</mo><mn>0</mn><mo>,</mo><mn>0</mn><mo>,</mo><mo>−</mo><mi>m</mi><mi>g</mi><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">\vec{F_g} = (0,0,-mg)</annotation></semantics></math>,
 with
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>g</mi><mo>=</mo><mn>9.81</mn><mspace width="0.278em"></mspace><msup><mtext mathvariant="normal">m/s</mtext><mn>2</mn></msup></mrow><annotation encoding="application/x-tex">g=9.81 \; \text{m/s}^2</annotation></semantics></math>.</p>
 <h5 id="validation-5">Validation</h5>
@@ -802,7 +802,7 @@ temperature decreases. This relationship is captured by the factor
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>α</mi><mi>v</mi></msub><annotation encoding="application/x-tex">\alpha_v</annotation></semantics></math>,
 used previously to compute viscosity. The factor is computed as
 follows:</p>
-<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>α</mi><mi>v</mi></msub><mo>=</mo><mi>b</mi><mo>exp</mo><mrow><mo stretchy="true" form="prefix">(</mo><mi>−</mi><mi>a</mi><mfrac><mi>T</mi><msub><mi>T</mi><mrow><mi>i</mi><mi>n</mi><mi>i</mi><mi>t</mi><mi>i</mi><mi>a</mi><mi>l</mi></mrow></msub></mfrac><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>α</mi><mi>v</mi></msub><mo>=</mo><mi>b</mi><mo>exp</mo><mrow><mo stretchy="true" form="prefix">(</mo><mo>−</mo><mi>a</mi><mfrac><mi>T</mi><msub><mi>T</mi><mrow><mi>i</mi><mi>n</mi><mi>i</mi><mi>t</mi><mi>i</mi><mi>a</mi><mi>l</mi></mrow></msub></mfrac><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">
 \alpha_v = b \exp \left( -a \frac{T}{T_{initial}} \right)
 </annotation></semantics></math></p>
 <p>where
@@ -1036,12 +1036,38 @@ change serves two main purposes. First, it helps determine the viscosity
 change, allowing the system to automatically adjust the flow behavior.
 Second, it enables rendering the lava based on its temperature.</p>
 <h4 id="implementation-14">Implementation</h4>
-<p>The temperature is passed into the shader as a “uniform” variable.
-First, we have to define the relationship between the color of the
-particle with corresponding temperature. This is done by defining the
-color for “hot”, “median” and “cold” temperature particles respectively.
-Then by using the “mix” function, we create the color transition for all
-ranges of temperature:</p>
+<p>First, we must determine the color of basaltic magma based on its
+temperature. After some resarch, the following presents a simple scale
+to determine the color of the magma depending on its temperature (<a
+href="https://www.science.smith.edu/~jbrady/petrology/advPet-topics/kinetics/kinetics-figure10.php">Lava
+Colors</a>).</p>
+<figure>
+<img src="images/lava/color_temp.png" width="600"
+alt="Basalt magma color with temperature" />
+<figcaption aria-hidden="true">Basalt magma color with
+temperature</figcaption>
+</figure>
+<p>Thus, to implement the rendering, we’ll perform a gradient between 3
+colors. Using the informations on the lava color above, we set the 3
+points in our gradient as below:</p>
+<ul>
+<li><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>1200</mn><mi>°</mi><mi>C</mi></mrow><annotation encoding="application/x-tex">1200 °C</annotation></semantics></math>,
+Yellow color <span style="background-color: yellow">—–</span>,
+(<code>lava_hot_color</code>)</li>
+<li><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>900</mn><mi>°</mi><mi>C</mi></mrow><annotation encoding="application/x-tex">900 °C</annotation></semantics></math>,
+Red color <span style="background-color: red">—–</span>,
+(<code>lava_middle_color</code>)</li>
+<li><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>500</mn><mi>°</mi><mi>C</mi></mrow><annotation encoding="application/x-tex">500 °C</annotation></semantics></math>,
+Black color <span style="background-color: black">—–</span>,
+(<code>lava_cold_color</code>)</li>
+</ul>
+<p>Concretely, the implementation is done as follows. The temperature is
+passed into the shader as a “uniform” variable. First, we have to define
+the relationship between the color of the particle with corresponding
+temperature. This is done by defining the color for “hot”, “median” and
+“cold” temperature particles respectively. Then by using the “mix”
+function, we create the color transition for all ranges of
+temperature:</p>
 <div class="sourceCode" id="cb3"><pre
 class="sourceCode glsl"><code class="sourceCode glsl"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="kw">if</span><span class="op">(</span>particle_temperature <span class="op">&lt;</span> middle_lava_temp<span class="op">)</span> <span class="op">{</span></span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>    material_color <span class="op">=</span> <span class="bu">mix</span><span class="op">(</span>lava_cold_color<span class="op">,</span> lava_middle_color<span class="op">,</span> </span>
@@ -1052,13 +1078,21 @@ class="sourceCode glsl"><code class="sourceCode glsl"><span id="cb3-1"><a href="
 <span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>    <span class="bu">clamp</span><span class="op">((</span>particle_temperature <span class="op">-</span> middle_lava_temp<span class="op">)</span> </span>
 <span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>    <span class="op">/</span> <span class="op">(</span>hot_lava_temp <span class="op">-</span> middle_lava_temp<span class="op">),</span> <span class="fl">0.0</span><span class="op">,</span> <span class="fl">1.0</span><span class="op">));</span> <span class="op">}</span></span></code></pre></div>
 <h4 id="validation-14">Validation</h4>
-<p>Please refer to the videos in the temperature transfer section to
-observe the color changes of individual particles in each frame as the
-simulation progresses. This color transition is crucial as it forms the
-foundation for applying procedurally-generated textures later on. The
-dynamic color changes not only enhance visual realism but also provide
-valuable insights into the underlying thermal processes, contributing to
-the overall accuracy and aesthetic quality of the simulation.</p>
+<p>The following presents the particle color depending on the
+temperature that is going from
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>1200</mn><mi>°</mi><mi>C</mi></mrow><annotation encoding="application/x-tex">1200 °C</annotation></semantics></math>
+to
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>500</mn><mi>°</mi><mi>C</mi></mrow><annotation encoding="application/x-tex">500 °C</annotation></semantics></math>.</p>
+<figure>
+<video src="images/lava/temp_render.mp4" width="300" controls=""><a
+href="images/lava/temp_render.mp4">Temperature shift color</a></video>
+<figcaption aria-hidden="true">Temperature shift color</figcaption>
+</figure>
+<p>This color transition is crucial as it forms the foundation for
+applying procedurally-generated textures later on. The dynamic color
+changes not only enhance visual realism but also provide valuable
+insights into the underlying thermal processes, contributing to the
+overall accuracy and aesthetic quality of the simulation.</p>
 <h3
 id="normal-mapping-10-points-with-procedural-texture-generation-for-volcanowaterlava-particles-10-points">Normal
 Mapping (10 points) with Procedural Texture Generation for

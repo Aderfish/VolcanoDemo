@@ -507,6 +507,18 @@ In the previous section on lava simulation, the mechanisms of temperature transf
 
 #### Implementation
 
+First, we must determine the color of basaltic magma based on its temperature. After some resarch, the following presents a simple scale to determine the color of the magma depending on its temperature ([Lava Colors](https://www.science.smith.edu/~jbrady/petrology/advPet-topics/kinetics/kinetics-figure10.php)).
+
+![Basalt magma color with temperature](images/lava/color_temp.png){width="600px"}
+
+
+Thus, to implement the rendering, we'll perform a gradient between 3 colors. Using the informations on the lava color above, we set the 3 points in our gradient as below:
+
+- $1200 °C$, Yellow color <span style="background-color: yellow">-----</span>, (`lava_hot_color`)
+- $900 °C$, Red color <span style="background-color: red">-----</span>, (`lava_middle_color`)
+- $500 °C$, Black color <span style="background-color: black">-----</span>, (`lava_cold_color`)
+
+Concretely, the implementation is done as follows.
 The temperature is passed into the shader as a "uniform" variable. First, we have to define the relationship between the color of the particle with corresponding temperature. This is done by defining the color for "hot", "median" and "cold" temperature particles respectively. Then by using the "mix" function, we create the color transition for all ranges of temperature:
 
 ```glsl
@@ -522,7 +534,12 @@ else {
 
 #### Validation
 
-Please refer to the videos in the temperature transfer section to observe the color changes of individual particles in each frame as the simulation progresses. This color transition is crucial as it forms the foundation for applying procedurally-generated textures later on. The dynamic color changes not only enhance visual realism but also provide valuable insights into the underlying thermal processes, contributing to the overall accuracy and aesthetic quality of the simulation.
+The following presents the particle color depending on the temperature that is going from $1200 °C$ to $500 °C$.
+
+![Temperature shift color](images/lava/temp_render.mp4){width="300px"}
+
+
+This color transition is crucial as it forms the foundation for applying procedurally-generated textures later on. The dynamic color changes not only enhance visual realism but also provide valuable insights into the underlying thermal processes, contributing to the overall accuracy and aesthetic quality of the simulation.
 
 
 ### Normal Mapping (10 points) with Procedural Texture Generation for Volcano/Water/Lava Particles (10 points)
