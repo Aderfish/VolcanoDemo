@@ -727,7 +727,7 @@ Another challenge was the display of the simulation. Initially, we aimed to perf
 
 #### Comments
 
-TODO
+The time estimates for the project were mostly accurate, except for the simulation component. This part of the project required extensive research to ensure correct implementation, which significantly increased the time required.
 
 
 ## References
