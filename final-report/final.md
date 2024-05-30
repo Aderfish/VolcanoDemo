@@ -633,7 +633,7 @@ To add a little more twist, in the vertex shader, the geometry of the lava parti
 
 #### Implementation
 
-The smoke effect is a combination of multiple small particles. Every particle is a partially transparent ellipse. It has a position in the world and always faces the camera. Every particle has a random position, size, vertical speed and lifetime. The particles then rise up, slowly becomming dimmer and then disappearing. Then by using many such particles we have a nice smoke effect. 
+The smoke effect is a combination of multiple small particles. Every particle is a partially transparent ellipse. It has a position in the world and always faces the camera. Every particle has a random position, size, vertical speed and lifetime. The particles then rise up, slowly becomming more transparent and darker, before disappearing. Then by using many such particles we have a nice smoke effect. 
 
 ![Single smoke particle](videos/smoke/single.mp4){width="600px"}
 
