@@ -28,7 +28,7 @@
     <style type="text/css">.sidebar ul{padding-left: 10px;}</style>
     <style type="text/css">
 pre > code.sourceCode { white-space: pre; position: relative; }
-pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
 pre > code.sourceCode > span:empty { height: 1.2em; }
 .sourceCode { overflow: visible; }
 code.sourceCode > span { color: inherit; text-decoration: inherit; }
@@ -103,45 +103,37 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
             <li class="active"><a href="#">Overview <span class="sr-only">(current)</span></a></li>
           </ul>-->
           <ul>
-          <li><a href="#volcano" id="toc-volcano">Volcano</a>
+          <li><a href="#volcano">Volcano</a>
           <ul>
-          <li><a href="#abstract" id="toc-abstract">Abstract</a></li>
-          <li><a href="#overview" id="toc-overview">Overview</a></li>
-          <li><a href="#feature-validation"
-          id="toc-feature-validation">Feature validation</a>
+          <li><a href="#abstract">Abstract</a></li>
+          <li><a href="#overview">Overview</a></li>
+          <li><a href="#feature-validation">Feature validation</a>
           <ul>
-          <li><a href="#procedural-volcano-terrain-generation-5-points"
-          id="toc-procedural-volcano-terrain-generation-5-points">Procedural
-          Volcano Terrain Generation (5 points)</a></li>
-          <li><a href="#lava-flow-fluid-simulation-20-points"
-          id="toc-lava-flow-fluid-simulation-20-points">Lava Flow Fluid
-          Simulation (20 points)</a></li>
           <li><a
-          href="#semi-physically-based-rendering-for-lava-particles-10-points"
-          id="toc-semi-physically-based-rendering-for-lava-particles-10-points">Semi-physically-based
+          href="#procedural-volcano-terrain-generation-5-points">Procedural
+          Volcano Terrain Generation (5 points)</a></li>
+          <li><a href="#lava-flow-fluid-simulation-20-points">Lava Flow
+          Fluid Simulation (20 points)</a></li>
+          <li><a
+          href="#semi-physically-based-rendering-for-lava-particles-10-points">Semi-physically-based
           Rendering for Lava Particles (10 points)</a></li>
           <li><a
-          href="#normal-mapping-10-points-with-procedural-texture-generation-for-volcanowaterlava-particles-10-points"
-          id="toc-normal-mapping-10-points-with-procedural-texture-generation-for-volcanowaterlava-particles-10-points">Normal
+          href="#normal-mapping-10-points-with-procedural-texture-generation-for-volcanowaterlava-particles-10-points">Normal
           Mapping (10 points) with Procedural Texture Generation for
           Volcano/Water/Lava Particles (10 points)</a></li>
-          <li><a href="#smoke-particles-15-points"
-          id="toc-smoke-particles-15-points">Smoke Particles (15
+          <li><a href="#smoke-particles-15-points">Smoke Particles (15
           points)</a></li>
           </ul></li>
-          <li><a href="#discussion"
-          id="toc-discussion">Discussion</a></li>
-          <li><a href="#contributions"
-          id="toc-contributions">Contributions</a></li>
-          <li><a href="#references" id="toc-references">References</a>
+          <li><a href="#discussion">Discussion</a></li>
+          <li><a href="#contributions">Contributions</a></li>
+          <li><a href="#references">References</a>
           <ul>
-          <li><a href="#terrain-generation"
-          id="toc-terrain-generation">Terrain generation</a></li>
-          <li><a href="#lava-flow-simulation"
-          id="toc-lava-flow-simulation">Lava Flow simulation</a></li>
-          <li><a href="#particles" id="toc-particles">Particles</a></li>
-          <li><a href="#procedural-textures"
-          id="toc-procedural-textures">Procedural textures</a></li>
+          <li><a href="#terrain-generation">Terrain generation</a></li>
+          <li><a href="#lava-flow-simulation">Lava Flow
+          simulation</a></li>
+          <li><a href="#particles">Particles</a></li>
+          <li><a href="#procedural-textures">Procedural
+          textures</a></li>
           </ul></li>
           </ul></li>
           </ul>
@@ -513,7 +505,7 @@ We then have a kernel that describes the particle mass distribution in
 space. We use the kernel function proposed by <a
 href="http://www.geometry.caltech.edu/pubs/DC_EW96.pdf">Smoother
 Particles: A new paradigm for highly deformable bodies</a>:</p>
-<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>W</mi><mi>h</mi></msub><mrow><mo stretchy="true" form="prefix">(</mo><mtext mathvariant="bold">𝐫</mtext><mo stretchy="true" form="postfix">)</mo></mrow><mo>=</mo><mfrac displaystyle="true"><mn>15</mn><mrow><mi>π</mi><msup><mrow><mo stretchy="true" form="prefix">(</mo><mn>4</mn><mi>h</mi><mo stretchy="true" form="postfix">)</mo></mrow><mn>3</mn></msup></mrow></mfrac><mrow><mo stretchy="true" form="prefix">{</mo><mtable><mtr><mtd columnalign="left" style="text-align: left"><msup><mrow><mo stretchy="true" form="prefix">(</mo><mn>2</mn><mo>−</mo><mfrac><mi>r</mi><mi>h</mi></mfrac><mo stretchy="true" form="postfix">)</mo></mrow><mn>3</mn></msup><mspace width="1.0em"></mspace><mrow><mtext mathvariant="normal">if </mtext><mspace width="0.333em"></mspace></mrow><mn>0</mn><mo>≤</mo><mi>r</mi><mo>≤</mo><mn>2</mn><mi>h</mi></mtd></mtr><mtr><mtd columnalign="left" style="text-align: left"><mn>0</mn><mspace width="1.0em"></mspace><mrow><mtext mathvariant="normal">if </mtext><mspace width="0.333em"></mspace></mrow><mi>r</mi><mo>&gt;</mo><mn>2</mn><mi>h</mi></mtd></mtr></mtable></mrow></mrow><annotation encoding="application/x-tex">
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>W</mi><mi>h</mi></msub><mrow><mo stretchy="true" form="prefix">(</mo><mtext mathvariant="bold">𝐫</mtext><mo stretchy="true" form="postfix">)</mo></mrow><mo>=</mo><mstyle displaystyle="true"><mfrac><mn>15</mn><mrow><mi>π</mi><msup><mrow><mo stretchy="true" form="prefix">(</mo><mn>4</mn><mi>h</mi><mo stretchy="true" form="postfix">)</mo></mrow><mn>3</mn></msup></mrow></mfrac></mstyle><mrow><mo stretchy="true" form="prefix">{</mo><mtable><mtr><mtd columnalign="left"><msup><mrow><mo stretchy="true" form="prefix">(</mo><mn>2</mn><mo>−</mo><mfrac><mi>r</mi><mi>h</mi></mfrac><mo stretchy="true" form="postfix">)</mo></mrow><mn>3</mn></msup><mspace width="1.0em"></mspace><mrow><mtext mathvariant="normal">if </mtext><mspace width="0.333em"></mspace></mrow><mn>0</mn><mo>≤</mo><mi>r</mi><mo>≤</mo><mn>2</mn><mi>h</mi></mtd></mtr><mtr><mtd columnalign="left"><mn>0</mn><mspace width="1.0em"></mspace><mrow><mtext mathvariant="normal">if </mtext><mspace width="0.333em"></mspace></mrow><mi>r</mi><mo>&gt;</mo><mn>2</mn><mi>h</mi></mtd></mtr></mtable></mrow></mrow><annotation encoding="application/x-tex">
 W_h(\textbf{r}) = \dfrac{15}{\pi(4h)^3} \begin{cases}
     (2 - \frac{r}{h})^3 \quad \text{if } 0 \leq r \leq 2h \\
     0 \quad \text{if } r &gt; 2h
@@ -617,7 +609,7 @@ is the expected behavior with viscosity.</p>
 <h5 id="implementation-5">Implementation</h5>
 <p>The next step for our simulation is to add the gravity force.</p>
 <p>This force can be easily computed by
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mover><msub><mi>F</mi><mi>g</mi></msub><mo accent="true">→</mo></mover><mo>=</mo><mrow><mo stretchy="true" form="prefix">(</mo><mn>0</mn><mo>,</mo><mn>0</mn><mo>,</mo><mo>−</mo><mi>m</mi><mi>g</mi><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">\vec{F_g} = (0,0,-mg)</annotation></semantics></math>,
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mover><msub><mi>F</mi><mi>g</mi></msub><mo accent="true">⃗</mo></mover><mo>=</mo><mrow><mo stretchy="true" form="prefix">(</mo><mn>0</mn><mo>,</mo><mn>0</mn><mo>,</mo><mo>−</mo><mi>m</mi><mi>g</mi><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">\vec{F_g} = (0,0,-mg)</annotation></semantics></math>,
 with
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>g</mi><mo>=</mo><mn>9.81</mn><mspace width="0.278em"></mspace><msup><mtext mathvariant="normal">m/s</mtext><mn>2</mn></msup></mrow><annotation encoding="application/x-tex">g=9.81 \; \text{m/s}^2</annotation></semantics></math>.</p>
 <h5 id="validation-5">Validation</h5>
@@ -1265,13 +1257,23 @@ Geometry)</figcaption>
 <h4 id="implementation-15">Implementation</h4>
 <p>The smoke effect is a combination of multiple small particles. Every
 particle is a partially transparent ellipse. It has a position in the
-world and always faces the camera. Every particle rises up for a random
-amount of time, becoming dimmer and then disappearing.</p>
+world and always faces the camera. Every particle has a random position,
+size, vertical speed and lifetime. The particles then rise up, slowly
+becomming dimmer and then disappearing. Then by using many such
+particles we have a nice smoke effect.</p>
+<figure>
+<video src="videos/smoke/single.mp4" width="600" controls=""><a
+href="videos/smoke/single.mp4">Single smoke particle</a></video>
+<figcaption aria-hidden="true">Single smoke particle</figcaption>
+</figure>
 <h4 id="validation-15">Validation</h4>
-<p><video src="videos/smoke/single.mp4" width="600" controls=""><a
-href="videos/smoke/single.mp4">Single smoke particle</a></video> <video
-src="videos/smoke/full.mp4" width="600" controls=""><a
-href="videos/smoke/full.mp4">Full smoke effect</a></video></p>
+<figure>
+<video src="videos/smoke/full.mp4" width="600" controls=""><a
+href="videos/smoke/full.mp4">Full smoke effect with 100
+particles</a></video>
+<figcaption aria-hidden="true">Full smoke effect with 100
+particles</figcaption>
+</figure>
 <h2 id="discussion">Discussion</h2>
 <p>We initially planned to perform a Voronoi tessellation of the
 particle system to generate a smooth mesh of the lava flow. However,
