@@ -202,8 +202,8 @@ void main(){
   vec3 material_color = vec3(0.0);
 
   const float hot_lava_temp = 1200.0 + 273.15;
-  const float middle_lava_temp = 1100.0 + 273.15;
-  const float cold_lava_temp = 900.0 + 273.15;
+  const float middle_lava_temp = 900.0 + 273.15;
+  const float cold_lava_temp = 500.0 + 273.15;
 
   const vec3 lava_hot_color_rgb = vec3(219., 177., 56.);
   vec3 lava_hot_color = rgb_nor(lava_hot_color_rgb);
